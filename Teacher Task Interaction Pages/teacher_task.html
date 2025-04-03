@@ -11,8 +11,35 @@
       <nav>navigation bar</nav>
     </header>
 
-    <main>
-      <h1>task item 1</h1>
+    <main class="task-view">
+      <div class="task-details">
+        <div class="task-header">
+          <h1>task item 1</h1>
+          <div class="task-actions">
+            <button class="complete-btn">Mark as Complete</button>
+            <button class="delete-btn">Delete</button>
+          </div>
+        </div>
+        <p>Due date: 2025-01-01</p>
+        <p>Status: In Progress</p>
+
+        <div class="content">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus
+          aliquam soluta quos, libero quae eveniet, dignissimos nihil voluptate
+          non magnam repudiandae ipsam enim ab accusantium? Error laboriosam
+          quibusdam quis incidunt?
+        </div>
+        <div class="comments-section">
+          <h2>Comments</h2>
+          <ul class="comments-list">
+            <li class="comment-item">Comment 1</li>
+            <li class="comment-item">Comment 2</li>
+            <li class="comment-item">Comment 3</li>
+          </ul>
+          <textarea placeholder="Add a comment..."></textarea>
+          <button class="submit-comment-btn">Submit</button>
+        </div>
+      </div>
     </main>
     <footer>
       <p>TaskTracker &copy; 2025</p>

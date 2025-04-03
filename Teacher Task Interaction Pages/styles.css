@@ -18,6 +18,9 @@ body {
 }
 
 header {
+  top: 0;
+  position: fixed;
+  width: 100%;
   background-color: var(--primary-black);
   padding: 1.5rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -170,4 +173,130 @@ footer {
   bottom: 0;
   width: 100%;
   box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* teach task view */
+.task-details {
+  background-color: var(--dark-gray);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  max-width: 800px;
+  margin: 2rem auto;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  margin-top: 3rem;
+}
+
+.task-header h1 {
+  color: white;
+  font-size: 1.5rem;
+}
+
+.task-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.complete-btn,
+.delete-btn {
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.complete-btn {
+  background-color: var(--accent-green);
+  color: white;
+}
+
+.complete-btn:hover {
+  background-color: #00994d;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f;
+}
+
+.task-details p {
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+  color: white;
+}
+
+.content {
+  background-color: #555;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+  color: #ddd;
+  line-height: 1.5;
+}
+
+.comments-section {
+  margin-top: 1.5rem;
+  background-color: #444;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.comments-section h2 {
+  margin-bottom: 0.8rem;
+  color: var(--accent-blue);
+}
+
+.comments-list {
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.comment-item {
+  background-color: #666;
+  padding: 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 4px;
+  border: none;
+  background-color: #333;
+  color: white;
+  resize: none;
+  margin-top: 0.5rem;
+}
+
+.submit-comment-btn {
+  display: block;
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 0.8rem;
+  background-color: var(--accent-blue);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-comment-btn:hover {
+  background-color: #005a94;
 }
