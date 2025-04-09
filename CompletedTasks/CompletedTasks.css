@@ -1,0 +1,85 @@
+* {
+	font-family: poppins, Arial, Helvetica, sans-serif;
+}
+
+:root {
+	--main_color: #010409;
+	--secondary_color: #151b23;
+	--third_color: #3076e3;
+	--fourth_color: #00b222;
+}
+
+body {
+	background-color: var(--main_color);
+	color: white;
+	height: 97vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.container {
+	display: inherit;
+	justify-content: space-evenly;
+	align-items: center;
+	padding: 20px;
+	border: 1px solid var(--third_color);
+	flex-direction: column;
+	border-radius: 5px;
+	width: 65%;
+	min-width: 400px;
+	overflow: auto;
+	background-color: var(--secondary_color);
+	height: 80%;
+	min-height: 500px;
+}
+
+.container div {
+	width: 80%;
+}
+
+.container div .task {
+	background-color: #2b394b;
+	margin: 5px 0;
+	border-radius: 5px;
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	min-height: 85px;
+	flex-direction: row;
+	transition: 0.2s;
+}
+
+.container div .task:hover {
+	background-color: var(--third_color);
+	cursor: pointer;
+}
+
+.container h1 {
+	color: var(--third_color);
+}
+
+.container .buttons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.container .buttons button {
+	background-color: var(--third_color);
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.container .buttons .Add:hover {
+	background-color: var(--fourth_color);
+}
+
+.container .buttons .Del:hover {
+	background-color: red;
+}
