@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Task</title>
+    <link rel="stylesheet" href="AdminTask.css" />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #2a2a2a;
+        justify-content: center;
+        color: #fff;
+        font-family: "Poppins", sans-serif; /* Consistent font */
+        height: 100vh;
+        margin: 0;
+      }
+
+      .edit-task-container {
+        background: #1c1c1c; /* Updated to match other pages */
+        padding: 2rem;
+        border-radius: 8px;
+        width: 30rem;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Consistent shadow */
+      }
+
+      .edit-task-container h2 {
+        margin-bottom: 1rem;
+        text-align: center;
+        background: linear-gradient(
+          90deg,
+          #00ffa6,
+          #00c0ff
+        ); /* Gradient text */
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 95%;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        background: #2a2a2a; /* Updated to match other pages */
+        color: #fff;
+      }
+
+      .form-group textarea {
+        resize: none;
+        height: 6rem;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+      }
+
+      .form-actions button {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .form-actions a {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        width: 10%;
+      }
+
+      .save-btn {
+        background: #00ffa6; /* Consistent button color */
+        color: #000;
+      }
+
+      .save-btn:hover {
+        background: #00c0ff; /* Hover effect */
+      }
+
+      .cancel-btn {
+        background: #f44336; /* Red for cancel */
+        text-decoration: none;
+        color: #fff;
+      }
+
+      .cancel-btn:hover {
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="edit-task-container">
+      <h2>Edit Task</h2>
+      <form action="/update-task" method="POST">
+        <div class="form-group">
+          <label for="task-title">Task Title</label>
+          <input
+            type="text"
+            id="task-title"
+            name="task-title"
+            placeholder="Enter task title"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="task-desc">Task Description</label>
+          <textarea
+            id="task-desc"
+            name="task-desc"
+            placeholder="Enter task description"
+            required
+          ></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="save-btn">Save</button>
+          <a href="AdminDashboard.html" class="cancel-btn">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

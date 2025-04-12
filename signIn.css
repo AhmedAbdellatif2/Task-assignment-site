@@ -1,0 +1,132 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: #0a0a0a;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+
+.form-container {
+  width: 350px;
+  background: #1c1c1c;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.title {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+
+  background: linear-gradient(90deg, #00ffa6, #00c0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #cfcfcf;
+  margin-bottom: 2rem;
+}
+.login-form {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.login-form label {
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+}
+
+.login-form input {
+  margin-bottom: 1.2rem;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 4px;
+  outline: none;
+  background: #2a2a2a;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+/* Button Styles */
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  padding: 0.8rem;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.login-btn {
+  background: #00ffa6;
+  color: #000;
+  margin-bottom: 1rem;
+}
+
+.login-btn:hover {
+  background: #00c0ff;
+  color: #000;
+}
+
+.switch-page {
+  font-size: 0.9rem;
+  color: #ccc;
+  text-align: center;
+}
+
+.switch-page a {
+  color: #00ffa6;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.switch-page a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .form-container {
+    width: 90%;
+    padding: 1.5rem;
+  }
+
+  h1.title {
+    font-size: 1.5rem;
+  }
+
+  p.subtitle {
+    font-size: 0.85rem;
+  }
+
+  .login-form label {
+    font-size: 0.9rem;
+  }
+
+  .login-form input {
+    font-size: 0.9rem;
+    padding: 0.7rem;
+  }
+
+  .btn {
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+
+  .switch-page {
+    font-size: 0.85rem;
+  }
+}
