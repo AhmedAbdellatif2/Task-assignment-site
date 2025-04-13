@@ -5,10 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Task Management</title>
     <link rel="stylesheet" href="AdminTask.css" />
+    <link rel="stylesheet" href="navStyle.css" />
   </head>
   <body>
     <div class="background"></div>
     <div class="container">
+      <header>
+        <nav>
+          <ul>
+            <li class="search-bar">
+              <label for="search">
+                <img height="40" src="search.png" />
+              </label>
+              <input
+                id="search"
+                type="search"
+                placeholder="Type to search..."
+                name="search"
+              />
+            </li>
+            <div class="right-nav">
+              <li>
+                <a href="x"><img height="20" src="icons8-bell-48.png" /></a>
+              </li>
+              <li class="Profile">
+                <a href="x"><img height="40" src="profile.png" /> </a>
+              </li>
+            </div>
+          </ul>
+        </nav>
+      </header>
+
       <h2>Admin Task Management</h2>
       <form action="#" method="post">
         <label for="task-id">Task ID</label>
@@ -53,19 +80,10 @@
           required
         ></textarea>
 
-        <label for="created-by">Created By</label>
-        <input
-          type="text"
-          id="created-by"
-          name="created-by"
-          placeholder="Enter creator's name"
-          required
-        />
-
         <button type="submit">Add Task</button>
       </form>
       <p class="login-link">
-        Already have tasks? <a href="view-tasks.html">View them here</a>
+        Already have tasks? <a href="AdminDashboard.html">View them here</a>
       </p>
     </div>
   </body>

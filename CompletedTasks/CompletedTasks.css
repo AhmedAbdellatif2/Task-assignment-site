@@ -16,6 +16,9 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+
+	padding-top: 80px;
+	/*the size of the nav bar*/
 }
 
 .container {
