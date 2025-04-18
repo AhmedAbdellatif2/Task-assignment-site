@@ -67,9 +67,30 @@
           <button class="submit-comment-btn">Submit</button>
         </div>
       </div>
+      <button class="chat_toggle">
+        <img src="music-robot.png" alt="Chat Icon" class="chat_icon" />
+      </button>
+      <section class="chat_bot">
+        <button class="chat_exit"></button>
+        <div class="chatbot-header">
+          <h2>Chatbot</h2>
+        </div>
+        <div class="chatbot-messages">
+          <div class="message bot-message">Hello, how can I help you?</div>
+        </div>
+        <section class="chatbot-input">
+          <input
+            type="text"
+            placeholder="Type your message..."
+            id="chatbot_input"
+          />
+          <button id="chat_send">Send</button>
+        </section>
+      </section>
     </main>
     <footer>
       <p>TaskTracker &copy; 2025</p>
     </footer>
+    <script type="module" src="teacher_task.js"></script>
   </body>
 </html>
