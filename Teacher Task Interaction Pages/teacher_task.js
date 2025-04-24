@@ -62,20 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       chat_body.innerHTML += `<div class="message bot-message">Error: ${data.error}</div>`;
       return;
     }
-    let reader = resp.body.getReader();
-    let decoder = new TextDecoder("utf-8");
-    let message_out = "";
-    let done = false;
-    while (!done) {
-      console.log("Reading stream...");
-      const { reader_done, value } = await reader.read();
-      done = reader_done;
-      const chunk = decoder.decode(value, { stream: true });
-      for (let line in chunk.split("\n")) {
-        console.log(line);
-      }
-    }
-    message_out = data.choices[0].message.content;
+    let message_out = data.choices[0].message.content;
     messages.push({ role: "assistant", content: message_out });
     chat_body.innerHTML = chat_body.innerHTML.replace(
       `<div class="message bot-message typing-dots">
