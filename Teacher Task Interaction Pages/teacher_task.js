@@ -1,3 +1,12 @@
+import { tasks, users } from "../tasks_data.js";
+
+if (localStorage.getItem("tasks") === null) {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+if (localStorage.getItem("users") === null) {
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
 let API_KEY =
   "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";
 document.addEventListener("DOMContentLoaded", async () => {
@@ -36,16 +45,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   chat_send.addEventListener("click", async () => {
     let message = chat_input.value;
-    if (message.trim() === "") return; // Ignore empty messages
-    chat_input.value = ""; // Clear the input field
+    if (message.trim() === "") return;
+
+    chat_input.value = "";
     chat_body.innerHTML += `<div class="message user-message">${message}</div>`;
-    chat_body.scrollTop = chat_body.scrollHeight; // Scroll to the bottom
-    chat_body.innerHTML += `<div class="message bot-message typing-dots">
-        <span>.</span><span>.</span><span>.</span>
-      </div>`;
-    chat_body.scrollTop = chat_body.scrollHeight; // Scroll to the bottom
+    chat_body.scrollTop = chat_body.scrollHeight;
+
+    // Add a placeholder for bot message
+    const messageId = `streaming-message-${Date.now()}`;
+    chat_body.innerHTML += `<div class="message bot-message" id="${messageId}">
+      <span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>
+    </div>`;
+    chat_body.scrollTop = chat_body.scrollHeight;
+
     messages.push({ role: "user", content: message });
-    let resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+
+    const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${API_KEY}`,
@@ -56,44 +71,43 @@ document.addEventListener("DOMContentLoaded", async () => {
         stream: true,
       }),
     });
-    let reader = resp.body.getReader();
-    let decoder = new TextDecoder("utf-8");
-    let result = "";
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let message_out = "";
     let done = false;
+
     while (!done) {
-      const { done: reader_done, value } = await reader.read();
+      const { value, done: reader_done } = await reader.read();
       done = reader_done;
-      let chunk = decoder.decode(value, { stream: true });
+      const chunk = decoder.decode(value, { stream: true });
+
       for (let line of chunk.split("\n")) {
         if (line.startsWith("data: ")) {
-          line = JSON.parse(line.slice(6).trim());
-          if (line.choices[0].delta.content) {
-            result += line.choices[0].delta.content;
-            if (chat_body.innerHTML.includes("typing-dots")) {
-              chat_body.innerHTML = chat_body.innerHTML.replace(
-                `<div class="message bot-message typing-dots">
-          <span>.</span><span>.</span><span>.</span>
-        </div>`,
-                `<div class="message bot-message" id="message_${line.id}">${result}</div>`
-              );
-            } else {
-              chat_body.innerHTML += `<div class="message bot-message" id="message_${line.id}">${result}</div>`;
+          const jsonStr = line.slice("data: ".length).trim();
+          if (jsonStr === "[DONE]") continue;
+
+          try {
+            const json = JSON.parse(jsonStr);
+            const token = json.choices?.[0]?.delta?.content || "";
+            message_out += token;
+
+            // Update message in DOM
+            const messageDiv = document.getElementById(messageId);
+            if (messageDiv) {
+              messageDiv.textContent = message_out;
+              chat_body.scrollTop = chat_body.scrollHeight;
             }
-            chat_body.scrollTop = chat_body.scrollHeight; // Scroll to the bottom
+          } catch (e) {
+            console.error("Stream parse error:", e, line);
           }
         }
       }
     }
-    let message_out = data.choices[0].message.content;
+
     messages.push({ role: "assistant", content: message_out });
-    console.log("Response:", message_out);
-    chat_body.innerHTML = chat_body.innerHTML.replace(
-      `<div class="message bot-message typing-dots">
-        <span>.</span><span>.</span><span>.</span>
-      </div>`,
-      `<div class="message bot-message">${message_out}</div>`
-    );
   });
+
   document
     .getElementById("chatbot_input")
     .addEventListener("keydown", function (e) {
@@ -112,47 +126,45 @@ let currentHour =
   ((new Date().getHours() + 24) % 12 || 12) < 10
     ? `0${(new Date().getHours() + 24) % 12 || 1}`
     : (new Date().getHours() + 24) % 12 || 12;
-let currentMinutes = new Date().getMinutes();
-// let task = JSON.parse(localStorage.getItem("commentsList"));
-// let commentsList = task.comments;
-// let commentLocalStorage = `[{"task_id": ${task.task_id}, "task_title": "${
-// 	task.task_title
-// }", "task_description": "${task.task_description}", "start_date": "${
-// 	task.start_date.innerHTML
-// }", "due_date": "${task.due_date.innerHTML}", "status": "${
-// 	task.status.innerHTML
-// }", "priority": "${task.priority.innerHTML}", "assigned_to": "${
-// 	task.assigned_to
-// }", "comments": ${JSON.stringify(task.comments)}, "created_at": "${
-// 	task.created_at.innerHTML
-// }", "updated_at": "${task.updated_at.innerHTML}"}]`;
-// localStorage.setItem("commentsList", commentLocalStorage);
-// let commentsFromLocalStorage = JSON.parse(localStorage.getItem("commentsList"));
 
-// window.addEventListener("load", function () {
-// 	for (let i = 0; i < commentsFromLocalStorage.length; i++) {
-// 		if (commentsFromLocalStorage[i]["task_id"] === task.task_id) {
-// 			for (
-// 				let j = 0;
-// 				j < commentsFromLocalStorage[i]["comments"].length;
-// 				j++
-// 			) {
-// 				this.document
-// 					.querySelector(".comments-list")
-// 					.insertAdjacentHTML(
-// 						"beforeend",
-// 						`<li><p><strong>
-// 							${currentDate} -
-// 							${currentHour}:
-// 							${currentMinutes}
-// 							${new Date().getHours() >= 12 ? "PM" : "AM"}</strong>:
-// 							<span>${commentsFromLocalStorage[i]["comments"][j]["comment"]}</span>
-// 							</p><button onClick="this.parentElement.remove();">Remove Comment</button></li>`
-// 					);
-// 			}
-// 		}
-// 	}
-// });
+let currentMinutes = new Date().getMinutes();
+let task = JSON.parse(localStorage.getItem("commentsList"));
+let commentsList = task.comments;
+console.log(task);
+let commentLocalStorage = `[{"task_id": ${task.task_id}, "task_title": "${
+  task.task_title
+}", "task_description": "${task.task_description}", "start_date": "${
+  task.start_date.innerHTML
+}", "due_date": "${task.due_date.innerHTML}", "status": "${
+  task.status.innerHTML
+}", "priority": "${task.priority.innerHTML}", "assigned_to": "${
+  task.assigned_to
+}", "comments": ${JSON.stringify(task.comments)}, "created_at": "${
+  task.created_at.innerHTML
+}", "updated_at": "${task.updated_at.innerHTML}"}]`;
+localStorage.setItem("commentsList", commentLocalStorage);
+let commentsFromLocalStorage = JSON.parse(localStorage.getItem("commentsList"));
+
+console.log(commentsFromLocalStorage);
+
+window.addEventListener("load", function () {
+  for (let i = 0; i < commentsFromLocalStorage.length; i++) {
+    if (commentsFromLocalStorage[i]["task_id"] === task.task_id) {
+      for (let j = 0; j < commentsFromLocalStorage[i]["comments"].length; j++) {
+        this.document.querySelector(".comments-list").insertAdjacentHTML(
+          "beforeend",
+          `<li><p><strong>
+							${currentDate} -
+							${currentHour}:
+							${currentMinutes}
+							${new Date().getHours() >= 12 ? "PM" : "AM"}</strong>:
+							<span>${commentsFromLocalStorage[i]["comments"][j]["comment"]}</span>
+							</p><button onClick="this.parentElement.remove();">Remove Comment</button></li>`
+        );
+      }
+    }
+  }
+});
 
 document
   .querySelector(".submit-comment-btn")
