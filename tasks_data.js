@@ -1,4 +1,4 @@
-const tasks = [
+export const tasks = [
   {
     task_id: "task-001",
     task_title: "Design Landing Page",
@@ -81,7 +81,7 @@ const tasks = [
     updated_at: new Date("2025-04-10T18:00:00Z"),
   },
 ];
-const users = [
+export const users = [
   {
     user_id: "user-101",
     name: "Alice Johnson",
