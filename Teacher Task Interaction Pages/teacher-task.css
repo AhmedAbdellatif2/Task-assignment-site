@@ -248,11 +248,22 @@ footer {
 	color: white;
 }
 
+.comments-list li .comment-header {
+	width: 80%;
+}
+
+.comments-list li .comment-author {
+	font-weight: bold;
+	color: var(--accent-blue);
+	font-size: x-large;
+}
+
 .comments-list li button {
 	border: none;
 	padding: 0.5rem;
 	border-radius: 4px;
 	cursor: pointer;
+	width: 20%;
 	transition: all 0.2s;
 	font-weight: bold;
 	background-color: red;
@@ -314,6 +325,11 @@ textarea {
 	background: linear-gradient(90deg, #00ffa6, #3076e3);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
+}
+.comment-date {
+	color: var(--gray-text);
+	font-size: 0.8rem;
+	margin-left: 60px;
 }
 
 .chat_toggle {

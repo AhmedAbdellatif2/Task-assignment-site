@@ -7,68 +7,88 @@ let currentHour =
 		? `0${(new Date().getHours() + 24) % 12 || 1}`
 		: (new Date().getHours() + 24) % 12 || 12;
 let currentMinutes = new Date().getMinutes();
-// let task = JSON.parse(localStorage.getItem("commentsList"));
-// let commentsList = task.comments;
-// let commentLocalStorage = `[{"task_id": ${task.task_id}, "task_title": "${
-// 	task.task_title
-// }", "task_description": "${task.task_description}", "start_date": "${
-// 	task.start_date.innerHTML
-// }", "due_date": "${task.due_date.innerHTML}", "status": "${
-// 	task.status.innerHTML
-// }", "priority": "${task.priority.innerHTML}", "assigned_to": "${
-// 	task.assigned_to
-// }", "comments": ${JSON.stringify(task.comments)}, "created_at": "${
-// 	task.created_at.innerHTML
-// }", "updated_at": "${task.updated_at.innerHTML}"}]`;
-// localStorage.setItem("commentsList", commentLocalStorage);
-// let commentsFromLocalStorage = JSON.parse(localStorage.getItem("commentsList"));
-
-// window.addEventListener("load", function () {
-// 	for (let i = 0; i < commentsFromLocalStorage.length; i++) {
-// 		if (commentsFromLocalStorage[i]["task_id"] === task.task_id) {
-// 			for (
-// 				let j = 0;
-// 				j < commentsFromLocalStorage[i]["comments"].length;
-// 				j++
-// 			) {
-// 				this.document
-// 					.querySelector(".comments-list")
-// 					.insertAdjacentHTML(
-// 						"beforeend",
-// 						`<li><p><strong>
-// 							${currentDate} -
-// 							${currentHour}:
-// 							${currentMinutes}
-// 							${new Date().getHours() >= 12 ? "PM" : "AM"}</strong>:
-// 							<span>${commentsFromLocalStorage[i]["comments"][j]["comment"]}</span>
-// 							</p><button onClick="this.parentElement.remove();">Remove Comment</button></li>`
-// 					);
-// 			}
-// 		}
-// 	}
-// });
+// localStorage.setItem(
+// 	"Tasks",
+// 	JSON.stringify([
+// 		{
+// 			task_id: Number.parseInt(
+// 				document
+// 					.querySelector(".task-view")
+// 					.children[0].className.toString()
+// 					.substring(4)
+// 			),
+// 			task_title: document.querySelector(".taskTitle h1").innerHTML,
+// 			task_description:
+// 				document.querySelector(".description").nextElementSibling
+// 					.children[0].innerHTML,
+// 			start_date: new Date(
+// 				document.querySelector(".taskStartDate").innerHTML
+// 			).toDateString(),
+// 			due_date: new Date(
+// 				document.querySelector(".taskDueDate").innerHTML
+// 			).toDateString(),
+// 			status: document.querySelector(".taskStatus").innerHTML,
+// 			priority: document.querySelector(".taskPriority").innerHTML,
+// 			assigned_to: [],
+// 			comments: [],
+// 			created_at: new Date(
+// 				document.querySelector(".taskCreateDate").innerHTML
+// 			).toDateString(),
+// 			updated_at: new Date(
+// 				document.querySelector(".taskUpdateDate").innerHTML
+// 			).toDateString(),
+// 		},
+// 	])
+// );
+window.addEventListener("load", function () {
+	let commentsList = JSON.parse(this.localStorage.getItem("Tasks"))[0]
+		.comments;
+	for (let j = 0; j < commentsList.length; j++) {
+		document.querySelector(".comments-list").insertAdjacentHTML(
+			"beforeend",
+			`<li id="${commentsList[j].comment_id}">
+				<div class="comment-header">
+				<span class="comment-author">${commentsList[j].user_id}: </span>
+				<span class="comment-text">${commentsList[j].comment}</span>
+				</div>
+				<button onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();" class="remove-comment">Remove Comment</button>
+			</li>
+			<pre class="comment-date">${commentsList[j].created_at}</pre>`
+		);
+	}
+});
 
 document
 	.querySelector(".submit-comment-btn")
 	.addEventListener("click", function () {
 		let commentText = document.querySelector(".comment-textarea").value;
 		if (commentText !== "") {
+			let commentID = new Date().getTime();
 			document.querySelector(".comments-list").insertAdjacentHTML(
 				"beforeend",
-				`<li id="${
-					document.querySelector(".comments-list").childElementCount +
-					1
-				}">
-					<p>
-						<span class="comment-user" style="border: 2px solid blue;padding: 5px 10px;border-radius: 5px;font-size: 25px;">User1</span>
-						<sub class="comment-created-at">${currentDate} - ${currentHour}:
-						${currentMinutes}
-						${new Date().getHours() >= 12 ? "PM" : "AM"}</sub>:
-						${commentText}
-						</p>
-		            <button onclick="this.parentElement.remove();">Remove Comment</button>
-            	</li>`
+				`<li id="${commentID}">
+					<div class="comment-header">
+					<span class="comment-author">${commentID}: </span>
+					<span class="comment-text">${commentText}</span>
+					</div>
+					<button onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();" class="remove-comment">Remove Comment</button>
+				</li>
+				<pre class="comment-date">${currentDate} - ${currentHour}:${currentMinutes} ${
+					new Date().getHours() >= 12 ? "PM" : "AM"
+				}</pre>`
 			);
+			let tasks = JSON.parse(localStorage.getItem("Tasks")) || [];
+			if (tasks.length > 0) {
+				tasks[0].comments.push({
+					comment_id: commentID,
+					user_id: commentID,
+					comment: commentText,
+					created_at: `${currentDate} - ${currentHour}:${currentMinutes} ${
+						new Date().getHours() >= 12 ? "PM" : "AM"
+					}`,
+				});
+				localStorage.setItem("Tasks", JSON.stringify(tasks));
+			}
 			commentText = "";
 		}
 	});
