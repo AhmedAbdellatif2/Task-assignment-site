@@ -40,10 +40,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     chat_input.value = ""; // Clear the input field
     chat_body.innerHTML += `<div class="message user-message">${message}</div>`;
     chat_body.scrollTop = chat_body.scrollHeight; // Scroll to the bottom
-    chat_body.innerHTML += `
-  <div class="message bot-message typing-dots">
-    <span>.</span><span>.</span><span>.</span>
-  </div>`;
+    chat_body.innerHTML += `<div class="message bot-message typing-dots">
+        <span>.</span><span>.</span><span>.</span>
+      </div>`;
     chat_body.scrollTop = chat_body.scrollHeight; // Scroll to the bottom
     messages.push({ role: "user", content: message });
     let resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -54,16 +53,40 @@ document.addEventListener("DOMContentLoaded", async () => {
       body: JSON.stringify({
         model: "thudm/glm-4-32b:free",
         messages: messages,
+        stream: true,
       }),
     });
-    let data = await resp.json();
-    if (data.error) {
-      console.error("Error:", data.error);
-      chat_body.innerHTML += `<div class="message bot-message">Error: ${data.error}</div>`;
-      return;
+    let reader = resp.body.getReader();
+    let decoder = new TextDecoder("utf-8");
+    let result = "";
+    let done = false;
+    while (!done) {
+      const { done: reader_done, value } = await reader.read();
+      done = reader_done;
+      let chunk = decoder.decode(value, { stream: true });
+      for (let line of chunk.split("\n")) {
+        if (line.startsWith("data: ")) {
+          line = JSON.parse(line.slice(6).trim());
+          if (line.choices[0].delta.content) {
+            result += line.choices[0].delta.content;
+            if (chat_body.innerHTML.includes("typing-dots")) {
+              chat_body.innerHTML = chat_body.innerHTML.replace(
+                `<div class="message bot-message typing-dots">
+          <span>.</span><span>.</span><span>.</span>
+        </div>`,
+                `<div class="message bot-message" id="message_${line.id}">${result}</div>`
+              );
+            } else {
+              chat_body.innerHTML += `<div class="message bot-message" id="message_${line.id}">${result}</div>`;
+            }
+            chat_body.scrollTop = chat_body.scrollHeight; // Scroll to the bottom
+          }
+        }
+      }
     }
     let message_out = data.choices[0].message.content;
     messages.push({ role: "assistant", content: message_out });
+    console.log("Response:", message_out);
     chat_body.innerHTML = chat_body.innerHTML.replace(
       `<div class="message bot-message typing-dots">
         <span>.</span><span>.</span><span>.</span>
