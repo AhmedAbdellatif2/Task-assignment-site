@@ -85,6 +85,7 @@ export const users = [
   {
     user_id: "user-101",
     name: "Alice Johnson",
+    username: "Alice Johnson",
     email: "alice.johnson@example.com",
     role: "teacher",
     avatar_url: "https://randomuser.me/api/portraits/women/1.jpg",
@@ -94,6 +95,7 @@ export const users = [
   {
     user_id: "user-102",
     name: "Mark Spencer",
+    username: "Mark Spencer",
     email: "mark.spencer@example.com",
     role: "teacher",
     avatar_url: "https://randomuser.me/api/portraits/men/2.jpg",
@@ -103,6 +105,7 @@ export const users = [
   {
     user_id: "user-103",
     name: "Sophia Lin",
+    username: "Sophia Lin",
     email: "sophia.lin@example.com",
     role: "teacher",
     avatar_url: "https://randomuser.me/api/portraits/women/3.jpg",
@@ -112,6 +115,7 @@ export const users = [
   {
     user_id: "user-105",
     name: "Daniel O'Neill",
+    username: "Daniel O'Neill",
     email: "daniel.oneill@example.com",
     role: "admin",
     avatar_url: "https://randomuser.me/api/portraits/men/5.jpg",
