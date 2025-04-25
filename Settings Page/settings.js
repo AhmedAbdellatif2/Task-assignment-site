@@ -88,7 +88,7 @@ deleteAccountBtn.addEventListener('click', () => {
         localStorage.clear();
         alert('Account deleted. Redirecting...');
         setTimeout(() => {
-            window.location.href = 'login.html';
+            window.location.href = 'signup.html';
         }, 1500);
     }
 });

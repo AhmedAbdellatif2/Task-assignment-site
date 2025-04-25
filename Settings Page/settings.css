@@ -144,27 +144,35 @@ button {
     align-items: center;
     gap: 0.8rem;
     cursor: pointer;
+    font-size: 1rem;
 }
 
-.checkmark {
+.checkbox-container input[type="checkbox"] {
+    appearance: none;
     width: 18px;
     height: 18px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-color: transparent;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
 }
 
-.checkbox-container input:checked + .checkmark {
+.checkbox-container input[type="checkbox"]:checked {
     background-color: var(--primary);
     border-color: var(--primary);
 }
 
-.checkbox-container input:checked + .checkmark::after {
+.checkbox-container input[type="checkbox"]:checked::after {
     content: "✓";
     color: white;
     font-size: 0.8rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
 }
 
 .danger-zone {
@@ -222,3 +230,5 @@ body.light-theme .danger-zone {
 .icon-trash::before { content: "🗑️"; }
 .icon-sun::before { content: "☀️"; }
 .icon-moon::before { content: "🌙"; }
+
+
