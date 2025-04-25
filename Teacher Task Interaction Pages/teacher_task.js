@@ -1,13 +1,11 @@
 import { tasks, users } from "../tasks_data.js";
 
 let searchParams = new URLSearchParams(document.location.search);
-let taskId;
 
 if (window.location.href.indexOf("?task_id=") == -1) {
-	window.location.href += "?task_id=" + "task-002";
+	window.location.href += "?task_id=" + "task-001";
 }
 
-taskId = searchParams.get("task_id");
 if (localStorage.getItem("Tasks") === null) {
 	localStorage.setItem("Tasks", JSON.stringify(tasks));
 }
@@ -15,7 +13,7 @@ if (localStorage.getItem("users") === null) {
 	localStorage.setItem("users", JSON.stringify(users));
 }
 let task = JSON.parse(localStorage.getItem("Tasks")).find(
-	(tsk) => tsk.task_id === taskId
+	(tsk) => tsk.task_id === searchParams.get("task_id")
 );
 if (task === undefined) {
 	console.error("Task not found");
@@ -148,18 +146,33 @@ window.addEventListener("load", function () {
 	if (task === undefined) {
 		return; // المفروض يحول على صفحة HTML 404 تانية معمولة مخصوص للحالة دي
 	} else {
+		// Fetching Task Data
+		this.document.querySelector(".taskCreateDate").innerHTML =
+			task.created_at;
+		this.document.querySelector(".taskUpdateDate").innerHTML =
+			task.updated_at;
+		this.document.querySelector(".taskTitle h1").innerHTML =
+			task.task_title;
+		this.document.querySelector(".taskStartDate").innerHTML =
+			task.start_date;
+		this.document.querySelector(".taskDueDate").innerHTML = task.due_date;
+		this.document.querySelector(".taskStatus").innerHTML = task.status;
+		this.document.querySelector(".taskPriority").innerHTML = task.priority;
+		this.document.querySelector(".content").children[0].innerHTML =
+			task.task_description;
+		// Fetching Comments from localStorage
 		let commentsList = task.comments;
 		for (let j = 0; j < commentsList.length; j++) {
 			document.querySelector(".comments-list").insertAdjacentHTML(
 				"beforeend",
 				`<li id="${commentsList[j].comment_id}">
-				<div class="comment-header">
-					<span class="comment-author">${commentsList[j].user_id}: </span>
-					<span class="comment-text">${commentsList[j].comment}</span>
-				</div>
-				<button onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();" class="remove-comment">Remove Comment</button>
-			</li>
-			<pre class="comment-date">${commentsList[j].created_at}</pre>`
+					<div class="comment-header">
+						<span class="comment-author">${commentsList[j].user_name}: </span>
+						<span class="comment-text">${commentsList[j].comment}</span>
+					</div>
+					<button onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();" class="remove-comment">Remove Comment</button>
+				</li>
+				<pre class="comment-date">${commentsList[j].created_at}</pre>`
 			);
 		}
 	}
@@ -175,7 +188,7 @@ document
 				"beforeend",
 				`<li id="${commentID}">
 					<div class="comment-header">
-						<span class="comment-author">${commentID}: </span>
+						<span class="comment-author">user-${commentID % 100}: </span>
 						<span class="comment-text">${commentText}</span>
 					</div>
 					<button onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();" class="remove-comment">Remove Comment</button>
@@ -184,24 +197,27 @@ document
 					new Date().getHours() >= 12 ? "PM" : "AM"
 				}</pre>`
 			);
-			task.comments.push({
-				comment_id: commentID,
-				user_id: commentID,
-				comment: commentText,
-				created_at: `${currentDate} - ${currentHour}:${currentMinutes} ${
-					new Date().getHours() >= 12 ? "PM" : "AM"
-				}`,
+			let tsks = JSON.parse(localStorage.getItem("Tasks"));
+			tsks.forEach((tsk) => {
+				if (tsk.task_id === task.task_id) {
+					tsk.comments.push({
+						comment_id: commentID,
+						user_name: `user-${commentID % 100}`,
+						comment: commentText,
+						created_at: `${currentDate} - ${currentHour}:${currentMinutes} ${
+							new Date().getHours() >= 12 ? "PM" : "AM"
+						}`,
+					});
+				}
 			});
-			console.log(task);
-			localStorage.setItem("Tasks", JSON.stringify(tasks));
-
+			localStorage.setItem("Tasks", JSON.stringify(tsks));
 			commentText = "";
 		}
 	});
 
 let taskDate = document.querySelector(".taskDueDate");
 let taskStatus = document.querySelector(".taskStatus");
-let date = new Date(taskDate.innerHTML);
+let date = new Date(task.due_date).getTime();
 
 if (calculateNumberOfDaysFrom(date) < 7) {
 	taskDate.setAttribute("style", "color: green;");
@@ -213,14 +229,21 @@ if (calculateNumberOfDaysFrom(date) < 2) {
 	taskDate.setAttribute("style", "color: red;");
 }
 
-if (taskStatus.innerHTML === "In Progress") {
+if (task.status === "In Progress") {
 	taskStatus.setAttribute("style", "color: orange;");
 }
-if (taskStatus.innerHTML === "Completed") {
-	taskStatus.setAttribute("style", "color: green;");
+if (task.status === "Completed") {
+	taskStatus.setAttribute("style", "color: green; font-weight: bold;");
 }
 
 document.querySelector(".complete-btn").addEventListener("click", () => {
 	taskStatus.innerHTML = "Completed";
 	taskStatus.setAttribute("style", "color: green; font-weight: bold;");
+	let tsks = JSON.parse(localStorage.getItem("Tasks"));
+	tsks.forEach((tsk) => {
+		if (tsk.task_id === task.task_id) {
+			tsk.status = "Completed";
+		}
+	});
+	localStorage.setItem("Tasks", JSON.stringify(tsks));
 });
