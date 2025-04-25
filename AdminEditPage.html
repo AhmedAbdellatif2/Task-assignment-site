@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Task</title>
+    <link rel="stylesheet" href="media\styles\navStyle.css" />
+    <style>
+      :root {
+        --primary-black: #010409;
+        --dark-gray: #151b23;
+        --accent-blue: #3076e3;
+        --accent-green: #00b222;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--dark-gray);
+        color: aliceblue;
+        font-family: "Poppins", sans-serif; /* Consistent font */
+        height: 100vh;
+        margin: 0;
+      }
+
+      .edit-task-container {
+        background: var(--primary-black); /* Updated to match other pages */
+        padding: 2rem;
+        border-radius: 8px;
+        width: 30rem;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Consistent shadow */
+      }
+
+      .edit-task-container h2 {
+        margin-bottom: 1rem;
+        text-align: center;
+        background: var(--accent-blue); /* Gradient text */
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 95%;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        background: var(--dark-gray); /* Updated to match other pages */
+        color: white;
+      }
+
+      .form-group textarea {
+        resize: none;
+        height: 6rem;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+      }
+
+      .form-actions button {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .form-actions a {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        width: 10%;
+      }
+
+      .save-btn {
+        width: 100%;
+        padding: 0.9rem;
+        background-color: var(--accent-green); /* Updated button color */
+        color: white;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        border-radius: 4px;
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .save-btn:hover {
+        background: var(--accent-blue); /* Hover effect */
+      }
+
+      .cancel-btn {
+        background: #f44336; /* Red for cancel */
+        text-decoration: none;
+        color: white;
+      }
+
+      .cancel-btn:hover {
+        opacity: 0.9;
+      }
+      footer {
+        position: fixed;
+        bottom: 0;
+        background-color: var(--primary-black);
+        color: white;
+        padding: 1rem 0rem;
+        text-align: center;
+        width: 100%;
+        box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.5);
+      }
+
+      /*side bar*/
+    #settings:hover{
+      background-color: goldenrod;
+      border-radius: 50px;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50px;
+      transition: background-color 0.3s, font-size 0.3s, text-decoration-line 0.3s;
+      cursor: pointer;
+    }
+
+    #sidebar{
+      margin-top: 10px;
+      padding: 10px;
+      width: fit-content;
+      height: 100%;
+      background-color: var(--primary-black);
+      border-radius: 25px;
+      }
+    </style>
+  </head>
+  <body>
+    <header id="navbar">
+      <nav>
+        <ul>
+            <li>
+              <img id="notification" height="40" src="media/logos/dark/notification panel.png" title="notification panel" />
+            </li>
+
+            <li class="search">
+              <label for="search">
+                <img id="ser"height="40" src="media/logos/dark/search.png" />
+              </label>
+              <input
+                id="search"
+                type="search"
+                placeholder="Type to search..."
+                name="search"
+              />
+             <!-- <a href="SearchPage.html"> <img height="40" src="media/logos/dark/search.png" title="search a tak" /> </a> -->
+            </li>
+
+            <li>
+              <a href="profile_page.html"><img id="Profile" height="40" src="media/logos/dark/profile.png" title="profile"/></a>
+            </li>
+
+            <li >
+             <img id="home" height="40" src="media/logos/dark/homepage.png" title="homepage">
+            </li>
+        </ul>
+      </nav>
+    </header>
+    
+
+    <div class="edit-task-container">
+      <h2>Edit Task</h2>
+      <form action="/update-task" method="POST">
+        <div class="form-group">
+          <label for="task-title">Task Title</label>
+          <input
+            type="text"
+            id="task-title"
+            name="task-title"
+            placeholder="Enter task title"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="task-desc">Task Description</label>
+          <textarea
+            id="task-desc"
+            name="task-desc"
+            placeholder="Enter task description"
+            required
+          ></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="save-btn">Save</button>
+          <a href="AdminDashboard.html" class="cancel-btn">Cancel</a>
+        </div>
+      </form>
+    </div>
+    <footer>
+      <p>TaskTracker &copy; 2025</p>
+    </footer>
+    <script src="media/js/navBar.js"></script>
+    <script src="media/js/settings.js"></script>
+  </body>
+</html>

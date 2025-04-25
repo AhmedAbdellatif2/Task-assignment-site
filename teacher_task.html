@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="media\styles\teacher-task.css" />
+    <link rel="stylesheet" href="media\styles\navStyle.css" />
+    <title>Task item</title>
+    <style>
+      #settings:hover{
+        background-color: goldenrod;
+        border-radius: 50px;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50px;
+        transition: background-color 0.3s, font-size 0.3s, text-decoration-line 0.3s;
+        cursor: pointer;
+      }
+  
+      #sidebar{
+        margin-top: 10px;
+        padding: 10px;
+        width: fit-content;
+        height: 100%;
+        background-color: var(--primary-black);
+        border-radius: 25px;
+        }
+      </style>
+
+  </head>
+  <body>
+    <header id="navbar">
+      <nav>
+        <ul>
+            <li>
+              <img id="notification" height="40" src="media/logos/dark/notification panel.png" title="notification panel" />
+            </li>
+
+            <li class="search">
+              <label for="search">
+                <img id="ser"height="40" src="media/logos/dark/search.png" />
+              </label>
+              <input
+                id="search"
+                type="search"
+                placeholder="Type to search..."
+                name="search"
+              />
+             <!-- <a href="SearchPage.html"> <img height="40" src="media/logos/dark/search.png" title="search a tak" /> </a> -->
+            </li>
+
+            <li>
+              <a href="profile_page.html"><img id="Profile" height="40" src="media/logos/dark/profile.png" title="profile"/></a>
+            </li>
+
+            <li >
+             <img id="home" height="40" src="media/logos/dark/homepage.png" title="homepage">
+            </li>
+        </ul>
+      </nav>
+    </header>
+    
+    <div id="sidebar">
+      <a href="settings.html"><img id="settings" height="40" src="media/logos/dark/settings.png" title="settings"></a>
+    </div>
+
+    <main class="task-view">
+      <div class="task-details">
+        <div class="task-header">
+          <h1 style="text-align: start">
+            Task item 1
+            <p class="sub-text">Due date: <span>2025-01-01</span></p>
+            <p class="status">Status: <span>In Progress</span></p>
+          </h1>
+          <div class="task-actions">
+            <button class="complete-btn">Mark as Complete</button>
+          </div>
+        </div>
+        <h5 class="description">Description</h5>
+
+        <div class="content">
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus
+            aliquam soluta quos, libero quae eveniet, dignissimos nihil
+            voluptate non magnam repudiandae ipsam enim ab accusantium? Error
+            laboriosam quibusdam quis incidunt?
+          </p>
+        </div>
+        <div class="comments-section">
+          <h2>Comments</h2>
+          <ul class="comments-list">
+            <li class="comment-item">Comment 1</li>
+            <li class="comment-item">Comment 2</li>
+            <li class="comment-item">Comment 3</li>
+          </ul>
+          <textarea placeholder="Add a comment..."></textarea>
+          <button class="submit-comment-btn">Submit</button>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <p>TaskTracker &copy; 2025</p>
+    </footer>
+    <script src="media/js/navBar.js"></script>
+  <script src="media/js/settings.js"></script>
+  </body>
+</html>

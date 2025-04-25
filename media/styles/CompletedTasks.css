@@ -1,0 +1,91 @@
+* {
+	font-family: poppins, Arial, Helvetica, sans-serif;
+}
+
+:root {
+	--primary-black: #010409;
+	--dark-gray: #151b23;
+	--accent-blue: #3076e3;
+	--accent-green: #00b222;
+
+	--white-text: white;
+	--gray-texts: #cfcfcf;
+}
+
+body {
+	background-color: var(--primary-black);
+	color: var(--white-text);
+	height: 97vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	padding-top: 80px;
+	/*the size of the nav bar*/
+}
+
+.container {
+	display: inherit;
+	justify-content: space-evenly;
+	align-items: center;
+	padding: 20px;
+	border: 1px solid var(--accent-blue);
+	flex-direction: column;
+	border-radius: 5px;
+	width: 65%;
+	min-width: 400px;
+	overflow: auto;
+	background-color: var(--dark-gray);
+	height: 80%;
+	min-height: 500px;
+}
+
+.container div {
+	width: 80%;
+}
+
+.container div .task {
+	background-color: var(--dark-gray);
+	margin: 5px 0;
+	border-radius: 5px;
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	min-height: 85px;
+	flex-direction: row;
+	transition: 0.2s;
+}
+
+.container div .task:hover {
+	background-color: var(--accent-blue);
+	cursor: pointer;
+}
+
+.container h1 {
+	color: var(--accent-blue);
+}
+
+.container .buttons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.container .buttons button {
+	background-color: var(--accent-blue);
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.container .buttons .Add:hover {
+	background-color: var(--accent-green);
+}
+
+.container .buttons .Del:hover {
+	background-color: red;
+}
