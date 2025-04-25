@@ -3,7 +3,7 @@ import { tasks, users } from "../tasks_data.js";
 let searchParams = new URLSearchParams(document.location.search);
 
 if (window.location.href.indexOf("?task_id=") == -1) {
-	window.location.href += "?task_id=" + "task-001";
+	window.location.href += "?task_id=" + "task-002";
 }
 
 if (localStorage.getItem("Tasks") === null) {
@@ -141,43 +141,38 @@ let currentHour =
 	((new Date().getHours() + 24) % 12 || 12) < 10
 		? `0${(new Date().getHours() + 24) % 12 || 1}`
 		: (new Date().getHours() + 24) % 12 || 12;
-let currentMinutes = new Date().getMinutes();
-window.addEventListener("load", function () {
-	if (task === undefined) {
-		return; // المفروض يحول على صفحة HTML 404 تانية معمولة مخصوص للحالة دي
-	} else {
-		// Fetching Task Data
-		this.document.querySelector(".taskCreateDate").innerHTML =
-			task.created_at;
-		this.document.querySelector(".taskUpdateDate").innerHTML =
-			task.updated_at;
-		this.document.querySelector(".taskTitle h1").innerHTML =
-			task.task_title;
-		this.document.querySelector(".taskStartDate").innerHTML =
-			task.start_date;
-		this.document.querySelector(".taskDueDate").innerHTML = task.due_date;
-		this.document.querySelector(".taskStatus").innerHTML = task.status;
-		this.document.querySelector(".taskPriority").innerHTML = task.priority;
-		this.document.querySelector(".content").children[0].innerHTML =
-			task.task_description;
-		// Fetching Comments from localStorage
-		let commentsList = task.comments;
-		for (let j = 0; j < commentsList.length; j++) {
-			document.querySelector(".comments-list").insertAdjacentHTML(
-				"beforeend",
-				`<li id="${commentsList[j].comment_id}">
-					<div class="comment-header">
-						<span class="comment-author">${commentsList[j].user_name}: </span>
-						<span class="comment-text">${commentsList[j].comment}</span>
-					</div>
-					<button onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();" class="remove-comment">Remove Comment</button>
-				</li>
-				<pre class="comment-date">${commentsList[j].created_at}</pre>`
-			);
-		}
+let currentMinutes =
+	new Date().getMinutes() < 10
+		? `0${new Date().getMinutes()}`
+		: new Date().getMinutes();
+function fetchData() {
+	// Fetching Task Data
+	document.querySelector(".taskCreateDate").innerHTML = task.created_at;
+	document.querySelector(".taskUpdateDate").innerHTML = task.updated_at;
+	document.querySelector(".taskTitle h1").innerHTML = task.task_title;
+	document.querySelector(".taskStartDate").innerHTML = task.start_date;
+	document.querySelector(".taskDueDate").innerHTML = task.due_date;
+	document.querySelector(".taskStatus").innerHTML = task.status;
+	document.querySelector(".taskPriority").innerHTML = task.priority;
+	document.querySelector(".content").children[0].innerHTML =
+		task.task_description;
+	// Fetching Comments from localStorage
+	let commentsList = task.comments;
+	for (let j = 0; j < commentsList.length; j++) {
+		document.querySelector(".comments-list").insertAdjacentHTML(
+			"beforeend",
+			`<li id="${commentsList[j].comment_id}">
+				<div class="comment-header">
+					<span class="comment-author">${commentsList[j].user_name}: </span>
+					<span class="comment-text">${commentsList[j].comment}</span>
+				</div>
+				<button onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();" class="remove-comment">Remove Comment</button>
+			</li>
+			<pre class="comment-date">${commentsList[j].created_at}</pre>`
+		);
 	}
-});
-
+}
+window.addEventListener("load", fetchData());
 document
 	.querySelector(".submit-comment-btn")
 	.addEventListener("click", function () {
@@ -217,6 +212,7 @@ document
 
 let taskDate = document.querySelector(".taskDueDate");
 let taskStatus = document.querySelector(".taskStatus");
+let taskPriority = document.querySelector(".taskPriority");
 let date = new Date(task.due_date).getTime();
 
 if (calculateNumberOfDaysFrom(date) < 7) {
@@ -227,6 +223,16 @@ if (calculateNumberOfDaysFrom(date) < 4) {
 }
 if (calculateNumberOfDaysFrom(date) < 2) {
 	taskDate.setAttribute("style", "color: red;");
+}
+
+if (task.priority === "High") {
+	taskPriority.setAttribute("style", "color: red; font-weight: bold;");
+}
+if (task.priority === "Medium") {
+	taskPriority.setAttribute("style", "color: orange; font-weight: bold;");
+}
+if (task.priority === "Low") {
+	taskPriority.setAttribute("style", "color: green; font-weight: bold;");
 }
 
 if (task.status === "In Progress") {
