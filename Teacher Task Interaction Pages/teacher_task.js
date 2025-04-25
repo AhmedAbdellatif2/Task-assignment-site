@@ -1,4 +1,14 @@
 import { tasks, users } from "../tasks_data.js";
+
+let searchParams;
+let taskId;
+
+if (window.location.href.indexOf("?task_id=") == -1) {
+  window.location.href += "?task_id=" + "task-002";
+  searchParams = new URLSearchParams(document.location.search);
+  taskId = searchParams.get("task_id");
+}
+
 if (localStorage.getItem("Tasks") == null) {
   localStorage.setItem("Tasks", JSON.stringify(tasks));
 }
