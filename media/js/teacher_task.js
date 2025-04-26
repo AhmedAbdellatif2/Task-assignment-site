@@ -1,13 +1,11 @@
 import { tasks, users } from "./tasks_data.js";
 
 let searchParams = new URLSearchParams(document.location.search);
-let taskId;
 
 if (window.location.href.indexOf("?task_id=") == -1) {
   window.location.href += "?task_id=" + "task-002";
 }
 
-taskId = searchParams.get("task_id");
 if (localStorage.getItem("Tasks") === null) {
   localStorage.setItem("Tasks", JSON.stringify(tasks));
 }
@@ -15,7 +13,7 @@ if (localStorage.getItem("users") === null) {
   localStorage.setItem("users", JSON.stringify(users));
 }
 let task = JSON.parse(localStorage.getItem("Tasks")).find(
-  (tsk) => tsk.task_id === taskId
+  (tsk) => tsk.task_id === searchParams.get("task_id")
 );
 if (task === undefined) {
   console.error("Task not found");
@@ -140,47 +138,52 @@ let currentHour =
   ((new Date().getHours() + 24) % 12 || 12) < 10
     ? `0${(new Date().getHours() + 24) % 12 || 1}`
     : (new Date().getHours() + 24) % 12 || 12;
-let currentMinutes = new Date().getMinutes();
-window.addEventListener("load", function () {
-  if (task === undefined) {
-    return; // المفروض يحول على صفحة HTML 404 تانية معمولة مخصوص للحالة دي
-  } else {
-    let commentsList = task.comments;
-    const commentsContainer = document.querySelector(".comments-list");
-    for (let j = 0; j < commentsList.length; j++) {
-      document.querySelector(".comments-list").insertAdjacentHTML(
-        "beforeend",
-        `<li id="comment-${commentsList[j].comment_id}">
-				<div class="comment-header">
-					<span class="comment-author">${commentsList[j].user_id}: </span>
-					<span class="comment-text">${commentsList[j].comment}</span>
-				</div>
-				<button onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();" class="remove-comment">Remove Comment</button>
-			</li>
-			<pre class="comment-date">${commentsList[j].created_at}</pre>`
-      );
-      commentsContainer.addEventListener("click", function (e) {
-        if (e.target.classList.contains("remove-comment")) {
-          const commentLi = e.target.closest("li");
-          const commentId = commentLi.id.replace("comment-", "");
+let currentMinutes =
+  new Date().getMinutes() < 10
+    ? `0${new Date().getMinutes()}`
+    : new Date().getMinutes();
+function formatDate(date) {
+  return new Date(date).toLocaleString(); // or .toLocaleDateString() for date only
+}
 
-          const commentIndex = task.comments.findIndex(
-            (c) => String(c.comment_id) === commentId
-          );
-          if (commentIndex !== -1) {
-            task.comments.splice(commentIndex, 1);
-          }
-          const taskIndex = tasks.findIndex((t) => t.task_id === task.task_id);
-          if (taskIndex !== -1) {
-            tasks[taskIndex] = task;
-            localStorage.setItem("Tasks", JSON.stringify(tasks));
-          }
-        }
-      });
-    }
+function fetchData() {
+  // Fetching Task Data
+  document.querySelector(".taskCreateDate").innerHTML = formatDate(
+    task.created_at
+  );
+  document.querySelector(".taskUpdateDate").innerHTML = formatDate(
+    task.updated_at
+  );
+  document.querySelector(".taskTitle h1").innerHTML = task.task_title;
+  document.querySelector(".taskStartDate").innerHTML = formatDate(
+    task.start_date
+  );
+  document.querySelector(".taskDueDate").innerHTML = formatDate(task.due_date);
+  document.querySelector(".taskStatus").innerHTML = task.status;
+  document.querySelector(".taskPriority").innerHTML = task.priority;
+  document.querySelector(".content").children[0].innerHTML =
+    task.task_description;
+
+  // Fetching Comments from localStorage
+  let commentsList = task.comments;
+  for (let j = 0; j < commentsList.length; j++) {
+    document.querySelector(".comments-list").insertAdjacentHTML(
+      "beforeend",
+      `<li id="${commentsList[j].comment_id}">
+            <div class="comment-header">
+              <span class="comment-author">${commentsList[j].user_name}: </span>
+              <span class="comment-text">${commentsList[j].comment}</span>
+            </div>
+            <button onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();" class="remove-comment">Remove Comment</button>
+          </li>
+          <pre class="comment-date">${formatDate(
+            commentsList[j].created_at
+          )}</pre>`
+    );
   }
-});
+}
 
+window.addEventListener("load", fetchData);
 document
   .querySelector(".submit-comment-btn")
   .addEventListener("click", function () {
@@ -191,7 +194,7 @@ document
         "beforeend",
         `<li id="${commentID}">
 					<div class="comment-header">
-						<span class="comment-author">${commentID}: </span>
+						<span class="comment-author">user-${commentID % 100}: </span>
 						<span class="comment-text">${commentText}</span>
 					</div>
 					<button onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();" class="remove-comment">Remove Comment</button>
@@ -200,25 +203,28 @@ document
           new Date().getHours() >= 12 ? "PM" : "AM"
         }</pre>`
       );
-      task.comments.push({
-        comment_id: commentID,
-        user_id: commentID,
-        comment: commentText,
-        created_at: `${currentDate} - ${currentHour}:${currentMinutes} ${
-          new Date().getHours() >= 12 ? "PM" : "AM"
-        }`,
+      let tsks = JSON.parse(localStorage.getItem("Tasks"));
+      tsks.forEach((tsk) => {
+        if (tsk.task_id === task.task_id) {
+          tsk.comments.push({
+            comment_id: commentID,
+            user_name: `user-${commentID % 100}`,
+            comment: commentText,
+            created_at: `${currentDate} - ${currentHour}:${currentMinutes} ${
+              new Date().getHours() >= 12 ? "PM" : "AM"
+            }`,
+          });
+        }
       });
-      console.log(task);
-      tasks[tasks.findIndex((tsk) => tsk.task_id === taskId)] = task;
-      localStorage.setItem("Tasks", JSON.stringify(tasks));
-
+      localStorage.setItem("Tasks", JSON.stringify(tsks));
       commentText = "";
     }
   });
 
 let taskDate = document.querySelector(".taskDueDate");
 let taskStatus = document.querySelector(".taskStatus");
-let date = new Date(taskDate.innerHTML);
+let taskPriority = document.querySelector(".taskPriority");
+let date = new Date(task.due_date).getTime();
 
 if (calculateNumberOfDaysFrom(date) < 7) {
   taskDate.setAttribute("style", "color: green;");
@@ -230,14 +236,31 @@ if (calculateNumberOfDaysFrom(date) < 2) {
   taskDate.setAttribute("style", "color: red;");
 }
 
-if (taskStatus.innerHTML === "In Progress") {
+if (task.priority === "High") {
+  taskPriority.setAttribute("style", "color: red; font-weight: bold;");
+}
+if (task.priority === "Medium") {
+  taskPriority.setAttribute("style", "color: orange; font-weight: bold;");
+}
+if (task.priority === "Low") {
+  taskPriority.setAttribute("style", "color: green; font-weight: bold;");
+}
+
+if (task.status === "In Progress") {
   taskStatus.setAttribute("style", "color: orange;");
 }
-if (taskStatus.innerHTML === "Completed") {
-  taskStatus.setAttribute("style", "color: green;");
+if (task.status === "Completed") {
+  taskStatus.setAttribute("style", "color: green; font-weight: bold;");
 }
 
 document.querySelector(".complete-btn").addEventListener("click", () => {
   taskStatus.innerHTML = "Completed";
   taskStatus.setAttribute("style", "color: green; font-weight: bold;");
+  let tsks = JSON.parse(localStorage.getItem("Tasks"));
+  tsks.forEach((tsk) => {
+    if (tsk.task_id === task.task_id) {
+      tsk.status = "Completed";
+    }
+  });
+  localStorage.setItem("Tasks", JSON.stringify(tsks));
 });

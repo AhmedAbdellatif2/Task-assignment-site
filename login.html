@@ -7,12 +7,9 @@
   </head>
   <body>
     <div class="form-container">
-      <!-- Title with gradient text -->
       <h1 class="title">Step into Smart Teaching!</h1>
-      <!-- Subtitle/Tagline -->
       <p class="subtitle">Log in and manage your assignments with ease.</p>
 
-      <!-- Login Form -->
       <form class="login-form" action="#" method="POST">
         <label for="username">Username</label>
         <input
@@ -24,13 +21,15 @@
         />
 
         <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Enter your password"
-          required
-        />
+        <div class="password-input-container">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
 
         <button type="submit" class="btn login-btn">Log In</button>
 
@@ -40,7 +39,10 @@
         </p>
       </form>
     </div>
+
     <script src="media/js/navBar.js"></script>
     <script src="media/js/settings.js"></script>
+    <!-- Added login functionality script -->
+    <script src="media/js/login.js"></script>
   </body>
 </html>

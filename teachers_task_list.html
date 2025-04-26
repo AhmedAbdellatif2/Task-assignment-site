@@ -7,119 +7,150 @@
     <link rel="stylesheet" href="media\styles\styles.css" />
     <link rel="stylesheet" href="media\styles\navStyle.css" />
     <style>
-      #settings:hover{
+      #settings:hover {
         background-color: goldenrod;
         border-radius: 50px;
         justify-content: center;
         align-items: center;
         border-radius: 50px;
-        transition: background-color 0.3s, font-size 0.3s, text-decoration-line 0.3s;
+        transition: background-color 0.3s, font-size 0.3s,
+          text-decoration-line 0.3s;
         cursor: pointer;
       }
-  
-      #sidebar{
+
+      #sidebar {
         margin-top: 10px;
         padding: 10px;
         width: fit-content;
         height: 100%;
         background-color: var(--primary-black);
         border-radius: 25px;
-        }
-      </style>
+      }
+    </style>
   </head>
   <body>
     <header id="navbar">
       <nav>
         <ul>
-            <li>
-              <img id="notification" height="40" src="media/logos/dark/notification panel.png" title="notification panel" />
-            </li>
+          <li>
+            <img
+              id="notification"
+              height="40"
+              src="media/logos/dark/notification panel.png"
+              title="notification panel"
+            />
+          </li>
 
-            <li class="search">
-              <label for="search">
-                <img id="ser"height="40" src="media/logos/dark/search.png" />
-              </label>
-              <input
-                id="search"
-                type="search"
-                placeholder="Type to search..."
-                name="search"
-              />
-             <!-- <a href="SearchPage.html"> <img height="40" src="media/logos/dark/search.png" title="search a tak" /> </a> -->
-            </li>
+          <li class="search">
+            <label for="search">
+              <img id="ser" height="40" src="media/logos/dark/search.png" />
+            </label>
+            <input
+              id="search"
+              type="search"
+              placeholder="Type to search..."
+              name="search"
+            />
+            <!-- <a href="SearchPage.html"> <img height="40" src="media/logos/dark/search.png" title="search a tak" /> </a> -->
+          </li>
 
-            <li>
-              <a href="profile_page.html"><img id="Profile" height="40" src="media/logos/dark/profile.png" title="profile"/></a>
-            </li>
+          <li>
+            <a href="profile_page.html"
+              ><img
+                id="Profile"
+                height="40"
+                src="media/logos/dark/profile.png"
+                title="profile"
+            /></a>
+          </li>
 
-            <li >
-             <img id="home" height="40" src="media/logos/dark/homepage.png" title="homepage">
-            </li>
+          <li>
+            <img
+              id="home"
+              height="40"
+              src="media/logos/dark/homepage.png"
+              title="homepage"
+            />
+          </li>
         </ul>
       </nav>
     </header>
-    
+
     <div id="sidebar">
-      <a href="settings.html"><img id="settings" height="40" src="media/logos/dark/settings.png" title="settings"></a>
+      <a href="settings.html"
+        ><img
+          id="settings"
+          height="40"
+          src="media/logos/dark/settings.png"
+          title="settings"
+      /></a>
     </div>
 
-    <main class="container">
-      <h1 class="title">Tasks List</h1>
-      <h3 class="tasks-percent">Tasks Completed 1/4</h3>
-      <div class="progress-bar-container">
-        <div class="progress-bar" style="width: 25%"></div>
+    <main class="task-view">
+      <div class="task1">
+        <div class="task-header">
+          <div class="taskTitle">
+            <h1 style="text-align: start"></h1>
+            <br />
+            <p class="create_date">
+              Create date: <span class="taskCreateDate"></span
+              ><sub> (Updated at: </sub><sub class="taskUpdateDate"></sub
+              ><sub>)</sub>
+            </p>
+            <p class="start_date">
+              Start date: <span class="taskStartDate"></span>
+            </p>
+            <p class="due_date">Due date: <span class="taskDueDate"></span></p>
+            <p class="status">Status: <span class="taskStatus"></span></p>
+            <p class="priority">Priority: <span class="taskPriority"></span></p>
+          </div>
+          <div class="task-actions">
+            <button class="complete-btn">Mark as Complete</button>
+          </div>
+        </div>
+        <hr />
+        <h5 class="description">Description</h5>
+        <div class="content">
+          <p></p>
+        </div>
+        <hr />
+        <div class="comments-section">
+          <textarea
+            autofocus
+            class="comment-textarea"
+            placeholder="Add a comment..."
+          ></textarea>
+          <button class="submit-comment-btn">Add Comment</button>
+          <br />
+          <h2>Comments</h2>
+          <ul class="comments-list"></ul>
+        </div>
+        <button class="chat_toggle">
+          <img src="music-robot.png" alt="Chat Icon" class="chat_icon" />
+        </button>
+        <section class="chat_bot">
+          <button class="chat_exit"></button>
+          <div class="chatbot-header">
+            <h2>Chatbot</h2>
+          </div>
+          <div class="chatbot-messages">
+            <div class="message bot-message">Hello, how can I help you?</div>
+          </div>
+          <section class="chatbot-input">
+            <input
+              type="text"
+              placeholder="Type your message..."
+              id="chatbot_input"
+            />
+            <button id="chat_send">Send</button>
+          </section>
+        </section>
       </div>
-
-      <div class="task-filters">
-        <button class="filter-btn active" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="active">Active</button>
-        <button class="filter-btn" data-filter="completed">Completed</button>
-      </div>
-
-      <ul class="task-list">
-        <li class="task-item">
-          <a href="./teacher_task.html" class="task-link">
-            <span class="task-text">Finish project proposal</span>
-            <div class="task-actions">
-              <button class="complete-btn">✓</button>
-              <button class="delete-btn">✕</button>
-            </div>
-          </a>
-        </li>
-        <li class="task-item completed">
-          <a href="./teacher_task.html" class="task-link">
-            <span class="task-text">Schedule team meeting</span>
-            <div class="task-actions">
-              <button class="complete-btn">✓</button>
-              <button class="delete-btn">✕</button>
-            </div>
-          </a>
-        </li>
-        <li class="task-item">
-          <a href="./teacher_task.html" class="task-link">
-            <span class="task-text">Research competitors</span>
-            <div class="task-actions">
-              <button class="complete-btn">✓</button>
-              <button class="delete-btn">✕</button>
-            </div>
-          </a>
-        </li>
-        <li class="task-item">
-          <a href="./teacher_task.html" class="task-link">
-            <span class="task-text">Update client documentation</span>
-            <div class="task-actions">
-              <button class="complete-btn">✓</button>
-              <button class="delete-btn">✕</button>
-            </div>
-          </a>
-        </li>
-      </ul>
     </main>
-
     <footer>
       <p>TaskTracker &copy; 2025</p>
     </footer>
     <script src="media/js/navBar.js"></script>
-    <script src="media/js/settings.js"></script>
+    <script src="media/js/settings.js" type="module"></script>
   </body>
 </html>

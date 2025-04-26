@@ -1,12 +1,3 @@
-import { tasks, users } from "./tasks_data.js";
-
-if (localStorage.getItem("Tasks") === null) {
-  localStorage.setItem("Tasks", JSON.stringify(tasks));
-}
-if (localStorage.getItem("users") === null) {
-  localStorage.setItem("users", JSON.stringify(users));
-}
-
 const darkThemeBtn = document.getElementById("dark-theme");
 const lightThemeBtn = document.getElementById("light-theme");
 const newUsernameInput = document.getElementById("new-username");
@@ -18,29 +9,45 @@ const deleteAccountBtn = document.getElementById("delete-account");
 const body = document.body;
 const usernameDisplay = document.getElementById("username-display");
 
-//logos
-let home_img = document.getElementById("home");
-let logout_img = document.getElementById("logout");
-let notification_img = document.getElementById("notification");
-let profile_placeholder_img = document.getElementById("profile_placeholder");
-let Profile_img = document.getElementById("Profile");
-let search_img = document.getElementById("ser");
-let settings_img = document.getElementById("settings");
+//photos
+const home_img = document.getElementById("home");
+const logout_img = document.getElementById("logout");
+const profile_placeholder_img = document.getElementById("profile_placeholder");
+const Profile_img = document.getElementById("Profile");
+const search_img = document.getElementById("ser");
+const settings_img = document.getElementById("settings");
+const notification_img = document.getElementById("notification");
 
-//paths of logos
-let home = ["media/logos/light/homepage.png", "media/logos/dark/homepage.png"];
-let log_out = ["media/logos/light/log out.png", "media/logos/dark/log out.png"];
-let notification_panel = [
+//colors for divs, texts
+const task_bg = ["#e3e3e3", "#1c1c1c"];
+const primary = ["#fefbf6", "#010409"];
+const navy = ["#eae4dc", "#151b23"];
+const white_t = ["#black", "white"];
+const gray_t = ["#303030", "#cfcfcf"];
+const gray_bg = ["aaa", "#555"];
+
+const home = [
+  "media/logos/light/homepage.png",
+  "media/logos/dark/homepage.png",
+];
+const log_out = [
+  "media/logos/light/log out.png",
+  "media/logos/dark/log out.png",
+];
+const notification_panel = [
   "media/logos/light/notification panel.png",
   "media/logos/dark/notification panel.png",
 ];
-let profile_placeholder = [
+const profile_placeholder = [
   "media/logos/light/profile-placeholder.png",
   "media/logos/dark/profile-placeholder.png",
 ];
-let profile = ["media/logos/light/profile.png", "media/logos/dark/profile.png"];
-let search = ["media/logos/light/search.png", "media/logos/dark/search.png"];
-let settings = [
+const profile = [
+  "media/logos/light/profile.png",
+  "media/logos/dark/profile.png",
+];
+const search = ["media/logos/light/search.png", "media/logos/dark/search.png"];
+const settings = [
   "media/logos/light/settings.png",
   "media/logos/dark/settings.png",
 ];
@@ -70,8 +77,17 @@ function applyTheme(theme) {
     darkThemeBtn.classList.add("active");
     lightThemeBtn.classList.remove("active");
   }
+  const root = document.documentElement;
 
-  //setting sources of logos
+  //set colors
+  root.style.setProperty("--task-background", task_bg[i]);
+  root.style.setProperty("--primary-black", primary[i]);
+  root.style.setProperty("--dark-gray", navy[i]);
+  root.style.setProperty("--white-text", white_t[i]);
+  root.style.setProperty("--gray-texts", gray_t[i]);
+  root.style.setProperty("--gray_backgrounds", gray_bg[i]);
+
+  //set sources for images
   home_img.src = home[i];
   logout_img.src = log_out[i];
   notification_img.src = notification_panel[i];

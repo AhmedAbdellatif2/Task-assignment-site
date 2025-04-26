@@ -187,6 +187,14 @@ footer {
   box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
 }
 
+.task-view > div {
+  background-color: var(--primary-black);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  max-width: 800px;
+  margin: 2rem auto;
+}
 .task-details {
   background-color: var(--primary-black);
   padding: 1.5rem;
@@ -330,6 +338,12 @@ textarea {
   height: 150px;
   border-radius: 50%;
   border: 2px solid #00ffa6;
+}
+
+.comment-date {
+  color: var(--gray-text);
+  font-size: 0.8rem;
+  margin-left: 60px;
 }
 
 .profile-info {
