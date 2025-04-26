@@ -143,7 +143,7 @@ let currentMinutes =
     ? `0${new Date().getMinutes()}`
     : new Date().getMinutes();
 function formatDate(date) {
-  return new Date(date).toLocaleString(); // or .toLocaleDateString() for date only
+  return date.toLocaleString(); // or .toLocaleDateString() for date only
 }
 
 function fetchData() {
