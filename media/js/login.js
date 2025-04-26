@@ -38,7 +38,7 @@ const handleLoginSubmission = async (e) => {
     const user = await authenticateUser(username, password);
 
     sessionStorage.setItem("currentUser", JSON.stringify(user));
-    window.location.href = "teacher_task_list.html";
+    window.location.href = "teachers_task_list.html";
   } catch (error) {
     showToast("Authentication failed. Please check your credentials", "error");
   } finally {
