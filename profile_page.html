@@ -31,62 +31,7 @@
     </style>
   </head>
   <body>
-    <header id="navbar">
-      <nav>
-        <ul>
-          <li>
-            <img
-              id="notification"
-              height="40"
-              src="media/logos/dark/notification panel.png"
-              title="notification panel"
-            />
-          </li>
-
-          <li class="search">
-            <label for="search">
-              <img id="ser" height="40" src="media/logos/dark/search.png" />
-            </label>
-            <input
-              id="search"
-              type="search"
-              placeholder="Type to search..."
-              name="search"
-            />
-            <!-- <a href="SearchPage.html"> <img height="40" src="media/logos/dark/search.png" title="search a tak" /> </a> -->
-          </li>
-
-          <li>
-            <a href="profile_page.html"
-              ><img
-                id="Profile"
-                height="40"
-                src="media/logos/dark/profile.png"
-                title="profile"
-            /></a>
-          </li>
-
-          <li>
-            <img
-              id="home"
-              height="40"
-              src="media/logos/dark/homepage.png"
-              title="homepage"
-            />
-          </li>
-        </ul>
-      </nav>
-    </header>
-
-    <div id="sidebar">
-      <a href="settings.html"
-        ><img
-          id="settings"
-          height="40"
-          src="media/logos/dark/settings.png"
-          title="settings"
-      /></a>
-    </div>
+    <div id="navbar-container"></div>
 
     <main>
       <section id="profile-details" class="container">
@@ -99,32 +44,23 @@
           />
         </div>
         <div class="profile-info">
-          <h2>John Doe</h2>
-          <p>Role: Teacher</p>
-          <p>Email: johndoe@example.com</p>
+          <h2 id="username">John Doe</h2>
+          <p>Role: <span id="user-role">Teacher</span></p>
+          <p>Email: <span id="user-email"></span></p>
         </div>
       </section>
       <section id="upcoming-tasks">
-<<<<<<< HEAD
         <h3>Upcoming Tasks</h3>
         <ul id="task-list"></ul>
-=======
-           <h3>Upcoming Tasks</h3>
-            <ul id="task-list"></ul>
->>>>>>> 021995288a07ffbb9b5e14140894f025cc04242a
       </section>
     </main>
 
     <footer>
       <p>TaskTracker &copy; 2025</p>
     </footer>
+    <script src="media/js/profile_page.js" type="module"></script>
     <script src="./media/js/navBar.js" type="module"></script>
     <script src="media/js/settings.js"></script>
-<<<<<<< HEAD
     <script src="./media/js/upcomming_tasks.js" type="module"></script>
-=======
-    <script type="module" src="media/js/upcomming_tasks.js"></script>
-
->>>>>>> 021995288a07ffbb9b5e14140894f025cc04242a
   </body>
 </html>

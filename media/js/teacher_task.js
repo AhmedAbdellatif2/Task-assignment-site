@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let messages = [
     {
       role: "system",
-      content: "You are a helpful assistant.",
+      content: `You are a helpful assistant helping in a task its description is '${task.description}'.`,
     },
     {
       role: "assistant",

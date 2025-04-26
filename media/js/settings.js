@@ -150,7 +150,7 @@ lightThemeBtn.addEventListener("click", () => {
 });
 
 function loadUsername() {
-  const savedUsername = localStorage.getItem("username") || "User";
+  const savedUsername = sessionStorage.getItem("currentUser") || "User";
   newUsernameInput.value = savedUsername;
   usernameDisplay.textContent = savedUsername;
 }
@@ -158,7 +158,7 @@ function loadUsername() {
 saveUsernameBtn.addEventListener("click", () => {
   const newUsername = newUsernameInput.value.trim();
   if (newUsername && newUsername.length >= 3) {
-    localStorage.setItem("username", newUsername);
+    sessionStorage.setItem("currentUser", newUsername);
     usernameDisplay.textContent = newUsername;
     alert("Username updated successfully!");
   } else {
@@ -177,7 +177,7 @@ function saveNotificationPrefs() {
     upcoming: upcomingTasksCheckbox.checked,
     scheduled: scheduledTasksCheckbox.checked,
   };
-  localStorage.setItem("notificationPrefs", JSON.stringify(prefs));
+  sessionStorage.setItem("notificationPrefs", JSON.stringify(prefs));
 }
 
 upcomingTasksCheckbox.addEventListener("change", saveNotificationPrefs);
@@ -185,7 +185,7 @@ scheduledTasksCheckbox.addEventListener("change", saveNotificationPrefs);
 
 logoutBtn.addEventListener("click", () => {
   if (confirm("Are you sure you want to logout?")) {
-    localStorage.removeItem("currentUser");
+    sessionStorage.removeItem("currentUser");
     window.location.href = "login.html";
   }
 });
@@ -196,7 +196,14 @@ deleteAccountBtn.addEventListener("click", () => {
       "WARNING: This will permanently delete your account and all data. Continue?"
     )
   ) {
-    localStorage.clear();
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    users = users.filter(
+      (user) =>
+        user.username !==
+        JSON.parse(sessionStorage.getItem("currentUser")).username
+    );
+    sessionStorage.removeItem("currentUser");
+    localStorage.setItem("users", JSON.stringify(users));
     alert("Account deleted. Redirecting...");
     setTimeout(() => {
       window.location.href = "signup.html";

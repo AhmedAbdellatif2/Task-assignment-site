@@ -79,7 +79,7 @@ function deleteTask(taskId) {
   if (confirm("Are you sure you want to delete this task?")) {
     const updatedTasks = storedTasks.filter((task) => task.task_id !== taskId);
 
-    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+    localStorage.setItem("Tasks", JSON.stringify(updatedTasks));
     renderTasks(updatedTasks);
   }
 }

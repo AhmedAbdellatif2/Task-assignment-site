@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", function () {
       tasks.push(newTask);
     }
 
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    localStorage.setItem("Tasks", JSON.stringify(tasks));
 
     showMessage("Task saved successfully!", "success");
 

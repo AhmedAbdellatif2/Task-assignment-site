@@ -6,77 +6,10 @@
     <link rel="stylesheet" href="media/styles/navStyle.css" />
     <link rel="stylesheet" href="media/styles/teacher-task.css" />
     <title>Task item</title>
-    <style>
-      #settings:hover {
-        background-color: goldenrod;
-        border-radius: 50px;
-        justify-content: center;
-        align-items: center;
-        border-radius: 50px;
-        transition: background-color 0.3s, font-size 0.3s,
-          text-decoration-line 0.3s;
-        cursor: pointer;
-      }
-
-      #sidebar {
-        margin-top: 10px;
-        padding: 10px;
-        width: fit-content;
-        height: 100%;
-        background-color: var(--primary-black);
-        border-radius: 25px;
-      }
-    </style>
   </head>
 
   <body>
-    <header>
-      <nav>
-        <ul>
-          <li>
-            <img
-              id="notification"
-              height="40"
-              src="media/logos/dark/notification panel.png"
-              title="notification panel"
-            />
-          </li>
-
-          <li class="search">
-            <label for="search">
-              <img id="ser" height="40" src="media/logos/dark/search.png" />
-            </label>
-            <input
-              id="search"
-              type="search"
-              placeholder="Type to search..."
-              name="search"
-            />
-            <!-- <a href="SearchPage.html"> <img height="40" src="media/logos/dark/search.png" title="search a tak" /> </a> -->
-          </li>
-
-          <li>
-            <a href="profile_page.html"
-              ><img
-                id="Profile"
-                height="40"
-                src="media/logos/dark/profile.png"
-                title="profile"
-            /></a>
-          </li>
-
-          <li>
-            <img
-              id="home"
-              height="40"
-              src="media/logos/dark/homepage.png"
-              title="homepage"
-            />
-          </li>
-        </ul>
-      </nav>
-    </header>
-
+    <div id="navbar-container"></div>
     <main class="task-view">
       <div class="task1">
         <div class="task-header">

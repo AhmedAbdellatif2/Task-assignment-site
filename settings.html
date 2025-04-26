@@ -18,52 +18,7 @@
     </style>
   </head>
   <body>
-    <header id="navbar">
-      <nav>
-        <ul>
-          <li>
-            <img
-              id="notification"
-              height="40"
-              src="media/logos/dark/notification panel.png"
-              title="notification panel"
-            />
-          </li>
-
-          <li class="search">
-            <label for="search">
-              <img id="ser" height="40" src="media/logos/dark/search.png" />
-            </label>
-            <input
-              id="search"
-              type="search"
-              placeholder="Type to search..."
-              name="search"
-            />
-            <!-- <a href="SearchPage.html"> <img height="40" src="media/logos/dark/search.png" title="search a tak" /> </a> -->
-          </li>
-
-          <li>
-            <a href="profile_page.html"
-              ><img
-                id="Profile"
-                height="40"
-                src="media/logos/dark/profile.png"
-                title="profile"
-            /></a>
-          </li>
-
-          <li>
-            <img
-              id="home"
-              height="40"
-              src="media/logos/dark/homepage.png"
-              title="homepage"
-            />
-          </li>
-        </ul>
-      </nav>
-    </header>
+    <div id="navbar-container"></div>
 
     <main class="settings-container">
       <h1><i class="icon-settings"></i> Account Settings</h1>
@@ -129,8 +84,7 @@
         <p class="warning-text">This action cannot be undone.</p>
       </div>
     </main>
-
-    <script src="media/js/settings.js" type="module"></script>
+    <script src="navbar.html" type="module"></script>
     <script src="media/js/settings.js" type="module"></script>
     <script>
       const currentUser = sessionStorage.getItem("currentUser");
