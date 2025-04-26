@@ -2,7 +2,7 @@ import { tasks, users } from "./tasks_data.js";
 
 let searchParams = new URLSearchParams(document.location.search);
 
-const currentUser = sessionStorage.getItem("currentUser");
+const currentUser = JSON.parse(sessionStorage.getItem("currentUser")) || null;
 
 if (!currentUser) {
   window.location.href = "login.html";
@@ -50,12 +50,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   chat_exit.addEventListener("click", () => {
-    chat_bot.classList.remove("visible"); // start hiding the bot
+    chat_bot.classList.remove("visible");
 
-    // After the bot has fully slid out, hide the toggle
     setTimeout(() => {
       chat_toggle.classList.remove("active");
-    }, 300); // match the transition duration in CSS (300ms)
+    }, 300);
   });
 
   let chat_input = document.getElementById("chatbot_input");
@@ -70,7 +69,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     chat_body.innerHTML += `<div class="message user-message">${message}</div>`;
     chat_body.scrollTop = chat_body.scrollHeight;
 
-    // Add a placeholder for bot message
     const messageId = `streaming-message-${Date.now()}`;
     chat_body.innerHTML += `<div class="message bot-message" id="${messageId}">
 									<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>
@@ -111,7 +109,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             const token = json.choices?.[0]?.delta?.content || "";
             message_out += token;
 
-            // Update message in DOM
             const messageDiv = document.getElementById(messageId);
             if (messageDiv) {
               messageDiv.textContent = message_out;
@@ -131,7 +128,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     .getElementById("chatbot_input")
     .addEventListener("keydown", function (e) {
       if (e.key === "Enter") {
-        e.preventDefault(); // Optional: prevent default form submission
+        e.preventDefault();
         document.getElementById("chat_send").click();
       }
     });
@@ -150,11 +147,10 @@ let currentMinutes =
     ? `0${new Date().getMinutes()}`
     : new Date().getMinutes();
 function formatDate(date) {
-  return date.toLocaleString(); // or .toLocaleDateString() for date only
+  return date.toLocaleString();
 }
 
 function fetchData() {
-  // Fetching Task Data
   document.querySelector(".taskCreateDate").innerHTML = formatDate(
     task.created_at
   );
@@ -171,7 +167,6 @@ function fetchData() {
   document.querySelector(".content").children[0].innerHTML =
     task.task_description;
 
-  // Fetching Comments from localStorage
   let commentsList = task.comments;
   for (let j = 0; j < commentsList.length; j++) {
     document.querySelector(".comments-list").insertAdjacentHTML(

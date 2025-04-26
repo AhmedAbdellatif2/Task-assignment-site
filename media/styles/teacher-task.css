@@ -26,6 +26,8 @@ body {
 .container {
   max-width: 800px;
   margin: 2rem auto;
+  margin-top: 4rem;
+  margin-bottom: 4rem;
   padding: 2rem;
   background: var(--task-background);
   border-radius: 8px;

@@ -1,6 +1,6 @@
 import { tasks, users } from "./tasks_data.js";
 
-const currentUser = sessionStorage.getItem("currentUser");
+const currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
 if (!currentUser) {
   window.location.href = "login.html";
   throw new Error("User not authenticated");
@@ -25,8 +25,8 @@ const filterButtons = document.querySelectorAll(".filter-btn");
 let storedTasks = JSON.parse(localStorage.getItem("Tasks")) || [];
 let currentFilter = "all";
 
-function filterTasksByUser(tasksArray, userId) {
-  return tasksArray.filter((task) => task.user_id === userId);
+function filterTasksByUser(tasksArray, username) {
+  return tasksArray.filter((task) => task.username === username);
 }
 
 function updateProgress(tasksArray) {
@@ -126,11 +126,13 @@ function applyFilter(filter) {
 
   const userTasks = storedTasks.filter((task) => {
     if (Array.isArray(task.assigned_to)) {
-      return task.assigned_to.includes(currentUser);
+      return task.assigned_to.includes(currentUser.username);
     }
-    return task.assigned_to === currentUser;
+    console.log(task.assigned_to);
+    console.log(currentUser.username);
+    return task.assigned_to === currentUser.username;
   });
-
+  console.log(userTasks);
   let filteredTasks = [];
   if (filter === "all") {
     filteredTasks = userTasks;

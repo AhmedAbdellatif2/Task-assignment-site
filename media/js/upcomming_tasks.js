@@ -1,7 +1,5 @@
-// Import tasks and users from tasks_data.js
 import { tasks, users } from "./tasks_data.js";
 
-// Check if tasks and users exist in localStorage, if not, initialize them
 if (localStorage.getItem("Tasks") === null) {
   localStorage.setItem("Tasks", JSON.stringify(tasks));
 }
@@ -9,14 +7,12 @@ if (localStorage.getItem("users") === null) {
   localStorage.setItem("users", JSON.stringify(users));
 }
 
-// Helper function to convert date strings back into Date objects
 function parseDateStrings(task) {
   task.start_date = new Date(task.start_date);
   task.due_date = new Date(task.due_date);
   task.created_at = new Date(task.created_at);
   task.updated_at = new Date(task.updated_at);
 
-  // Parse comments dates
   task.comments.forEach((comment) => {
     comment.created_at = new Date(comment.created_at);
   });
@@ -24,19 +20,16 @@ function parseDateStrings(task) {
   return task;
 }
 
-// Load tasks from localStorage and parse date strings
 function loadTasks() {
   const tasks = localStorage.getItem("tasks");
   return tasks ? JSON.parse(tasks).map(parseDateStrings) : [];
 }
 
-// Load users from localStorage
 function loadUsers() {
   const users = localStorage.getItem("users");
   return users ? JSON.parse(users) : [];
 }
 
-// TaskItem class for managing task data
 class TaskItem {
   constructor(
     task_id,
@@ -54,8 +47,8 @@ class TaskItem {
     this.task_description = task_description;
     this.start_date = new Date(start_date);
     this.due_date = new Date(due_date);
-    this.status = status; // 'pending' | 'in_progress' | 'completed' | 'archived'
-    this.priority = priority; // 'low' | 'medium' | 'high'
+    this.status = status;
+    this.priority = priority;
     this.assigned_to = assigned_to;
     this.comments = comments;
     this.created_at = new Date();
@@ -63,12 +56,10 @@ class TaskItem {
   }
 }
 
-// Save tasks to localStorage
 function saveTasks(tasks) {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-// Display upcoming tasks in the UI
 function displayUpcomingTasks() {
   const tasks = loadTasks();
   const taskList = document.getElementById("task-list");
@@ -101,19 +92,16 @@ function displayUpcomingTasks() {
   });
 }
 
-// Display the initial tasks when the page loads
 document.addEventListener("DOMContentLoaded", () => {
   displayUpcomingTasks();
 });
 
 const { LocalStorage } = require("node-localstorage");
-const localStorage = new LocalStorage("./scratch"); // تحديد مسار لتخزين البيانات
+const localStorage = new LocalStorage("./scratch");
 
 if (localStorage.getItem("Tasks") === null) {
   localStorage.setItem("Tasks", JSON.stringify(tasks));
 }
-
-// أكمل الكود زي ما هو
 
 class TaskItem {
   constructor(
@@ -132,8 +120,8 @@ class TaskItem {
     this.task_description = task_description;
     this.start_date = new Date(start_date);
     this.due_date = new Date(due_date);
-    this.status = status; // 'pending' | 'in_progress' | 'completed' | 'archived'
-    this.priority = priority; // 'low' | 'medium' | 'high'
+    this.status = status;
+    this.priority = priority;
     this.assigned_to = assigned_to;
     this.comments = comments;
     this.created_at = new Date();
@@ -141,7 +129,6 @@ class TaskItem {
   }
 }
 
-// Save tasks to localStorage
 function saveTasks(tasks) {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 }

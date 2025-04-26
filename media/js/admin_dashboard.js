@@ -1,5 +1,3 @@
-// admin_dashboard.js
-
 function getCurrentUserRole() {
   return JSON.parse(sessionStorage.getItem("currentUser"))?.role || null;
 }

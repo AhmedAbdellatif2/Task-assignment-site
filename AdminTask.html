@@ -29,65 +29,63 @@
     </style>
   </head>
   <body>
+    <header id="navbar">
+      <nav>
+        <ul>
+          <li>
+            <img
+              id="notification"
+              height="40"
+              src="media/logos/dark/notification panel.png"
+              title="notification panel"
+            />
+          </li>
+
+          <li class="search">
+            <label for="search">
+              <img id="ser" height="40" src="media/logos/dark/search.png" />
+            </label>
+            <input
+              id="search"
+              type="search"
+              placeholder="Type to search..."
+              name="search"
+            />
+            <!-- <a href="SearchPage.html"> <img height="40" src="media/logos/dark/search.png" title="search a tak" /> </a> -->
+          </li>
+
+          <li>
+            <a href="profile_page.html"
+              ><img
+                id="Profile"
+                height="40"
+                src="media/logos/dark/profile.png"
+                title="profile"
+            /></a>
+          </li>
+
+          <li>
+            <img
+              id="home"
+              height="40"
+              src="media/logos/dark/homepage.png"
+              title="homepage"
+            />
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <div id="sidebar">
+      <a href="settings.html"
+        ><img
+          id="settings"
+          height="40"
+          src="media/logos/dark/settings.png"
+          title="settings"
+      /></a>
+    </div>
     <div class="background"></div>
     <div class="container">
-      <header id="navbar">
-        <nav>
-          <ul>
-            <li>
-              <img
-                id="notification"
-                height="40"
-                src="media/logos/dark/notification panel.png"
-                title="notification panel"
-              />
-            </li>
-
-            <li class="search">
-              <label for="search">
-                <img id="ser" height="40" src="media/logos/dark/search.png" />
-              </label>
-              <input
-                id="search"
-                type="search"
-                placeholder="Type to search..."
-                name="search"
-              />
-              <!-- <a href="SearchPage.html"> <img height="40" src="media/logos/dark/search.png" title="search a tak" /> </a> -->
-            </li>
-
-            <li>
-              <a href="profile_page.html"
-                ><img
-                  id="Profile"
-                  height="40"
-                  src="media/logos/dark/profile.png"
-                  title="profile"
-              /></a>
-            </li>
-
-            <li>
-              <img
-                id="home"
-                height="40"
-                src="media/logos/dark/homepage.png"
-                title="homepage"
-              />
-            </li>
-          </ul>
-        </nav>
-      </header>
-
-      <div id="sidebar">
-        <a href="settings.html"
-          ><img
-            id="settings"
-            height="40"
-            src="media/logos/dark/settings.png"
-            title="settings"
-        /></a>
-      </div>
-
       <h2>Admin Task Management</h2>
       <form action="#" method="post">
         <label for="task-id">Task ID</label>
@@ -140,5 +138,6 @@
     </div>
     <script src="media/js/navBar.js" type="module"></script>
     <script src="media/js/settings.js"></script>
+    <script src="media/js/add_task.js" type="module"></script>
   </body>
 </html>

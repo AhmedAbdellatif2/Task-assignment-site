@@ -52,6 +52,34 @@ const settings = [
   "media/logos/dark/settings.png",
 ];
 
+// theme elements mapping
+const themeElements = {
+  home: home_img,
+  logout: logout_img,
+  notification: notification_img,
+  profile_placeholder: profile_placeholder_img,
+  Profile: Profile_img,
+  search: search_img,
+  settings: settings_img,
+};
+
+const themeImages = {
+  home: home,
+  logout: log_out,
+  notification: notification_panel,
+  profile_placeholder: profile_placeholder,
+  Profile: profile,
+  search: search,
+  settings: settings,
+};
+
+// update all images
+Object.keys(themeElements).forEach((key) => {
+  if (themeElements[key] && themeImages[key]) {
+    themeElements[key].src = themeImages[key][i];
+  }
+});
+
 if (
   !darkThemeBtn ||
   !lightThemeBtn ||
@@ -87,14 +115,23 @@ function applyTheme(theme) {
   root.style.setProperty("--gray-texts", gray_t[i]);
   root.style.setProperty("--gray_backgrounds", gray_bg[i]);
 
-  //set sources for images
-  home_img.src = home[i];
-  logout_img.src = log_out[i];
-  notification_img.src = notification_panel[i];
-  profile_placeholder_img.src = profile_placeholder[i];
-  Profile_img.src = profile[i];
-  search_img.src = search[i];
-  settings_img.src = settings[i];
+  // update all images after light / dark mode
+  Object.keys(themeElements).forEach((key) => {
+    if (themeElements[key] && themeImages[key]) {
+      themeElements[key].src = themeImages[key][i];
+    }
+  });
+
+  // update any other theme-dependent elements
+  document.querySelectorAll("[data-theme]").forEach((element) => {
+    const themeAttr = element.getAttribute("data-theme");
+    if (themeAttr) {
+      element.style.setProperty(
+        "--theme-color",
+        theme === "light" ? "#fefbf6" : "#010409"
+      );
+    }
+  });
 }
 
 function initializeTheme() {
@@ -148,7 +185,7 @@ scheduledTasksCheckbox.addEventListener("change", saveNotificationPrefs);
 
 logoutBtn.addEventListener("click", () => {
   if (confirm("Are you sure you want to logout?")) {
-    sessionStorage.removeItem("currentUser");
+    localStorage.removeItem("currentUser");
     window.location.href = "login.html";
   }
 });

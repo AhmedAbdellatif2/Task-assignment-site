@@ -190,7 +190,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const task = tasks.find((t) => t.task_id === id);
 
     if (task) {
-      // Populate form with task data
       titleInput.value = task.task_title;
       descInput.value = task.task_description;
 
@@ -273,7 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
         start_date: startDateValue ? new Date(startDateValue) : now,
         due_date: dueDateValue
           ? new Date(dueDateValue)
-          : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000), // default: 1 week from now
+          : new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
         status: status,
         priority: priority,
         assigned_to:
