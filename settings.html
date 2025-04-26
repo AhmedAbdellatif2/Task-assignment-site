@@ -132,5 +132,13 @@
 
     <script src="media/js/settings.js" type="module"></script>
     <script src="media/js/settings.js" type="module"></script>
+    <script>
+      const currentUser = sessionStorage.getItem("currentUser");
+
+      if (!currentUser) {
+        window.location.href = "login.html";
+        throw new Error("User not authenticated");
+      }
+    </script>
   </body>
 </html>

@@ -1,12 +1,12 @@
+let Profile_img = document.getElementById("Profile");
+let settings_img = document.getElementById("settings");
 /*let btn = document.getElementById('switch');
 
 //photos
 let logout_img = document.getElementById('logout');
 // let prev_img = document.getElementById('prev');
 let profile_placeholder_img = document.getElementById('profile_placeholder');
-let Profile_img = document.getElementById('Profile');
 let search_img = document.getElementById('ser');
-let settings_img = document.getElementById('settings');
 
 //colors for divs, texts
 let task_bg = ['#e3e3e3', '#1c1c1c'];
@@ -72,24 +72,23 @@ logout_img.onclick = function () {
 };*/
 
 // DISPLAY THE NOTIFICATION PANEL
-let notification_img = document.getElementById('notification');
+let notification_img = document.getElementById("notification");
 
 notification_img.onclick = function () {
+  document.body.classList.toggle("panel_on");
+  if (document.body.classList.contains("panel_on")) {
+    let container = document.createElement("div");
+    container.className = "notification_panel";
 
-    document.body.classList.toggle('panel_on');
-    if (document.body.classList.contains('panel_on')) {
-        let container = document.createElement('div');
-        container.className = 'notification_panel';
+    let notifications = document.createElement("p");
+    let header = document.getElementById("navbar");
 
-        let notifications = document.createElement('p');
-        let header = document.getElementById('navbar');
+    notifications.textContent = "No notifications yet";
+    container.appendChild(notifications);
 
-        notifications.textContent = 'No notifications yet';
-        container.appendChild(notifications);
+    header.parentNode.insertBefore(container, header.nextSibling);
 
-        header.parentNode.insertBefore(container, header.nextSibling);
-
-        container.style.cssText = `
+    container.style.cssText = `
         background-color: var(--primary-black);
         margin: 10px;
         padding: 10px;
@@ -99,28 +98,28 @@ notification_img.onclick = function () {
         text-align: center;
         z-index: 1000;
         `;
-    }
-
-    else {
-        const panel = document.querySelector('.notification_panel');
-        panel.remove();
-    }
+  } else {
+    const panel = document.querySelector(".notification_panel");
+    panel.remove();
+  }
 };
 
-//temp user object
-let user = { role: 'admin' };
+function getCurrentUserRole() {
+  return JSON.parse(sessionStorage.getItem("currentUser"))?.role || null;
+}
+let userRole = getCurrentUserRole();
 
-let home_img = document.getElementById('home');
+let home_img = document.getElementById("home");
 home_img.onclick = function () {
-    if (user.role == 'admin')
-        window.location.href = 'AdminDashboard.html';
-    else
-        window.location.href = 'teachers_task_list.html';
+  if (userRole == "admin") window.location.href = "AdminDashboard.html";
+  else window.location.href = "teachers_task_list.html";
 };
 
 Profile_img.onclick = function (e) {
-    e.preventDefault();
-    window.location.href = 'profile_page.html';
+  e.preventDefault();
+  window.location.href = "profile_page.html";
 };
 
-settings_img.onclick = function () { window.location.href = 'settings.html'; };
+settings_img.onclick = function () {
+  window.location.href = "settings.html";
+};

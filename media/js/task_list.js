@@ -6,6 +6,10 @@ if (!currentUser) {
   throw new Error("User not authenticated");
 }
 
+if (currentUser.role === "admin") {
+  window.location.href = "AdminDashboard.html";
+}
+
 if (localStorage.getItem("Tasks") === null) {
   localStorage.setItem("Tasks", JSON.stringify(tasks));
 }

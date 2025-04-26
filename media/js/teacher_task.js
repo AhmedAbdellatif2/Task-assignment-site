@@ -2,6 +2,13 @@ import { tasks, users } from "./tasks_data.js";
 
 let searchParams = new URLSearchParams(document.location.search);
 
+const currentUser = sessionStorage.getItem("currentUser");
+
+if (!currentUser) {
+  window.location.href = "login.html";
+  throw new Error("User not authenticated");
+}
+
 if (window.location.href.indexOf("?task_id=") == -1) {
   window.location.href += "?task_id=" + "task-002";
 }

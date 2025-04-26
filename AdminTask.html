@@ -7,26 +7,26 @@
     <link rel="stylesheet" href="media\styles\AdminTask.css" />
     <link rel="stylesheet" href="media\styles\navStyle.css" />
     <style>
-      #settings:hover{
+      #settings:hover {
         background-color: goldenrod;
         border-radius: 50px;
         justify-content: center;
         align-items: center;
         border-radius: 50px;
-        transition: background-color 0.3s, font-size 0.3s, text-decoration-line 0.3s;
+        transition: background-color 0.3s, font-size 0.3s,
+          text-decoration-line 0.3s;
         cursor: pointer;
       }
-  
-      #sidebar{
+
+      #sidebar {
         margin-top: 10px;
         padding: 10px;
         width: fit-content;
         height: 100%;
         background-color: var(--primary-black);
         border-radius: 25px;
-        }
-      </style>
-
+      }
+    </style>
   </head>
   <body>
     <div class="background"></div>
@@ -34,36 +34,58 @@
       <header id="navbar">
         <nav>
           <ul>
-              <li>
-                <img id="notification" height="40" src="media/logos/dark/notification panel.png" title="notification panel" />
-              </li>
-  
-              <li class="search">
-                <label for="search">
-                  <img id="ser"height="40" src="media/logos/dark/search.png" />
-                </label>
-                <input
-                  id="search"
-                  type="search"
-                  placeholder="Type to search..."
-                  name="search"
-                />
-               <!-- <a href="SearchPage.html"> <img height="40" src="media/logos/dark/search.png" title="search a tak" /> </a> -->
-              </li>
-  
-              <li>
-                <a href="profile_page.html"><img id="Profile" height="40" src="media/logos/dark/profile.png" title="profile"/></a>
-              </li>
-  
-              <li >
-               <img id="home" height="40" src="media/logos/dark/homepage.png" title="homepage">
-              </li>
+            <li>
+              <img
+                id="notification"
+                height="40"
+                src="media/logos/dark/notification panel.png"
+                title="notification panel"
+              />
+            </li>
+
+            <li class="search">
+              <label for="search">
+                <img id="ser" height="40" src="media/logos/dark/search.png" />
+              </label>
+              <input
+                id="search"
+                type="search"
+                placeholder="Type to search..."
+                name="search"
+              />
+              <!-- <a href="SearchPage.html"> <img height="40" src="media/logos/dark/search.png" title="search a tak" /> </a> -->
+            </li>
+
+            <li>
+              <a href="profile_page.html"
+                ><img
+                  id="Profile"
+                  height="40"
+                  src="media/logos/dark/profile.png"
+                  title="profile"
+              /></a>
+            </li>
+
+            <li>
+              <img
+                id="home"
+                height="40"
+                src="media/logos/dark/homepage.png"
+                title="homepage"
+              />
+            </li>
           </ul>
         </nav>
       </header>
-      
+
       <div id="sidebar">
-        <a href="settings.html"><img id="settings" height="40" src="media/logos/dark/settings.png" title="settings"></a>
+        <a href="settings.html"
+          ><img
+            id="settings"
+            height="40"
+            src="media/logos/dark/settings.png"
+            title="settings"
+        /></a>
       </div>
 
       <h2>Admin Task Management</h2>
@@ -116,7 +138,7 @@
         Already have tasks? <a href="AdminDashboard.html">View them here</a>
       </p>
     </div>
-    <script src="media/js/navBar.js"></script>
-  <script src="media/js/settings.js"></script>
+    <script src="media/js/navBar.js" type="module"></script>
+    <script src="media/js/settings.js"></script>
   </body>
 </html>

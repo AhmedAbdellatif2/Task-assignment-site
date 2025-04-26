@@ -148,7 +148,7 @@ scheduledTasksCheckbox.addEventListener("change", saveNotificationPrefs);
 
 logoutBtn.addEventListener("click", () => {
   if (confirm("Are you sure you want to logout?")) {
-    localStorage.removeItem("currentUser");
+    sessionStorage.removeItem("currentUser");
     window.location.href = "login.html";
   }
 });

@@ -1,7 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const currentUser = sessionStorage.getItem("currentUser");
-  if (currentUser) {
-    window.location.href = "teacher_task.html";
+  const currentUser = JSON.parse(sessionStorage.getItem("currentUser")) || null;
+  if (currentUser?.role === "admin") {
+    window.location.href = "AdminDashboard.html";
+    return;
+  } else if (currentUser?.role === "teacher") {
+    window.location.href = "teachers_task_list.html";
     return;
   }
 
@@ -38,7 +41,11 @@ const handleLoginSubmission = async (e) => {
     const user = await authenticateUser(username, password);
 
     sessionStorage.setItem("currentUser", JSON.stringify(user));
-    window.location.href = "teachers_task_list.html";
+    if (user.role === "admin") {
+      window.location.href = "AdminDashboard.html";
+    } else {
+      window.location.href = "teachers_task_list.html";
+    }
   } catch (error) {
     showToast("Authentication failed. Please check your credentials", "error");
   } finally {
@@ -62,6 +69,7 @@ const authenticateUser = (username, password) => {
       resolve({
         username: existingUser.username,
         email: existingUser.email,
+        role: existingUser.role,
         createdAt: existingUser.createdAt,
       });
     }, 1200);
