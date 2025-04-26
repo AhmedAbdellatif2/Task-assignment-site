@@ -1,13 +1,42 @@
-const { LocalStorage } = require('node-localstorage');
-const localStorage = new LocalStorage('./scratch'); // تحديد مسار لتخزين البيانات
+// Import tasks and users from tasks_data.js
+import { tasks, users } from "./tasks_data.js";
 
-if (localStorage.getItem('Tasks') === null) {
-  localStorage.setItem('Tasks', JSON.stringify(tasks));
+// Check if tasks and users exist in localStorage, if not, initialize them
+if (localStorage.getItem("Tasks") === null) {
+  localStorage.setItem("Tasks", JSON.stringify(tasks));
+}
+if (localStorage.getItem("users") === null) {
+  localStorage.setItem("users", JSON.stringify(users));
 }
 
-// أكمل الكود زي ما هو
+// Helper function to convert date strings back into Date objects
+function parseDateStrings(task) {
+  task.start_date = new Date(task.start_date);
+  task.due_date = new Date(task.due_date);
+  task.created_at = new Date(task.created_at);
+  task.updated_at = new Date(task.updated_at);
 
+  // Parse comments dates
+  task.comments.forEach(comment => {
+    comment.created_at = new Date(comment.created_at);
+  });
 
+  return task;
+}
+
+// Load tasks from localStorage and parse date strings
+function loadTasks() {
+  const tasks = localStorage.getItem('tasks');
+  return tasks ? JSON.parse(tasks).map(parseDateStrings) : [];
+}
+
+// Load users from localStorage
+function loadUsers() {
+  const users = localStorage.getItem('users');
+  return users ? JSON.parse(users) : [];
+}
+
+// TaskItem class for managing task data
 class TaskItem {
   constructor(task_id, task_title, task_description, start_date, due_date, status, priority, assigned_to, comments = []) {
     this.task_id = task_id;
@@ -29,11 +58,7 @@ function saveTasks(tasks) {
   localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-function loadTasks() {
-  const tasks = localStorage.getItem('tasks');
-  return tasks ? JSON.parse(tasks) : [];
-}
-
+// Display upcoming tasks in the UI
 function displayUpcomingTasks() {
   const tasks = loadTasks();
   const taskList = document.getElementById('task-list');
@@ -60,4 +85,8 @@ function displayUpcomingTasks() {
     taskList.appendChild(li);
   });
 }
-displayUpcomingTasks()
+
+// Display the initial tasks when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  displayUpcomingTasks();
+});
