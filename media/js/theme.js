@@ -28,6 +28,10 @@ export function applyTheme(theme) {
     "media/logos/light/profile.png",
     "media/logos/dark/profile.png",
   ];
+  const dropdown_profile = [
+    "media/logos/light/profile.png",
+    "media/logos/dark/profile.png",
+  ];
   const search = [
     "media/logos/light/search.png",
     "media/logos/dark/search.png",
@@ -44,11 +48,10 @@ export function applyTheme(theme) {
     notification: document.getElementById("notification"),
     profile_placeholder: document.getElementById("profile_placeholder"),
     profile: document.getElementById("Profile"), // was "Profile"
-    dropdown_profile: document.getElementById("dropdown-profile"),
+    dropdown_profile: document.getElementById("dropdown_profile"),
     search: document.getElementById("ser"),
     settings: document.getElementById("settings"),
   };
-  console.log(themeElements);
 
   const themeImages = {
     home,
@@ -56,6 +59,7 @@ export function applyTheme(theme) {
     notification,
     profile_placeholder,
     profile,
+    dropdown_profile,
     search,
     settings,
   };
