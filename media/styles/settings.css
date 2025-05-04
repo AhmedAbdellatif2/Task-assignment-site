@@ -221,14 +221,51 @@ body.light-theme .danger-zone {
     background-color: #fff9f9;
 }
 
-.icon-settings::before { content: "⚙️"; }
-.icon-theme::before { content: "🎨"; }
-.icon-user::before { content: "👤"; }
-.icon-bell::before { content: "🔔"; }
-.icon-warning::before { content: "⚠️"; }
-.icon-logout::before { content: "🚪"; }
-.icon-trash::before { content: "🗑️"; }
-.icon-sun::before { content: "☀️"; }
-.icon-moon::before { content: "🌙"; }
+.icon-settings::before {
+    content: "⚙️";
+}
 
+.icon-theme::before {
+    content: "🎨";
+}
 
+.icon-user::before {
+    content: "👤";
+}
+
+.icon-bell::before {
+    content: "🔔";
+}
+
+.icon-warning::before {
+    content: "⚠️";
+}
+
+.icon-logout::before {
+    content: "🚪";
+}
+
+.icon-trash::before {
+    content: "🗑️";
+}
+
+.icon-sun::before {
+    content: "☀️";
+}
+
+.icon-moon::before {
+    content: "🌙";
+}
+
+.username-display {
+    padding: 15px;
+    background-color: var(--task-background);
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.username-display span {
+    font-size: 1.2em;
+    color: var(--white-text);
+    font-weight: 500;
+}

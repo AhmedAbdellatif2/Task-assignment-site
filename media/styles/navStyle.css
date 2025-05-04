@@ -120,18 +120,6 @@ nav #home:hover {
   font-size: large;
 }
 
-#sidebar {
-  position: fixed;
-  left: 10px;
-  top: 80px;
-  margin-top: 10px;
-  padding: 10px;
-  width: fit-content;
-  background-color: var(--primary-black);
-  border-radius: 25px;
-  z-index: 100;
-}
-
 .profile {
   display: flex;
   justify-content: center;
@@ -178,5 +166,14 @@ nav #home:hover {
 }
 .profile.active ul a:hover {
   background-color: goldenrod;
+  cursor: pointer;
+}
+
+/* adding this in 26 april */
+#settings:hover {
+  background-color: goldenrod;
+  border-radius: 50px;
+  border-radius: 50px;
+  transition: background-color 0.3s, font-size 0.3s, text-decoration-line 0.3s;
   cursor: pointer;
 }

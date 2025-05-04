@@ -1,3 +1,5 @@
+import { applyTheme, initializeTheme } from './theme.js';
+
 const darkThemeBtn = document.getElementById("dark-theme");
 const lightThemeBtn = document.getElementById("light-theme");
 const newUsernameInput = document.getElementById("new-username");
@@ -74,147 +76,130 @@ const themeImages = {
 };
 
 // update all images
+let j = !(localStorage.getItem("theme") === "light");
 Object.keys(themeElements).forEach((key) => {
   if (themeElements[key] && themeImages[key]) {
-    themeElements[key].src = themeImages[key][i];
+    themeElements[key].src = themeImages[key][j];
   }
 });
 
-if (
-  !darkThemeBtn ||
-  !lightThemeBtn ||
-  !newUsernameInput ||
-  !saveUsernameBtn ||
-  !upcomingTasksCheckbox ||
-  !scheduledTasksCheckbox ||
-  !logoutBtn ||
-  !deleteAccountBtn ||
-  !usernameDisplay
-) {
-  console.error("Critical elements missing!");
-}
-
-function applyTheme(theme) {
-  let i = !(theme === "light");
-  if (theme === "light") {
-    body.classList.add("light-theme");
-    lightThemeBtn.classList.add("active");
-    darkThemeBtn.classList.remove("active");
-  } else {
-    body.classList.remove("light-theme");
-    darkThemeBtn.classList.add("active");
-    lightThemeBtn.classList.remove("active");
+// Only check for critical elements on the settings page
+if (window.location.pathname.includes('settings.html')) {
+  if (!usernameDisplay) console.error("usernameDisplay is null!");
+  if (
+    !darkThemeBtn ||
+    !lightThemeBtn ||
+    !newUsernameInput ||
+    !saveUsernameBtn ||
+    !upcomingTasksCheckbox ||
+    !scheduledTasksCheckbox ||
+    !logoutBtn ||
+    !deleteAccountBtn ||
+    !usernameDisplay
+  ) {
+    console.error("Critical elements missing!");
   }
-  const root = document.documentElement;
-
-  //set colors
-  root.style.setProperty("--task-background", task_bg[i]);
-  root.style.setProperty("--primary-black", primary[i]);
-  root.style.setProperty("--dark-gray", navy[i]);
-  root.style.setProperty("--white-text", white_t[i]);
-  root.style.setProperty("--gray-texts", gray_t[i]);
-  root.style.setProperty("--gray_backgrounds", gray_bg[i]);
-
-  // update all images after light / dark mode
-  Object.keys(themeElements).forEach((key) => {
-    if (themeElements[key] && themeImages[key]) {
-      themeElements[key].src = themeImages[key][i];
-    }
-  });
-
-  // update any other theme-dependent elements
-  document.querySelectorAll("[data-theme]").forEach((element) => {
-    const themeAttr = element.getAttribute("data-theme");
-    if (themeAttr) {
-      element.style.setProperty(
-        "--theme-color",
-        theme === "light" ? "#fefbf6" : "#010409"
-      );
-    }
-  });
 }
-
-function initializeTheme() {
-  const savedTheme = localStorage.getItem("theme") || "dark";
-  applyTheme(savedTheme);
-}
-
-darkThemeBtn.addEventListener("click", () => {
-  localStorage.setItem("theme", "dark");
-  applyTheme("dark");
-});
-
-lightThemeBtn.addEventListener("click", () => {
-  localStorage.setItem("theme", "light");
-  applyTheme("light");
-});
 
 function loadUsername() {
-  const savedUsername = sessionStorage.getItem("currentUser") || "User";
-  newUsernameInput.value = savedUsername;
-  usernameDisplay.textContent = savedUsername;
+  if (usernameDisplay && newUsernameInput) {
+    const savedUsername = sessionStorage.getItem("currentUser") || "User";
+    newUsernameInput.value = savedUsername;
+    usernameDisplay.textContent = savedUsername;
+  }
 }
 
-saveUsernameBtn.addEventListener("click", () => {
-  const newUsername = newUsernameInput.value.trim();
-  if (newUsername && newUsername.length >= 3) {
-    sessionStorage.setItem("currentUser", newUsername);
-    usernameDisplay.textContent = newUsername;
-    alert("Username updated successfully!");
-  } else {
-    alert("Username must be at least 3 characters long");
-  }
-});
-
 function loadNotificationPrefs() {
-  const prefs = JSON.parse(localStorage.getItem("notificationPrefs") || "{}");
-  upcomingTasksCheckbox.checked = prefs.upcoming !== false;
-  scheduledTasksCheckbox.checked = prefs.scheduled !== false;
+  const upcomingTasks = localStorage.getItem("upcomingTasks") === "true";
+  const scheduledTasks = localStorage.getItem("scheduledTasks") === "true";
+
+  if (upcomingTasksCheckbox) {
+    upcomingTasksCheckbox.checked = upcomingTasks;
+  }
+  if (scheduledTasksCheckbox) {
+    scheduledTasksCheckbox.checked = scheduledTasks;
+  }
 }
 
 function saveNotificationPrefs() {
-  const prefs = {
-    upcoming: upcomingTasksCheckbox.checked,
-    scheduled: scheduledTasksCheckbox.checked,
-  };
-  sessionStorage.setItem("notificationPrefs", JSON.stringify(prefs));
+  if (upcomingTasksCheckbox) {
+    localStorage.setItem("upcomingTasks", upcomingTasksCheckbox.checked);
+  }
+  if (scheduledTasksCheckbox) {
+    localStorage.setItem("scheduledTasks", scheduledTasksCheckbox.checked);
+  }
 }
 
-upcomingTasksCheckbox.addEventListener("change", saveNotificationPrefs);
-scheduledTasksCheckbox.addEventListener("change", saveNotificationPrefs);
-
-logoutBtn.addEventListener("click", () => {
-  if (confirm("Are you sure you want to logout?")) {
-    sessionStorage.removeItem("currentUser");
-    window.location.href = "login.html";
+function updateThemeButtons(theme) {
+  if (lightThemeBtn && darkThemeBtn) {
+    if (theme === "light") {
+      lightThemeBtn.classList.add("active");
+      darkThemeBtn.classList.remove("active");
+    } else {
+      darkThemeBtn.classList.add("active");
+      lightThemeBtn.classList.remove("active");
+    }
   }
-});
-
-deleteAccountBtn.addEventListener("click", () => {
-  if (
-    confirm(
-      "WARNING: This will permanently delete your account and all data. Continue?"
-    )
-  ) {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    users = users.filter(
-      (user) =>
-        user.username !==
-        JSON.parse(sessionStorage.getItem("currentUser")).username
-    );
-    sessionStorage.removeItem("currentUser");
-    localStorage.setItem("users", JSON.stringify(users));
-    alert("Account deleted. Redirecting...");
-    setTimeout(() => {
-      window.location.href = "signup.html";
-    }, 1500);
-  }
-});
+}
 
 function initializePage() {
+  const currentTheme = localStorage.getItem("theme") || "dark";
   initializeTheme();
+  updateThemeButtons(currentTheme);
   loadUsername();
   loadNotificationPrefs();
+}
+
+// Event Listeners
+if (darkThemeBtn) {
+  darkThemeBtn.addEventListener("click", () => {
+    localStorage.setItem("theme", "dark");
+    applyTheme("dark");
+    updateThemeButtons("dark");
+  });
+}
+
+if (lightThemeBtn) {
+  lightThemeBtn.addEventListener("click", () => {
+    localStorage.setItem("theme", "light");
+    applyTheme("light");
+    updateThemeButtons("light");
+  });
+}
+
+if (saveUsernameBtn) {
+  saveUsernameBtn.addEventListener("click", () => {
+    const newUsername = newUsernameInput.value.trim();
+    if (newUsername) {
+      sessionStorage.setItem("currentUser", newUsername);
+      usernameDisplay.textContent = newUsername;
+      newUsernameInput.value = "";
+    }
+  });
+}
+
+if (upcomingTasksCheckbox) {
+  upcomingTasksCheckbox.addEventListener("change", saveNotificationPrefs);
+}
+
+if (scheduledTasksCheckbox) {
+  scheduledTasksCheckbox.addEventListener("change", saveNotificationPrefs);
+}
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    sessionStorage.removeItem("currentUser");
+    window.location.href = "login.html";
+  });
+}
+
+if (deleteAccountBtn) {
+  deleteAccountBtn.addEventListener("click", () => {
+    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+      sessionStorage.removeItem("currentUser");
+      window.location.href = "login.html";
+    }
+  });
 }
 
 document.addEventListener("DOMContentLoaded", initializePage);
