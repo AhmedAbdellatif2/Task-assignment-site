@@ -17,6 +17,22 @@ fetch("navbar.html")
 
     navbarContainer.innerHTML = html;
 
+    let searchbar = document.getElementById("search");
+
+    if (searchbar) {
+      searchbar.addEventListener("keydown", (event) => {
+        console.log("Key pressed:", event.key); // Debugging line
+        if (event.key === "Enter") {
+          const query = searchbar.value.trim();
+          if (query) {
+            window.location.href = `SearchPage.html?query=${encodeURIComponent(
+              query
+            )}`;
+          }
+        }
+      });
+    }
+
     // Wait for the navbar HTML to be inserted before getting elements
     setTimeout(() => {
       const body = document.body;

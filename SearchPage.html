@@ -3,46 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Search Page</title>
-    <link rel="stylesheet" href="media\styles\SearchPage.css" />
-    <link rel="stylesheet" href="media\styles\navStyle.css" />
-    <style>
-      #settings:hover {
-        background-color: goldenrod;
-        border-radius: 50px;
-        justify-content: center;
-        align-items: center;
-        border-radius: 50px;
-        transition: background-color 0.3s, font-size 0.3s,
-          text-decoration-line 0.3s;
-        cursor: pointer;
-      }
-
-      #sidebar {
-        margin-top: 10px;
-        padding: 10px;
-        width: fit-content;
-        height: 100%;
-        background-color: var(--primary-black);
-        border-radius: 25px;
-      }
-    </style>
+    <title>Search Tasks</title>
+    <link rel="stylesheet" href="media/styles/SearchPage.css" />
+    <link rel="stylesheet" href="media/styles/navStyle.css" />
+    <link rel="stylesheet" href="media/styles/styles.css" />
   </head>
   <body>
     <div id="navbar-container"></div>
 
-    <div id="sidebar">
-      <a href="settings.html"
-        ><img
-          id="settings"
-          height="40"
-          src="media/logos/dark/settings.png"
-          title="settings"
-      /></a>
-    </div>
-
     <div class="search-container">
       <h1>Search Tasks</h1>
+      <div class="task-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="active">Active</button>
+        <button class="filter-btn" data-filter="completed">Completed</button>
+      </div>
+
       <form class="search-form" action="#" method="GET">
         <input
           type="text"
@@ -52,12 +28,11 @@
         />
         <button type="submit">Search</button>
       </form>
-      <div class="search-results">
-        <p>No results found. Try a different search term.</p>
-      </div>
+
+      <div class="search-results"></div>
     </div>
-    
+
+    <script src="media/js/search.js"></script>
     <script src="media/js/navBar.js" type="module"></script>
-    <script src="media/js/settings.js" type="module"></script>
   </body>
 </html>
