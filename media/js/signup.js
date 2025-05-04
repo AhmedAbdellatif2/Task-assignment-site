@@ -13,13 +13,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const PASSWORD_REGEX =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{}|\\:;"'<>,.?/~`-])[A-Za-z\d!@#$%^&*()_+[\]{}|\\:;"'<>,.?/~`-]{8,}$/;
-
   const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!localStorage.getItem("users")) {
     localStorage.setItem("users", JSON.stringify([]));
   }
 
+  // ID generation function
+  const generateUserId = () =>
+    `user_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+  // Form validation and submission
   inputs.forEach((input) => {
     input.addEventListener("blur", () => {
       validateField(input);
@@ -43,11 +47,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (validationResults.isValid) {
       saveUser({
+        user_id: generateUserId(),
         name: formData.name,
         username: formData.username,
         email: formData.email,
         password: formData.password,
         role: formData.role,
+        avatar_url: "default-avatar.png",
+        joined_at: new Date(),
+        last_active: new Date(),
       });
       alert("Signup successful!");
       window.location.href = "login.html";
@@ -58,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Helper functions
   function getValue(id) {
     return document.getElementById(id).value.trim();
   }
@@ -78,74 +87,74 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let error = null;
 
-    if (fieldId === "name" && !value) {
-      error = { field: "name", message: "Full name is required" };
-    } else if (fieldId === "username") {
-      if (!value) {
-        error = { field: "username", message: "Username is required" };
-      } else if (usernameExists(value)) {
-        error = { field: "username", message: "Username already taken" };
-      }
-    } else if (fieldId === "email") {
-      if (!value) {
-        error = { field: "email", message: "Email is required" };
-      } else if (!EMAIL_REGEX.test(value)) {
-        error = { field: "email", message: "Invalid email format" };
-      }
-    } else if (fieldId === "password") {
-      if (!value) {
-        error = { field: "password", message: "Password is required" };
-      } else if (!PASSWORD_REGEX.test(value)) {
-        error = {
-          field: "password",
-          message:
-            "Password must be 8+ chars with uppercase, lowercase, number & special char",
-        };
-      }
-    } else if (fieldId === "confirm-password") {
-      if (!value) {
-        error = {
-          field: "confirm-password",
-          message: "Please confirm your password",
-        };
-      } else if (value !== formData.password) {
-        error = {
-          field: "confirm-password",
-          message: "Passwords do not match",
-        };
-      }
-    } else if (fieldId === "role" && !value) {
-      error = { field: "role", message: "Please select a role" };
+    switch (fieldId) {
+      case "name":
+        if (!value) error = { field: "name", message: "Full name is required" };
+        break;
+      case "username":
+        if (!value) {
+          error = { field: "username", message: "Username is required" };
+        } else if (usernameExists(value)) {
+          error = { field: "username", message: "Username already taken" };
+        }
+        break;
+      case "email":
+        if (!value) {
+          error = { field: "email", message: "Email is required" };
+        } else if (!EMAIL_REGEX.test(value)) {
+          error = { field: "email", message: "Invalid email format" };
+        } else if (emailExists(value)) {
+          error = { field: "email", message: "Email already registered" };
+        }
+        break;
+      case "password":
+        if (!value) {
+          error = { field: "password", message: "Password is required" };
+        } else if (!PASSWORD_REGEX.test(value)) {
+          error = {
+            field: "password",
+            message:
+              "Password must be 8+ chars with uppercase, lowercase, number & special char",
+          };
+        }
+        break;
+      case "confirm-password":
+        if (!value) {
+          error = {
+            field: "confirm-password",
+            message: "Please confirm your password",
+          };
+        } else if (value !== formData.password) {
+          error = {
+            field: "confirm-password",
+            message: "Passwords do not match",
+          };
+        }
+        break;
+      case "role":
+        if (!value) error = { field: "role", message: "Please select a role" };
+        break;
     }
 
-    if (error) {
-      console.log("Error for field:", fieldId, "Message:", error.message);
-      showError(error.field, error.message);
-    } else {
-      console.log("No error for field:", fieldId);
-      clearError(fieldId);
-    }
+    if (error) showError(error.field, error.message);
   }
 
   function validateForm(data) {
     const errors = [];
-
-    if (!data.name) {
+    if (!data.name)
       errors.push({ field: "name", message: "Full name is required" });
-    }
-
     if (!data.username) {
       errors.push({ field: "username", message: "Username is required" });
     } else if (usernameExists(data.username)) {
       errors.push({ field: "username", message: "Username already taken" });
     }
-
     if (!data.email) {
       errors.push({ field: "email", message: "Email is required" });
     } else if (!EMAIL_REGEX.test(data.email)) {
       errors.push({ field: "email", message: "Invalid email format" });
+    } else if (emailExists(data.email)) {
+      errors.push({ field: "email", message: "Email already registered" });
     }
-
     if (!data.password) {
       errors.push({ field: "password", message: "Password is required" });
     } else if (!PASSWORD_REGEX.test(data.password)) {
@@ -155,7 +164,6 @@ document.addEventListener("DOMContentLoaded", () => {
           "Password must be 8+ chars with uppercase, lowercase, number & special char",
       });
     }
-
     if (!data.confirmPassword) {
       errors.push({
         field: "confirm-password",
@@ -167,21 +175,23 @@ document.addEventListener("DOMContentLoaded", () => {
         message: "Passwords do not match",
       });
     }
-
-    if (!data.role) {
+    if (!data.role)
       errors.push({ field: "role", message: "Please select a role" });
-    }
 
-    return {
-      isValid: errors.length === 0,
-      errors,
-    };
+    return { isValid: errors.length === 0, errors };
   }
 
   function usernameExists(username) {
     const users = JSON.parse(localStorage.getItem("users"));
     return users.some(
       (user) => user.username.toLowerCase() === username.toLowerCase()
+    );
+  }
+
+  function emailExists(email) {
+    const users = JSON.parse(localStorage.getItem("users"));
+    return users.some(
+      (user) => user.email.toLowerCase() === email.toLowerCase()
     );
   }
 
@@ -204,9 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function clearError(fieldId) {
     const inputGroup = document.getElementById(fieldId).parentElement;
     const errorElement = inputGroup.querySelector(".error-message");
-    if (errorElement) {
-      errorElement.remove();
-    }
+    if (errorElement) errorElement.remove();
   }
 
   function clearAllErrors() {
