@@ -25,41 +25,6 @@ function loadTasks() {
   return tasks ? JSON.parse(tasks).map(parseDateStrings) : [];
 }
 
-function loadUsers() {
-  const users = localStorage.getItem("users");
-  return users ? JSON.parse(users) : [];
-}
-
-class TaskItem {
-  constructor(
-    task_id,
-    task_title,
-    task_description,
-    start_date,
-    due_date,
-    status,
-    priority,
-    assigned_to,
-    comments = []
-  ) {
-    this.task_id = task_id;
-    this.task_title = task_title;
-    this.task_description = task_description;
-    this.start_date = new Date(start_date);
-    this.due_date = new Date(due_date);
-    this.status = status;
-    this.priority = priority;
-    this.assigned_to = assigned_to;
-    this.comments = comments;
-    this.created_at = new Date();
-    this.updated_at = new Date();
-  }
-}
-
-function saveTasks(tasks) {
-  localStorage.setItem("Tasks", JSON.stringify(tasks));
-}
-
 function displayUpcomingTasks() {
   const tasks = loadTasks();
   const taskList = document.getElementById("task-list");

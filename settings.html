@@ -1,106 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings | Task Assignment</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+    />
+    <link rel="stylesheet" href="media/styles/settings.css" />
+    <link rel="stylesheet" href="media/styles/navStyle.css" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Settings | Task Assignment</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
-  <link rel="stylesheet" href="media/styles/settings.css" />
-  <link rel="stylesheet" href="media/styles/navStyle.css" />
+    <style>
+      .settings-container {
+        margin-top: 5rem;
+      }
+    </style>
+  </head>
 
-  <style>
-    .icon-settings {
-      margin-top: 60px;
-    }
-  </style>
-</head>
+  <body>
+    <div id="navbar-container"></div>
 
-<body>
-  <div id="navbar-container"></div>
+    <main class="settings-container">
+      <h1><i class="icon-settings"></i> Account Settings</h1>
 
-  <main class="settings-container">
-    <h1><i class="icon-settings"></i> Account Settings</h1>
-
-    <!-- Add username display -->
-    <div class="setting-card">
-      <div class="setting-header">
-        <i class="icon-user"></i>
-        <h2>Current Username</h2>
+      <!-- Add username display -->
+      <div class="setting-card">
+        <div class="setting-header">
+          <i class="icon-user"></i>
+          <h2>Current Username</h2>
+        </div>
+        <div class="username-display">
+          <span id="username-display">User</span>
+        </div>
       </div>
-      <div class="username-display">
-        <span id="username-display">User</span>
-      </div>
-    </div>
 
-    <div class="setting-card">
-      <div class="setting-header">
-        <i class="icon-theme"></i>
-        <h2>Theme Preferences</h2>
+      <div class="setting-card">
+        <div class="setting-header">
+          <i class="icon-theme"></i>
+          <h2>Theme Preferences</h2>
+        </div>
+        <div class="theme-options">
+          <button id="light-theme" class="theme-btn">
+            <i class="icon-sun"></i> Light
+          </button>
+          <button id="dark-theme" class="theme-btn active">
+            <i class="icon-moon"></i> Dark
+          </button>
+        </div>
       </div>
-      <div class="theme-options">
-        <button id="light-theme" class="theme-btn">
-          <i class="icon-sun"></i> Light
+
+      <div class="setting-card">
+        <div class="setting-header">
+          <i class="icon-user"></i>
+          <h2>Change Username</h2>
+        </div>
+        <div class="input-group">
+          <input
+            type="text"
+            id="new-username"
+            placeholder="Enter new username"
+          />
+          <button id="save-username" class="primary-btn">Update</button>
+        </div>
+      </div>
+
+      <div class="setting-card">
+        <div class="setting-header">
+          <i class="icon-bell"></i>
+          <h2>Notification Preferences</h2>
+        </div>
+        <div class="checkbox-group">
+          <label class="checkbox-container">
+            <input type="checkbox" id="upcoming-tasks" checked />
+            Upcoming Tasks
+          </label>
+          <label class="checkbox-container">
+            <input type="checkbox" id="scheduled-tasks" checked />
+            Scheduled Tasks
+          </label>
+        </div>
+      </div>
+
+      <div class="setting-card danger-zone">
+        <div class="setting-header">
+          <i class="icon-warning"></i>
+          <h2>Danger Zone</h2>
+        </div>
+        <button id="logout-btn" class="logout-btn">
+          <i class="icon-logout"></i> Logout
         </button>
-        <button id="dark-theme" class="theme-btn active">
-          <i class="icon-moon"></i> Dark
+        <button id="delete-account" class="danger-btn">
+          <i class="icon-trash"></i> Delete Account
         </button>
+        <p class="warning-text">This action cannot be undone.</p>
       </div>
-    </div>
+    </main>
+    <script src="media/js/theme.js" type="module"></script>
+    <script src="media/js/navBar.js" type="module"></script>
+    <script src="media/js/settings.js" type="module"></script>
+    <script>
+      const currentUser = sessionStorage.getItem("currentUser");
 
-    <div class="setting-card">
-      <div class="setting-header">
-        <i class="icon-user"></i>
-        <h2>Change Username</h2>
-      </div>
-      <div class="input-group">
-        <input type="text" id="new-username" placeholder="Enter new username" />
-        <button id="save-username" class="primary-btn">Update</button>
-      </div>
-    </div>
-
-    <div class="setting-card">
-      <div class="setting-header">
-        <i class="icon-bell"></i>
-        <h2>Notification Preferences</h2>
-      </div>
-      <div class="checkbox-group">
-        <label class="checkbox-container">
-          <input type="checkbox" id="upcoming-tasks" checked />
-          Upcoming Tasks
-        </label>
-        <label class="checkbox-container">
-          <input type="checkbox" id="scheduled-tasks" checked />
-          Scheduled Tasks
-        </label>
-      </div>
-    </div>
-
-    <div class="setting-card danger-zone">
-      <div class="setting-header">
-        <i class="icon-warning"></i>
-        <h2>Danger Zone</h2>
-      </div>
-      <button id="logout-btn" class="logout-btn">
-        <i class="icon-logout"></i> Logout
-      </button>
-      <button id="delete-account" class="danger-btn">
-        <i class="icon-trash"></i> Delete Account
-      </button>
-      <p class="warning-text">This action cannot be undone.</p>
-    </div>
-  </main>
-  <script src="media/js/theme.js" type="module"></script>
-  <script src="media/js/navBar.js" type="module"></script>
-  <script src="media/js/settings.js" type="module"></script>
-  <script>
-    const currentUser = sessionStorage.getItem("currentUser");
-
-    if (!currentUser) {
-      window.location.href = "login.html";
-      throw new Error("User not authenticated");
-    }
-  </script>
-</body>
-
+      if (!currentUser) {
+        window.location.href = "login.html";
+        throw new Error("User not authenticated");
+      }
+    </script>
+  </body>
 </html>

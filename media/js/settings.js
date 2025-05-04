@@ -1,4 +1,4 @@
-import { applyTheme, initializeTheme } from './theme.js';
+import { applyTheme, initializeTheme } from "./theme.js";
 
 const darkThemeBtn = document.getElementById("dark-theme");
 const lightThemeBtn = document.getElementById("light-theme");
@@ -32,13 +32,10 @@ const home = [
   "media/logos/light/homepage.png",
   "media/logos/dark/homepage.png",
 ];
-const log_out = [
-  "media/logos/light/log out.png",
-  "media/logos/dark/log out.png",
-];
+const log_out = ["media/logos/light/logout.png", "media/logos/dark/logout.png"];
 const notification_panel = [
-  "media/logos/light/notification panel.png",
-  "media/logos/dark/notification panel.png",
+  "media/logos/light/notification-panel.png",
+  "media/logos/dark/notification-panel.png",
 ];
 const profile_placeholder = [
   "media/logos/light/profile-placeholder.png",
@@ -84,7 +81,7 @@ Object.keys(themeElements).forEach((key) => {
 });
 
 // Only check for critical elements on the settings page
-if (window.location.pathname.includes('settings.html')) {
+if (window.location.pathname.includes("settings.html")) {
   if (!usernameDisplay) console.error("usernameDisplay is null!");
   if (
     !darkThemeBtn ||
@@ -103,7 +100,8 @@ if (window.location.pathname.includes('settings.html')) {
 
 function loadUsername() {
   if (usernameDisplay && newUsernameInput) {
-    const savedUsername = sessionStorage.getItem("currentUser") || "User";
+    const savedUsername =
+      JSON.parse(sessionStorage.getItem("currentUser")).username || "User";
     newUsernameInput.value = savedUsername;
     usernameDisplay.textContent = savedUsername;
   }
@@ -195,7 +193,11 @@ if (logoutBtn) {
 
 if (deleteAccountBtn) {
   deleteAccountBtn.addEventListener("click", () => {
-    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+    if (
+      confirm(
+        "Are you sure you want to delete your account? This action cannot be undone."
+      )
+    ) {
       sessionStorage.removeItem("currentUser");
       window.location.href = "login.html";
     }

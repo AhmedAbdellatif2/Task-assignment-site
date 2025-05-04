@@ -1,4 +1,4 @@
-import { applyTheme, initializeTheme } from './theme.js';
+import { applyTheme, initializeTheme } from "./theme.js";
 
 fetch("navbar.html")
   .then((response) => {

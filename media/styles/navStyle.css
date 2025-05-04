@@ -133,7 +133,7 @@ nav #home:hover {
   position: absolute;
   top: 50px;
   left: 0;
-  background-color: #11274d;
+  background-color: var(--dark-gray);
   border-radius: 10px;
   padding: 1rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);

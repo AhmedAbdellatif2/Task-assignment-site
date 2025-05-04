@@ -222,7 +222,7 @@ h1 {
 .filter-btn {
   background-color: transparent;
   border: 2px solid var(--accent-blue);
-  color: white;
+  color: var(--white-text);
   padding: 0.5rem 1rem;
   cursor: pointer;
   border-radius: 20px;
