@@ -25,7 +25,7 @@ function renderTasks(tasks) {
     taskItem.className = "task-item";
 
     taskItem.addEventListener("click", () => {
-      editTask(task.task_id);
+      window.location.href = `teacher_task.html?task_id=${task.task_id}`;
     });
 
     const startDate = task.start_date

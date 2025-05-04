@@ -36,9 +36,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const filteredTasks = tasks.filter(
     (task) =>
-      task.assigned_to === currentUser.username &&
-      (task.task_title.toLowerCase().includes(query) ||
-        task.task_description.toLowerCase().includes(query))
+      (task.assigned_to === currentUser.username &&
+        (task.task_title.toLowerCase().includes(query) ||
+          task.task_description.toLowerCase().includes(query))) ||
+      currentUser.role == "admin"
   );
 
   const getStatusClass = (status) => {
