@@ -150,7 +150,20 @@ let currentMinutes =
 		? `0${new Date().getMinutes()}`
 		: new Date().getMinutes();
 function formatDate(date) {
-	return date.toLocaleString();
+	console.log(date);
+	let currentDate = new Date(date).toDateString();
+	let currentHour =
+		((new Date().getHours() + 24) % 12 || 12) < 10
+			? `0${(new Date().getHours() + 24) % 12 || 1}`
+			: (new Date().getHours() + 24) % 12 || 12;
+	let currentMinutes =
+		new Date().getMinutes() < 10
+			? `0${new Date().getMinutes()}`
+			: new Date().getMinutes();
+
+	return `${currentDate} - ${currentHour}:${currentMinutes} ${
+		new Date().getHours() >= 12 ? "PM" : "AM"
+	}`;
 }
 
 window.removeComment = (commentID) => {
@@ -201,7 +214,7 @@ function fetchData() {
 					: ""
 			}
       </li>
-      <pre class="comment-date">${formatDate(commentsList[j].created_at)}</pre>`
+      <pre class="comment-date">${commentsList[j].created_at}</pre>`
 		);
 	}
 }
