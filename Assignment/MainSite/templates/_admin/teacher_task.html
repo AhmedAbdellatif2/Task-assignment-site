@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% load static %}
+{% extends "base.html" %} {% load static %} {% block content %}
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -15,7 +15,6 @@
 	</head>
 
 	<body>
-		{% block content %}
 		<div id="navbar-container"></div>
 		<main class="task-view">
 			<div class="task">
@@ -90,7 +89,6 @@
 				</section>
 			</div>
 		</main>
-		{% endblock content %}
 
 		<script
 			src="{% static 'JSs/teacher_task.js' %}"
@@ -102,3 +100,5 @@
 		></script>
 	</body>
 </html>
+
+{% endblock content %}
