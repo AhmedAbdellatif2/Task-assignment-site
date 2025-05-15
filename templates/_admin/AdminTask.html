@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% load static %}
+{% extends 'base.html' %} {% load static %} {% block content %}
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -14,7 +14,6 @@
 		/>
 	</head>
 	<body>
-		{% block content %}
 		<div id="navbar-container"></div>
 		<div class="background"></div>
 		<div class="container">
@@ -75,15 +74,16 @@
 				<a href="{% url 'dashboard' %}">View them here</a>
 			</p>
 		</div>
-		{% endblock content %}
 
 		<script
-			src="media/js/navBar.js"
+			src="{% static 'JSs/navBar.js' %}"
 			type="module"
 		></script>
 		<script
-			src="media/js/add_task.js"
+			src="{% static 'JSs/add_task.js' %}"
 			type="module"
 		></script>
 	</body>
 </html>
+
+{% endblock content %}

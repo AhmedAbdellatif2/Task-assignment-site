@@ -1,85 +1,104 @@
+{% extends "base.html" %} {% load static %} {% block content %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="media/styles/navStyle.css" />
-    <link rel="stylesheet" href="media/styles/teacher-task.css" />
-    <title>Task item</title>
-  </head>
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<link
+			rel="stylesheet"
+			href="{% static 'CSSs/teacher-task.css' %}"
+		/>
+		<title>Task item</title>
+	</head>
 
-  <body>
-    <div id="navbar-container"></div>
-    <main class="task-view">
-      <div class="task1">
-        <div class="task-header">
-          <div class="taskTitle">
-            <h1 style="text-align: start"></h1>
-            <br />
-            <p class="create_date">
-              Create date: <span class="taskCreateDate"></span
-              ><sub> (Updated at: </sub><sub class="taskUpdateDate"></sub
-              ><sub>)</sub>
-            </p>
-            <p class="start_date">
-              Start date: <span class="taskStartDate"></span>
-            </p>
-            <p class="due_date">Due date: <span class="taskDueDate"></span></p>
-            <p class="status">Status: <span class="taskStatus"></span></p>
-            <p class="priority">Priority: <span class="taskPriority"></span></p>
-          </div>
-          <div class="task-actions">
-            <button class="complete-btn">Mark as Complete</button>
-          </div>
-        </div>
-        <hr />
-        <h5 class="description">Description</h5>
-        <div class="content">
-          <p></p>
-        </div>
-        <hr />
-        <div class="comments-section">
-          <textarea
-            autofocus
-            class="comment-textarea"
-            placeholder="Add a comment..."
-          ></textarea>
-          <button class="submit-comment-btn">Add Comment</button>
-          <br />
-          <h2>Comments</h2>
-          <ul class="comments-list"></ul>
-        </div>
-        <button class="chat_toggle">
-          <img
-            src="media/logos/music-robot.png"
-            alt="Chat Icon"
-            class="chat_icon"
-          />
-        </button>
-        <section class="chat_bot">
-          <button class="chat_exit"></button>
-          <div class="chatbot-header">
-            <h2>Chatbot</h2>
-          </div>
-          <div class="chatbot-messages">
-            <div class="message bot-message">Hello, how can I help you?</div>
-          </div>
-          <section class="chatbot-input">
-            <input
-              type="text"
-              placeholder="Type your message..."
-              id="chatbot_input"
-            />
-            <button id="chat_send">Send</button>
-          </section>
-        </section>
-      </div>
-    </main>
-    <footer>
-      <p>TaskTracker &copy; 2025</p>
-    </footer>
+	<body>
+		<div id="navbar-container"></div>
+		<main class="task-view">
+			<div class="task">
+				<div class="task-header">
+					<div class="taskTitle">
+						<h1 style="text-align: start"></h1>
+						<br />
+						<p class="create_date">
+							Create date: <span class="taskCreateDate"></span
+							><sub> (Updated at: </sub
+							><sub class="taskUpdateDate"></sub><sub>)</sub>
+						</p>
+						<p class="start_date">
+							Start date: <span class="taskStartDate"></span>
+						</p>
+						<p class="due_date">
+							Due date: <span class="taskDueDate"></span>
+						</p>
+						<p class="status">
+							Status: <span class="taskStatus"></span>
+						</p>
+						<p class="priority">
+							Priority: <span class="taskPriority"></span>
+						</p>
+					</div>
+					<div class="task-actions">
+						<button class="complete-btn">Mark as Complete</button>
+					</div>
+				</div>
+				<hr />
+				<h5 class="description">Description</h5>
+				<div class="content">
+					<p></p>
+				</div>
+				<hr />
+				<div class="comments-section">
+					<textarea
+						autofocus
+						class="comment-textarea"
+						placeholder="Add a comment..."
+					></textarea>
+					<button class="submit-comment-btn">Add Comment</button>
+					<br />
+					<h2>Comments</h2>
+					<ul class="comments-list"></ul>
+				</div>
+				<button class="chat_toggle">
+					<img
+						src="{% static 'Images/music-robot.png' %}"
+						alt="Chat Icon"
+						class="chat_icon"
+					/>
+				</button>
+				<section class="chat_bot">
+					<button class="chat_exit"></button>
+					<div class="chatbot-header">
+						<h2>Chatbot</h2>
+					</div>
+					<div class="chatbot-messages">
+						<div class="message bot-message">
+							Hello, how can I help you?
+						</div>
+					</div>
+					<section class="chatbot-input">
+						<input
+							type="text"
+							placeholder="Type your message..."
+							id="chatbot_input"
+						/>
+						<button id="chat_send">Send</button>
+					</section>
+				</section>
+			</div>
+		</main>
 
-    <script src="media/js/teacher_task.js" type="module"></script>
-    <script src="media/js/navBar.js" type="module"></script>
-  </body>
+		<script
+			src="{% static 'JSs/teacher_task.js' %}"
+			type="module"
+		></script>
+		<script
+			src="{% static 'JSs/navBar.js' %}"
+			type="module"
+		></script>
+	</body>
 </html>
+
+{% endblock content %}

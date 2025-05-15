@@ -1,66 +1,75 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile Page</title>
-    <link rel="stylesheet" href="media\styles\styles.css" />
-    <link rel="stylesheet" href="media\styles\navStyle.css" />
-    <link rel="stylesheet" href="media\styles\upcomming.css" />
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>Profile Page</title>
+		<style>
+			#settings:hover {
+				background-color: goldenrod;
+				border-radius: 50px;
+				justify-content: center;
+				align-items: center;
+				border-radius: 50px;
+				transition: background-color 0.3s, font-size 0.3s,
+					text-decoration-line 0.3s;
+				cursor: pointer;
+			}
 
-    <style>
-      #settings:hover {
-        background-color: goldenrod;
-        border-radius: 50px;
-        justify-content: center;
-        align-items: center;
-        border-radius: 50px;
-        transition: background-color 0.3s, font-size 0.3s,
-          text-decoration-line 0.3s;
-        cursor: pointer;
-      }
+			#sidebar {
+				margin-top: 10px;
+				padding: 10px;
+				width: fit-content;
+				height: 100%;
+				background-color: var(--primary-black);
+				border-radius: 25px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="navbar-container"></div>
+		<main>
+			<section
+				id="profile-details"
+				class="container"
+			>
+				<div class="profile-picture">
+					<img
+						id="profile_placeholder"
+						src="{% static 'Images/dark/profile-placeholder.png' %}"
+						alt="Profile Picture"
+						height="150"
+					/>
+				</div>
+				<div class="profile-info">
+					<h2 id="username">John Doe</h2>
+					<p><span id="user-role">Teacher</span></p>
+					<p><span id="user-email"></span></p>
+				</div>
+			</section>
+			<section id="upcoming-tasks">
+				<h3>Upcoming Tasks</h3>
+				<ul id="task-list"></ul>
+			</section>
+		</main>
 
-      #sidebar {
-        margin-top: 10px;
-        padding: 10px;
-        width: fit-content;
-        height: 100%;
-        background-color: var(--primary-black);
-        border-radius: 25px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="navbar-container"></div>
-
-    <main>
-      <section id="profile-details" class="container">
-        <div class="profile-picture">
-          <img
-            id="profile_placeholder"
-            src="media\logos\dark\profile-placeholder.png"
-            alt="Profile Picture"
-            height="150"
-          />
-        </div>
-        <div class="profile-info">
-          <h2 id="username">John Doe</h2>
-          <p><span id="user-role">Teacher</span></p>
-          <p><span id="user-email"></span></p>
-        </div>
-      </section>
-      <section id="upcoming-tasks">
-        <h3>Upcoming Tasks</h3>
-        <ul id="task-list"></ul>
-      </section>
-    </main>
-
-    <footer>
-      <p>TaskTracker &copy; 2025</p>
-    </footer>
-
-    <script src="media/js/profile_page.js" type="module"></script>
-    <script src="./media/js/navBar.js" type="module"></script>
-    <script src="./media/js/upcomming_tasks.js" type="module"></script>
-  </body>
+		<script
+			src="{% static 'JSs/profile_page.js' %}"
+			type="module"
+		></script>
+		<script
+			src="{% static 'JSs/navBar.js' %}"
+			type="module"
+		></script>
+		<script
+			src="{% static 'JSs/upcomming_tasks.js' %}"
+			type="module"
+		></script>
+	</body>
 </html>
+
+{% endblock content %}

@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% load static %}
+{% extends 'base.html' %} {% load static %}{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -12,14 +12,9 @@
 			rel="stylesheet"
 			href="{% static 'CSSs/AdminDashboard.css' %}"
 		/>
-		<link
-			rel="stylesheet"
-			href="{% static 'CSSs/navStyle.css' %}"
-		/>
 	</head>
 
 	<body>
-		{% block content %}
 		<div id="navbar-container"></div>
 		<main class="admin-dashboard">
 			<h2>Admin Dashboard</h2>
@@ -37,7 +32,6 @@
 				➕ Add New Task
 			</button>
 		</main>
-		{% endblock content %}
 
 		<script
 			src="{% static 'JSs/navBar.js' %}"
@@ -49,3 +43,5 @@
 		></script>
 	</body>
 </html>
+
+{% endblock content %}
