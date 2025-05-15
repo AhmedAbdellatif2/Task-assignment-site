@@ -1,0 +1,75 @@
+{% extends 'base.html' %} {% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>Sign Up - Step into Smart Teaching</title>
+		<link
+			rel="stylesheet"
+			href="{% static 'CSSs/navStyle.css' %}"
+		/>
+		<link
+			rel="stylesheet"
+			href="{% static 'CSSs/signup.css' %}"
+		/>
+	</head>
+
+	<body>
+		{% block content %}
+		<div class="container">
+			<h2>Step into Smart Teaching!</h2>
+			<p class="subtext">Join now and manage assignments with ease.</p>
+			<form method="POST">
+				{% csrf_token %}<!-- Name Field -->
+				<div class="input-group">
+					<label for="name">Full Name</label>
+					{{ form.full_name }}
+				</div>
+
+				<!-- Username Field -->
+				<div class="input-group">
+					<label for="username">Username</label>
+					{{ form.username }}
+				</div>
+
+				<!-- Email Field -->
+				<div class="input-group">
+					<label for="email">Email</label>
+					{{ form.email }}
+				</div>
+
+				<!-- Password Field -->
+				<div class="input-group">
+					<label for="password">Password</label>
+					{{ form.password }}
+				</div>
+
+				<!-- Confirm Password Field -->
+				<div class="input-group">
+					<label for="confirm-password">Confirm Password</label>
+					{{ form.confirm_password }}
+				</div>
+
+				<!-- Role Selection -->
+				<div class="input-group">
+					<label for="role">Register as</label>
+					{{ form.role }}
+				</div>
+				<!-- Submit Button -->
+				<button type="submit">Sign Up</button>
+			</form>
+
+			<!-- Login Link -->
+			<p class="login-link">
+				Already have an account? <a href="login.html">Log in here</a>
+			</p>
+		</div>
+		{% endblock content %}
+		<script src="{% static 'JSs/signup.js' %}"></script>
+	</body>
+</html>

@@ -1,0 +1,133 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+:root {
+  --primary-black: #010409;
+  --dark-gray: #151b23;
+  --accent-blue: #3076e3;
+  --accent-green: #00b222;
+
+  --white-text: white;
+  --gray-texts: #cfcfcf;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: var(--dark-gray); /* Updated background color */
+  color: var(--white-text); /* Retain softer white for text */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  margin-top: 2rem;
+  width: 400px;
+  background: var(--primary-black); /* Updated container background */
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6); /* Enhanced shadow for depth */
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(
+    90deg,
+    #00ffa6,
+    var(--accent-blue)
+  ); /* Gradient for title */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtext {
+  font-size: 0.75rem;
+  color: var(--gray-texts); /* Retain softer gray for readability */
+  margin-bottom: 2rem;
+}
+
+.input-group {
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-weight: 500;
+  color: white; /* Retain slightly darker label color */
+  font-size: 0.95rem;
+}
+input,
+select {
+  padding: 0.8rem;
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  outline: none;
+  background: var(--dark-gray);
+  color: var(--white-text);
+  font-size: 0.95rem;
+}
+select {
+  width: 70%;
+}
+input:focus,
+select:focus {
+  border-color: var(--accent-blue); /* Updated focus border color */
+  outline: none;
+  box-shadow: 0 0 0 3px var(--dark-gray); /* Adjusted focus shadow */
+  background-color: var(--primary-black);
+}
+
+button {
+  width: 100%;
+  padding: 0.9rem;
+  background-color: var(--accent-green); /* Updated button color */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+button:hover {
+  background-color: var(--accent-blue); /* Updated hover color */
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px var(--accent-blue); /* Adjusted hover shadow */
+}
+.login-link {
+  font-size: 0.9rem;
+  color: var(--gray-texts); /* Retain softer gray for link text */
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.login-link a {
+  color: var(--accent-green); /* Updated link color */
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+select#role {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}

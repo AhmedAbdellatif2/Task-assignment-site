@@ -1,0 +1,31 @@
+#upcoming-tasks {
+  margin-top: 2rem;
+  background: var(--primary-black);
+  color: var(--white-text);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+#upcoming-tasks h3 {
+  color: var(--accent-blue);
+  margin-bottom: 1rem;
+}
+
+#task-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+#task-list li {
+  background-color: var(--dark-gray);
+  margin-bottom: 10px;
+  padding: 1rem;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+#task-list li:hover {
+  background-color: var(--accent-blue);
+  cursor: pointer;
+}
