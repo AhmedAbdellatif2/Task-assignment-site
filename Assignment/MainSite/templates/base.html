@@ -7,4 +7,9 @@
 	rel="stylesheet"
 	href="{% static 'CSSs/navStyle.css' %}"
 />
-{% include 'navbar.html' %} {% block content %} {% endblock content %}
+<link
+	rel="stylesheet"
+	href="{% static 'CSSs/footer.css' %}"
+/>
+{% include 'navbar.html' %} {% block content %} {% endblock content %} 
+{% include 'footer.html' %}

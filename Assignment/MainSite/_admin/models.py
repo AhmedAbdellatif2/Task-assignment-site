@@ -7,7 +7,7 @@ class SignUp(models.Model):
     email = models.EmailField()
     password = models.CharField(max_length=100)
     confirm_password = models.CharField(max_length=100)
-    role = models.CharField(choices=[('', 'Select'), (0, 'Teacher'), (1, 'Admin')])
+    role = models.CharField(choices=[('0', 'Teacher'), ('1', 'Admin')])
     
     def __str__(self):
         return self.full_name

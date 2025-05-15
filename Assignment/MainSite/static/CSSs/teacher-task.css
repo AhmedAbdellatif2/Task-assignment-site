@@ -179,16 +179,6 @@ body {
   transition: width 0.3s;
 }
 
-footer {
-  background-color: var(--primary-black);
-  text-align: center;
-  padding: 1rem;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
-}
-
 .task-view > div {
   background-color: var(--primary-black);
   padding: 1.5rem;

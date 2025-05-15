@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Teacher Login</title>
+		<link
+			rel="stylesheet"
+			href="{% static 'CSSs/login.css' %}"
+		/>
+	</head>
+
+	<body>
+		<div class="form-container">
+			<h1 class="title">Step into Smart Teaching!</h1>
+			<p class="subtitle">
+				Log in and manage your assignments with ease.
+			</p>
+
+			<form
+				class="login-form"
+				action="#"
+				method="POST"
+			>
+				<label for="username">Username</label>
+				<input
+					type="text"
+					id="username"
+					name="username"
+					placeholder="Enter your username"
+					required
+				/>
+
+				<label for="password">Password</label>
+				<div class="password-input-container">
+					<input
+						type="password"
+						id="password"
+						name="password"
+						placeholder="Enter your password"
+						required
+					/>
+				</div>
+
+				<button
+					type="submit"
+					class="btn login-btn"
+				>
+					Log In
+				</button>
+
+				<p class="switch-page">
+					Don't have an account?
+					<a href="{% url 'signup' %}">Sign up here</a>
+				</p>
+			</form>
+		</div>
+
+		<script
+			src="{% static 'JSs/theme.js' %}"
+			type="module"
+		></script>
+		<script
+			src="{% static 'JSs/settings.js' %}"
+			type="module"
+		></script>
+		<!-- Added login functionality script -->
+		<script
+			src="{% static 'JSs/login.js' %}"
+			type="module"
+		></script>
+	</body>
+</html>

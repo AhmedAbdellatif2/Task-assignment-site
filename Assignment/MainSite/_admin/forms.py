@@ -13,3 +13,12 @@ class SignUpForm(forms.ModelForm):
             'confirm_password': forms.PasswordInput(attrs={'placeholder': 'Confirm Password', 'style': 'margin-bottom: 2px;'}),
             'role': forms.Select(attrs={'placeholder': 'Admin - Teacher', 'style': 'margin-bottom: 2px;'}),
         }
+        
+class LoginForm(forms.ModelForm):
+    class Meta:
+        model = SignUp
+        fields = ['username', 'password']
+        widgets = {
+            'username': forms.TextInput(attrs={'placeholder': 'Username'}),
+            'password': forms.PasswordInput(attrs={'placeholder': 'Password'}),
+        }
