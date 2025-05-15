@@ -4,11 +4,6 @@ function getCurrentUserRole() {
 
 const userRole = getCurrentUserRole();
 
-if (userRole !== "admin") {
-  alert("Unauthorized access. Redirecting to login...");
-  window.location.href = "login.html";
-}
-
 document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
   const taskId = urlParams.get("id");
