@@ -40,6 +40,7 @@ class LoginManager {
 		e.preventDefault();
 		const form = e.target;
 		const username = form.username.value.trim();
+		
 		const password = form.password.value.trim();
 		const loginButton = form.querySelector('button[type="submit"]');
 
@@ -51,7 +52,7 @@ class LoginManager {
 			loginButton.disabled = true;
 			loginButton.innerHTML = '<div class="button-spinner"></div> Authenticating';
 
-			await apiService.login(username, password);
+			await apiService.login({ username, password });
 			const user = await apiService.getCurrentUser();
 
 			if (user.role === "admin") {

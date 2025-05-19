@@ -291,7 +291,7 @@ class ApiService {
 
   // User-related methods
   async login(credentials) {
-    const response = await this.request("/auth/login", {
+    const response = await this.request("/auth/login/", {
       method: "POST",
       body: JSON.stringify(credentials),
       skipAuth: true,

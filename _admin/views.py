@@ -86,46 +86,40 @@ def SignUp(request):
 
     return render(request, '_admin/signup.html')
 
+@csrf_exempt
 def Login(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        role = data.get('role')  # Determine user type (teacher or admin)
+        try:
+            data = json.loads(request.body)
+            print(data)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return JsonResponse({"success": False, "error": "Invalid JSON"}, status=400)
+
         username = data.get('username')
-        password = data.POST.get('password')
+        password = data.get('password')
+        
 
-        if role == 'teacher':
-            try:
-                teacher = Teacher.objects.get(username=username)
-                # Check if the password matches using Django's check_password method
-                if check_password(password, teacher.password):
-                    # Store login info in session
-                    request.session['teacher_id'] = teacher.id
-                    request.session['username'] = teacher.username
-                    return redirect('home')  # Redirect to homepage
-                else:
-                    messages.error(request, "Invalid password for teacher")
-            except Teacher.DoesNotExist:
-                messages.error(request, "Invalid username for teacher")
+        if not username or not password:
+            return JsonResponse({"success": False, "error": "Username and password are required"}, status=400)
 
-        elif role == 'admin':
-            try:
-                admin = Admin.objects.get(username=username)
-                # Check if the password matches using Django's check_password method
-                if check_password(password, admin.password):
-                    # Store login info in session
-                    request.session['admin_id'] = admin.id
-                    request.session['username'] = admin.username
-                    return redirect('home')  # Redirect to homepage
-                else:
-                    messages.error(request, "Invalid password for admin")
-            except Admin.DoesNotExist:
-                messages.error(request, "Invalid username for admin")
+        # Try teacher first
+        teacher = Teacher.objects.filter(username=username).first()
+        if teacher and check_password(password, teacher.password):
+            request.session['teacher_id'] = teacher.id
+            request.session['username'] = teacher.username
+            return JsonResponse({"success": True, "role": "teacher"})
 
-        else:
-            messages.error(request, "Invalid role")
+        # Try admin
+        admin = Admin.objects.filter(username=username).first()
+        if admin and check_password(password, admin.password):
+            request.session['admin_id'] = admin.id
+            request.session['username'] = admin.username
+            return JsonResponse({"success": True, "role": "admin"})
+
+        # If neither found or password incorrect
+        return JsonResponse({"success": False, "error": "Invalid username or password"}, status=401)
 
     return render(request, '_admin/login.html')
-
 
 def is_strong_password(password):
     # Check if password length is at least 8 characters
