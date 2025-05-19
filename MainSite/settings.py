@@ -130,3 +130,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+# REST_AUTH = {
+#     'USR_JWT':True,
+#     'Jwt_AUTH-COOCIE': 'authentication_cookie',
+#     'JWT-AUTH',''
+# }

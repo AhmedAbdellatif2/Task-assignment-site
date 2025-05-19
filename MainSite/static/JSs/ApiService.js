@@ -129,7 +129,7 @@ class ApiService {
     async retryRequest(endpoint, options, attempt = 1) {
         try {
             const response = await fetch(`${this.baseUrl}${endpoint}`, options);
-            return await this.handleResponse(response);
+            return await this.handleResponse(response);//send as .json
         } catch (error) {
             if (attempt < this.maxRetries && this.shouldRetry(error)) {
                 const delay = this.retryDelay * Math.pow(2, attempt - 1);
