@@ -1,11 +1,8 @@
 from django.contrib import admin
-from .models import SignUp
-
+from .models import  Teacher, Admin, Task, Comment
 # Register your models here.
-class SignUpAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'username', 'email', 'role')
-    search_fields = ('full_name', 'username', 'email')
-    list_filter = ('role',)
-    ordering = ('full_name',)
-    
-admin.site.register(SignUp, SignUpAdmin)
+
+admin.site.register(Teacher)
+admin.site.register(Admin)
+admin.site.register(Task)
+admin.site.register(Comment)
