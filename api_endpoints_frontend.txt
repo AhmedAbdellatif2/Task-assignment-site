@@ -1,0 +1,31 @@
+API Endpoints Used in Frontend
+==============================
+
+Task-related Endpoints
+----------------------
+GET    /tasks
+GET    /tasks/:taskId
+POST   /tasks
+PUT    /tasks/:taskId
+DELETE /tasks/:taskId
+GET    /tasks?teacherId=:teacherId
+GET    /tasks/upcoming?days=:days
+GET    /tasks/search?q=:query
+GET    /tasks/:taskId/comments?page=:page&limit=:limit
+POST   /tasks/:taskId/comments
+PUT    /tasks/:taskId/comments/:commentId
+DELETE /tasks/:taskId/comments/:commentId
+
+User-related Endpoints
+----------------------
+POST   /auth/login
+POST   /auth/refresh
+POST   /auth/logout
+GET    /users/me
+PUT    /users/me
+GET    /users
+PUT    /users/me/password
+GET    /user/preferences
+PUT    /user/preferences
+PUT    /user/username
+DELETE /user/account

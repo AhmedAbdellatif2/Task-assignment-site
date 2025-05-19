@@ -2,113 +2,100 @@
 
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0"
-		/>
-		<title>Sign Up - Step into Smart Teaching</title>
-		<link
-			rel="stylesheet"
-			href="{% static 'CSSs/navStyle.css' %}"
-		/>
-		<link
-			rel="stylesheet"
-			href="{% static 'CSSs/signup.css' %}"
-		/>
-	</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - Step into Smart Teaching</title>
+    <link rel="stylesheet" href="{% static 'CSSs/navStyle.css' %}" />
+    <link rel="stylesheet" href="{% static 'CSSs/signup.css' %}" />
+  </head>
 
-	<body>
-		{% block content %}
-		<div class="container">
-			<h2>Step into Smart Teaching!</h2>
-			<p class="subtext">Join now and manage assignments with ease.</p>
-			<form method="POST">
-				{% csrf_token %}<!-- Name Field -->
-				<!-- Name Field -->
-				<div class="input-group">
-					<label for="name">Full Name</label>
-					<input
-						type="text"
-						id="name"
-						name="name"
-						placeholder="Enter your full name"
-						required
-					/>
-				</div>
+  <body>
+    {% block content %}
+    <div class="container">
+      <h2>Step into Smart Teaching!</h2>
+      <p class="subtext">Join now and manage assignments with ease.</p>
+      <form method="POST" id="signup-form">
+        {% csrf_token %}<!-- Name Field -->
+        <!-- Name Field -->
+        <div class="input-group">
+          <label for="name">Full Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Enter your full name"
+            required
+          />
+        </div>
 
-				<!-- Username Field -->
-				<div class="input-group">
-					<label for="username">Username</label>
-					<input
-						type="text"
-						id="username"
-						name="username"
-						placeholder="Choose a username"
-						required
-					/>
-				</div>
+        <!-- Username Field -->
+        <div class="input-group">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Choose a username"
+            required
+          />
+        </div>
 
-				<!-- Email Field -->
-				<div class="input-group">
-					<label for="email">Email</label>
-					<input
-						type="email"
-						id="email"
-						name="email"
-						placeholder="Enter your email"
-						required
-					/>
-				</div>
+        <!-- Email Field -->
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
 
-				<!-- Password Field -->
-				<div class="input-group">
-					<label for="password">Password</label>
-					<input
-						type="password"
-						id="password"
-						name="password"
-						placeholder="Create a password"
-						required
-					/>
-				</div>
+        <!-- Password Field -->
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Create a password"
+            required
+          />
+        </div>
 
-				<!-- Confirm Password Field -->
-				<div class="input-group">
-					<label for="confirm-password">Confirm Password</label>
-					<input
-						type="password"
-						id="confirm-password"
-						name="confirm-password"
-						placeholder="Confirm your password"
-						required
-					/>
-				</div>
+        <!-- Confirm Password Field -->
+        <div class="input-group">
+          <label for="confirm-password">Confirm Password</label>
+          <input
+            type="password"
+            id="confirm-password"
+            name="confirm-password"
+            placeholder="Confirm your password"
+            required
+          />
+        </div>
 
-				<!-- Role Selection -->
-				<div class="input-group">
-					<label for="role">Register as</label>
-					<select
-						id="role"
-						name="role"
-						required
-					>
-						<option value="teacher">Teacher</option>
-						<option value="admin">Admin</option>
-					</select>
-				</div>
-				<!-- Submit Button -->
-				<button type="submit">Sign Up</button>
-			</form>
+        <!-- Role Selection -->
+        <div class="input-group">
+          <label for="role">Register as</label>
+          <select id="role" name="role" required>
+            <option value="teacher">Teacher</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <!-- Submit Button -->
+        <button type="submit">Sign Up</button>
+      </form>
 
-			<!-- Login Link -->
-			<p class="login-link">
-				Already have an account?
-				<a href="{% url 'login' %}">Log in here</a>
-			</p>
-		</div>
-		{% endblock content %}
-		<script src="{% static 'JSs/signup.js' %}"></script>
-	</body>
+      <!-- Login Link -->
+      <p class="login-link">
+        Already have an account?
+        <a href="{% url 'login' %}">Log in here</a>
+      </p>
+    </div>
+    {% endblock content %}
+    <script src="{% static 'JSs/signup.js' %}"></script>
+  </body>
 </html>
