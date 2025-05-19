@@ -1,0 +1,18 @@
+Django _admin App Endpoints
+==========================
+
+| URL Path               | View Function         | Methods   | Description                        |
+|------------------------|----------------------|-----------|------------------------------------|
+| /                      | SignUp               | GET, POST | Signup page and registration logic |
+| /login/                | Login                | GET, POST | Login page and authentication      |
+| /dashboard/            | Dashboard            | GET       | Admin dashboard page               |
+| /tasks/                | Tasks                | GET       | Admin tasks page                   |
+| /editpage/             | EditPage             | GET       | Admin edit page                    |
+| /profile/              | Profile              | GET       | Profile page                       |
+| /settings/             | Settings             | GET       | Settings page                      |
+| /search/               | Search               | GET       | Search page                        |
+| /teacher_task/         | teacher_task         | GET       | Teacher task page                  |
+| /teachers_task_list/   | teachers_task_list   | GET       | Teachers task list page            |
+
+- The `/` and `/login/` endpoints accept both GET (to render the form) and POST (to process form submissions).
+- All other endpoints are GET requests that render their respective pages.

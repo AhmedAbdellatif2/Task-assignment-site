@@ -5,7 +5,7 @@ from django.contrib import messages
 from .models import Teacher, Admin
 from django.contrib.auth.hashers import make_password,check_password
 # Create your views here.
-
+import json
 
 def Dashboard(request):
     return render(request, '_admin/AdminDashboard.html')
@@ -32,11 +32,13 @@ def teachers_task_list(request):
     return render(request, '_admin/teachers_task_list.html')
 def SignUp(request):
     if request.method == 'POST':
-        user_type = request.POST.get('role')  # Determine user type (teacher or admin)
-        name = request.POST.get('name')
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        email = request.POST.get('email')
+        data = json.loads(request.body)
+        user_type = data.get('role')
+        name = data.get('name')
+        username = data.get('username')
+        password = data.get('password')
+        email = data.get('email')
+        avatar_url = data.get('avatar_url')
 
 
         # Check if the username or email already exists
@@ -55,9 +57,6 @@ def SignUp(request):
 
             # Create new teacher
             hashed_password = make_password(password)
-            # add avatar_url
-            avatar_url = request.POST.get('avatar_url')  # Assuming you have a field for avatar URL
-
             teacher = Teacher(name=name, username=username, password=hashed_password, email=email, avatar_url=avatar_url)
             # Set default avatar URL if not provided
             if not avatar_url:
