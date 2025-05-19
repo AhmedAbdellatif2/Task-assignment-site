@@ -1,191 +1,246 @@
-import ApiService from "./ApiService.js";
+import apiService from "./ApiService.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-    const form = document.querySelector("form");
-    const inputs = form.querySelectorAll("input, select");
+class SignupManager {
+  constructor() {
+    this.form = document.getElementById("signup-form");
+    this.setupEventListeners();
+  }
 
-    const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{}|\\:;"'<>,.?/~`-])[A-Za-z\d!@#$%^&*()_+[\]{}|\\:;"'<>,.?/~`-]{8,}$/;
-    const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  setupEventListeners() {
+    this.form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await this.handleSignup(e);
+    });
 
+    // Add input validation listeners
+    const inputs = this.form.querySelectorAll("input");
     inputs.forEach((input) => {
-        input.addEventListener("blur", () => {
-            validateField(input);
-        });
+      input.addEventListener("blur", () => this.validateField(input));
     });
+  }
 
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        clearAllErrors();
+  async handleSignup(event) {
+    const formData = new FormData(event.target);
 
-        const formData = {
-            name: getValue("name"),
-            username: getValue("username"),
-            email: getValue("email"),
-            password: getValue("password"),
-            confirmPassword: getValue("confirm-password"),
-            role: getValue("role"),
-        };
+    const userData = {
+      username: formData.get("username"),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirm_password"),
+      email: formData.get("email"),
+      name: formData.get("name"),
+      role: formData.get("role"),
+    };
 
-        const validationResults = validateForm(formData);
+    try {
+      await this.validateSignupData(userData);
 
-        if (validationResults.isValid) {
-            try {
-                await ApiService.signup({
-                    name: formData.name,
-                    username: formData.username,
-                    email: formData.email,
-                    password: formData.password,
-                    role: formData.role,
-                });
-                alert("Signup successful!");
-                window.location.href = "login.html";
-            } catch (error) {
-                alert("Failed to create account. Please try again.");
-            }
+      // Remove confirm password before sending to API
+      delete userData.confirmPassword;
+
+      await apiService.request("/auth/signup", {
+        method: "POST",
+        content_type: "application/json",
+        body: JSON.stringify(userData),
+        skipAuth: true,
+      });
+
+      this.showSuccess("Account created successfully! Redirecting to login...");
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 2000);
+    } catch (error) {
+      console.error("Signup error:", error);
+      this.showError(error.message || "Failed to create account");
+    }
+  }
+
+  validateField(input) {
+    const value = input.value.trim();
+    const fieldName = input.name;
+
+    switch (fieldName) {
+      case "username":
+        if (!value) {
+          this.showFieldError(input, "Username is required");
+        } else if (value.length < 3) {
+          this.showFieldError(input, "Username must be at least 3 characters");
         } else {
-            validationResults.errors.forEach(({ field, message }) => {
-                showError(field, message);
-            });
+          this.clearFieldError(input);
         }
-    });
+        break;
 
-    function getValue(id) {
-        return document.getElementById(id).value.trim();
-    }
-
-    async function validateField(input) {
-        const fieldId = input.id;
-        const value = input.value.trim();
-        clearError(fieldId);
-
-        const formData = {
-            name: getValue("name"),
-            username: getValue("username"),
-            email: getValue("email"),
-            password: getValue("password"),
-            confirmPassword: getValue("confirm-password"),
-            role: getValue("role"),
-        };
-
-        let error = null;
-
-        if (fieldId === "name" && !value) {
-            error = { field: "name", message: "Full name is required" };
-        } else if (fieldId === "username") {
-            if (!value) {
-                error = { field: "username", message: "Username is required" };
-            } else {
-                try {
-                    const response = await ApiService.checkUsername(value);
-                    if (response.exists) {
-                        error = { field: "username", message: "Username already taken" };
-                    }
-                } catch (err) {
-                    console.error("Error checking username:", err);
-                }
-            }
-        } else if (fieldId === "email") {
-            if (!value) {
-                error = { field: "email", message: "Email is required" };
-            } else if (!EMAIL_REGEX.test(value)) {
-                error = { field: "email", message: "Invalid email format" };
-            }
-        } else if (fieldId === "password") {
-            if (!value) {
-                error = { field: "password", message: "Password is required" };
-            } else if (!PASSWORD_REGEX.test(value)) {
-                error = {
-                    field: "password",
-                    message: "Password must be 8+ chars with uppercase, lowercase, number & special char",
-                };
-            }
-        } else if (fieldId === "confirm-password") {
-            if (!value) {
-                error = { field: "confirm-password", message: "Please confirm your password" };
-            } else if (value !== formData.password) {
-                error = { field: "confirm-password", message: "Passwords do not match" };
-            }
-        } else if (fieldId === "role" && !value) {
-            error = { field: "role", message: "Please select a role" };
-        }
-
-        if (error) {
-            showError(error.field, error.message);
+      case "password":
+        if (!value) {
+          this.showFieldError(input, "Password is required");
+        } else if (value.length < 6) {
+          this.showFieldError(input, "Password must be at least 6 characters");
         } else {
-            clearError(fieldId);
+          this.clearFieldError(input);
         }
+        break;
+
+      case "confirm_password":
+        const password = this.form.querySelector(
+          'input[name="password"]'
+        ).value;
+        if (!value) {
+          this.showFieldError(input, "Please confirm your password");
+        } else if (value !== password) {
+          this.showFieldError(input, "Passwords do not match");
+        } else {
+          this.clearFieldError(input);
+        }
+        break;
+
+      case "email":
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value) {
+          this.showFieldError(input, "Email is required");
+        } else if (!emailRegex.test(value)) {
+          this.showFieldError(input, "Please enter a valid email");
+        } else {
+          this.clearFieldError(input);
+        }
+        break;
+
+      case "name":
+        if (!value) {
+          this.showFieldError(input, "Name is required");
+        } else {
+          this.clearFieldError(input);
+        }
+        break;
+    }
+  }
+
+  async validateSignupData(data) {
+    const errors = [];
+
+    if (!data.username?.trim()) {
+      errors.push("Username is required");
+    } else if (data.username.length < 3) {
+      errors.push("Username must be at least 3 characters");
     }
 
-    function validateForm(data) {
-        const errors = [];
-
-        if (!data.name) {
-            errors.push({ field: "name", message: "Full name is required" });
-        }
-
-        if (!data.username) {
-            errors.push({ field: "username", message: "Username is required" });
-        }
-
-        if (!data.email) {
-            errors.push({ field: "email", message: "Email is required" });
-        } else if (!EMAIL_REGEX.test(data.email)) {
-            errors.push({ field: "email", message: "Invalid email format" });
-        }
-
-        if (!data.password) {
-            errors.push({ field: "password", message: "Password is required" });
-        } else if (!PASSWORD_REGEX.test(data.password)) {
-            errors.push({
-                field: "password",
-                message: "Password must be 8+ chars with uppercase, lowercase, number & special char",
-            });
-        }
-
-        if (!data.confirmPassword) {
-            errors.push({ field: "confirm-password", message: "Please confirm your password" });
-        } else if (data.password !== data.confirmPassword) {
-            errors.push({ field: "confirm-password", message: "Passwords do not match" });
-        }
-
-        if (!data.role) {
-            errors.push({ field: "role", message: "Please select a role" });
-        }
-
-        return {
-            isValid: errors.length === 0,
-            errors,
-        };
+    if (!data.password?.trim()) {
+      errors.push("Password is required");
+    } else if (data.password.length < 6) {
+      errors.push("Password must be at least 6 characters");
     }
 
-    function showError(fieldId, message) {
-        const inputGroup = document.getElementById(fieldId).parentElement;
-        const errorElement = document.createElement("small");
-        errorElement.className = "error-message";
-        errorElement.textContent = message;
-        errorElement.style.color = "#ff4444";
-        errorElement.style.marginTop = "8px";
-        
-        // Remove any existing error message
-        const existingError = inputGroup.querySelector(".error-message");
-        if (existingError) {
-            existingError.remove();
-        }
-        
-        inputGroup.appendChild(errorElement);
+    if (data.password !== data.confirmPassword) {
+      errors.push("Passwords do not match");
     }
 
-    function clearError(fieldId) {
-        const inputGroup = document.getElementById(fieldId).parentElement;
-        const errorElement = inputGroup.querySelector(".error-message");
-        if (errorElement) {
-            errorElement.remove();
-        }
+    if (!data.email?.trim()) {
+      errors.push("Email is required");
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(data.email)) {
+        errors.push("Please enter a valid email");
+      }
     }
 
-    function clearAllErrors() {
-        document.querySelectorAll(".error-message").forEach((error) => {
-            error.remove();
-        });
+    if (!data.name?.trim()) {
+      errors.push("Name is required");
     }
+
+    if (!data.role) {
+      errors.push("Role is required");
+    }
+
+    if (errors.length > 0) {
+      throw new Error(errors.join("\n"));
+    }
+
+    // Check if username already exists
+    try {
+      const response = await apiService.request(
+        `/auth/check-username?username=${data.username}`,
+        {
+          method: "GET",
+          skipAuth: true,
+        }
+      );
+      if (response.exists) {
+        throw new Error("Username already exists");
+      }
+    } catch (error) {
+      if (error.message !== "Username already exists") {
+        console.error("Error checking username:", error);
+      }
+      throw error;
+    }
+  }
+
+  showFieldError(field, message) {
+    this.clearFieldError(field);
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "field-error";
+    errorDiv.textContent = message;
+    errorDiv.style.color = "#f44336";
+    errorDiv.style.fontSize = "0.8rem";
+    errorDiv.style.marginTop = "4px";
+    field.parentNode.appendChild(errorDiv);
+    field.style.borderColor = "#f44336";
+  }
+
+  clearFieldError(field) {
+    const existingError = field.parentNode.querySelector(".field-error");
+    if (existingError) {
+      existingError.remove();
+      field.style.borderColor = "";
+    }
+  }
+
+  showError(message) {
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "error-message";
+    errorDiv.textContent = message;
+    errorDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        `;
+    document.body.appendChild(errorDiv);
+    setTimeout(() => {
+      errorDiv.style.opacity = "0";
+      errorDiv.style.transition = "opacity 0.3s ease";
+      setTimeout(() => errorDiv.remove(), 300);
+    }, 3000);
+  }
+
+  showSuccess(message) {
+    const successDiv = document.createElement("div");
+    successDiv.className = "success-message";
+    successDiv.textContent = message;
+    successDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        `;
+    document.body.appendChild(successDiv);
+    setTimeout(() => {
+      successDiv.style.opacity = "0";
+      successDiv.style.transition = "opacity 0.3s ease";
+      setTimeout(() => successDiv.remove(), 300);
+    }, 2000);
+  }
+}
+
+// Initialize when the DOM is loaded
+document.addEventListener("DOMContentLoaded", () => {
+  new SignupManager();
 });
