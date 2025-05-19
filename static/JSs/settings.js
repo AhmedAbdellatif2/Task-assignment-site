@@ -1,4 +1,5 @@
 import { applyTheme, initializeTheme } from "./theme.js";
+import ApiService from "./ApiService.js";
 
 const darkThemeBtn = document.getElementById("dark-theme");
 const lightThemeBtn = document.getElementById("light-theme");
@@ -98,13 +99,9 @@ if (window.location.pathname.includes("settings.html")) {
   }
 }
 
-function loadUsername() {
-  if (usernameDisplay && newUsernameInput) {
-    const savedUsername =
-      JSON.parse(sessionStorage.getItem("currentUser")).username || "User";
-    newUsernameInput.value = savedUsername;
-    usernameDisplay.textContent = savedUsername;
-  }
+function loadUserData(user) {
+  if (usernameDisplay) usernameDisplay.textContent = user.username;
+  if (newUsernameInput) newUsernameInput.value = user.username;
 }
 
 function loadNotificationPrefs() {
@@ -144,7 +141,7 @@ function initializePage() {
   const currentTheme = localStorage.getItem("theme") || "dark";
   initializeTheme();
   updateThemeButtons(currentTheme);
-  loadUsername();
+  loadUserData();
   loadNotificationPrefs();
 }
 
@@ -166,12 +163,15 @@ if (lightThemeBtn) {
 }
 
 if (saveUsernameBtn) {
-  saveUsernameBtn.addEventListener("click", () => {
-    const newUsername = newUsernameInput.value.trim();
+  saveUsernameBtn.addEventListener("click", async () => {
+    const newUsername = document.getElementById("new-username").value.trim();
     if (newUsername) {
-      sessionStorage.setItem("currentUser", newUsername);
-      usernameDisplay.textContent = newUsername;
-      newUsernameInput.value = "";
+      try {
+        await ApiService.updateUserSettings({ username: newUsername });
+        document.getElementById("username-display").textContent = newUsername;
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
   });
 }
@@ -185,23 +185,85 @@ if (scheduledTasksCheckbox) {
 }
 
 if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
-    sessionStorage.removeItem("currentUser");
-    window.location.href = "login.html";
-  });
-}
-
-if (deleteAccountBtn) {
-  deleteAccountBtn.addEventListener("click", () => {
-    if (
-      confirm(
-        "Are you sure you want to delete your account? This action cannot be undone."
-      )
-    ) {
-      sessionStorage.removeItem("currentUser");
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await ApiService.logout();
       window.location.href = "login.html";
+    } catch (error) {
+      console.error('Error:', error);
     }
   });
 }
 
-document.addEventListener("DOMContentLoaded", initializePage);
+if (deleteAccountBtn) {
+  deleteAccountBtn.addEventListener("click", async () => {
+    if (confirm("Are you sure you want to delete your account?")) {
+      try {
+        await ApiService.deleteAccount();
+        window.location.href = "login.html";
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const currentUser = await ApiService.getCurrentUser();
+    if (!currentUser) {
+      window.location.href = "login.html";
+      return;
+    }
+    
+    loadUserData(currentUser);
+    setupEventListeners();
+  } catch (error) {
+    console.error('Error:', error);
+    window.location.href = "login.html";
+  }
+});
+
+function setupEventListeners() {
+  const saveUsernameBtn = document.getElementById("save-username");
+  const logoutBtn = document.getElementById("logout-btn");
+  const deleteAccountBtn = document.getElementById("delete-account");
+
+  if (saveUsernameBtn) {
+    saveUsernameBtn.addEventListener("click", async () => {
+      const newUsername = document.getElementById("new-username").value.trim();
+      if (newUsername) {
+        try {
+          await ApiService.updateUserSettings({ username: newUsername });
+          document.getElementById("username-display").textContent = newUsername;
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
+    });
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await ApiService.logout();
+        window.location.href = "login.html";
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  if (deleteAccountBtn) {
+    deleteAccountBtn.addEventListener("click", async () => {
+      if (confirm("Are you sure you want to delete your account?")) {
+        try {
+          await ApiService.deleteAccount();
+          window.location.href = "login.html";
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
+    });
+  }
+}

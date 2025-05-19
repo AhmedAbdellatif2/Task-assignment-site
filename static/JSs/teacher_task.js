@@ -1,30 +1,167 @@
-import { tasks, users } from "./tasks_data.js";
+import ApiService from "./ApiService.js";
 
-let searchParams = new URLSearchParams(document.location.search);
+let currentTask = null;
+let currentUser = null;
+const searchParams = new URLSearchParams(document.location.search);
+const taskId = searchParams.get("task_id");
 
-const currentUser = JSON.parse(sessionStorage.getItem("currentUser")) || null;
+document.addEventListener("DOMContentLoaded", async () => {
+	try {
+		// Check authentication
+		currentUser = await ApiService.getCurrentUser();
+		if (!currentUser) {
+			window.location.href = "login.html";
+			return;
+		}
 
-if (!currentUser) {
-	window.location.href = "login.html";
-	throw new Error("User not authenticated");
+		// Show loading state
+		showLoading();
+
+		// Load task data
+		await loadTaskData();
+		
+		if (currentTask) {
+			// Initialize chat functionality
+			initializeChat();
+			// Initialize comment functionality
+			initializeComments();
+			// Initialize task status handling
+			initializeTaskStatus();
+		}
+
+		hideLoading();
+	} catch (error) {
+		console.error('Error initializing page:', error);
+		showError('Failed to load task. Please try again.');
+		hideLoading();
+	}
+});
+
+async function loadTaskData() {
+	try {
+		// Use getTaskById instead of getAllTasks for efficiency
+		currentTask = await ApiService.getTaskById(taskId);
+
+		if (!currentTask) {
+			showError('Task not found');
+			setTimeout(() => window.location.href = "index.html", 2000);
+			return;
+		}
+
+		updateTaskDisplay();
+	} catch (error) {
+		if (error.status === 404) {
+			showError('Task not found');
+			setTimeout(() => window.location.href = "index.html", 2000);
+		} else {
+			console.error('Error loading task:', error);
+			showError('Failed to load task data');
+		}
+	}
 }
 
-if (window.location.href.indexOf("?task_id=") == -1) {
-	window.location.href += "?task_id=" + "task-002";
+function updateTaskDisplay() {
+	const elements = {
+		'.taskCreateDate': formatDate(currentTask.created_at),
+		'.taskUpdateDate': formatDate(currentTask.updated_at),
+		'.taskTitle h1': currentTask.task_title,
+		'.taskStartDate': formatDate(currentTask.start_date),
+		'.taskDueDate': formatDate(currentTask.due_date),
+		'.taskStatus': currentTask.status,
+		'.taskPriority': currentTask.priority,
+		'.content': currentTask.task_description
+	};
+
+	Object.entries(elements).forEach(([selector, value]) => {
+		const element = document.querySelector(selector);
+		if (element) {
+			if (selector === '.content') {
+				element.children[0].innerHTML = value;
+			} else {
+				element.innerHTML = value;
+			}
+		}
+	});
 }
 
-if (localStorage.getItem("Tasks") === null) {
-	localStorage.setItem("Tasks", JSON.stringify(tasks));
+async function removeComment(commentId) {
+	try {
+		showMessage('Removing comment...', 'info');
+		
+		// Use dedicated comment deletion endpoint
+		await ApiService.deleteComment(currentTask.task_id, commentId);
+		
+		// Refresh task data
+		await loadTaskData();
+		
+		showMessage('Comment removed successfully', 'success');
+	} catch (error) {
+		console.error('Error removing comment:', error);
+		showMessage('Failed to remove comment', 'error');
+	}
 }
-if (localStorage.getItem("users") === null) {
-	localStorage.setItem("users", JSON.stringify(users));
+
+function showLoading() {
+	const loadingDiv = document.createElement('div');
+	loadingDiv.id = 'loading-indicator';
+	loadingDiv.innerHTML = 'Loading task data...';
+	loadingDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 20px; border-radius: 8px; z-index: 1000;';
+	document.body.appendChild(loadingDiv);
 }
-let task = JSON.parse(localStorage.getItem("Tasks")).find(
-	(tsk) => tsk.task_id === searchParams.get("task_id")
-);
-if (task === undefined) {
-	console.error("Task not found");
+
+function hideLoading() {
+	const loadingDiv = document.getElementById('loading-indicator');
+	if (loadingDiv) {
+		loadingDiv.remove();
+	}
 }
+
+function showError(message) {
+	const errorDiv = document.createElement('div');
+	errorDiv.className = 'error-message';
+	errorDiv.textContent = message;
+	errorDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #f44336; color: white; padding: 10px 20px; border-radius: 4px; z-index: 1000;';
+	document.body.appendChild(errorDiv);
+	setTimeout(() => errorDiv.remove(), 5000);
+}
+
+function showMessage(message, type) {
+	const messageDiv = document.createElement('div');
+	messageDiv.className = `message ${type}`;
+	messageDiv.textContent = message;
+	messageDiv.style.cssText = `
+		position: fixed;
+		top: 20px;
+		right: 20px;
+		padding: 10px 20px;
+		border-radius: 4px;
+		color: white;
+		z-index: 1000;
+		background-color: ${type === 'success' ? '#4caf50' : type === 'info' ? '#2196f3' : '#f44336'};
+	`;
+	document.body.appendChild(messageDiv);
+	setTimeout(() => messageDiv.remove(), 3000);
+}
+
+function calculateNumberOfDaysFrom(dueDate) {
+	return (new Date(dueDate).getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000);
+}
+
+function formatDate(date) {
+	if (!date) return 'Not set';
+	
+	const d = new Date(date);
+	const currentDate = d.toDateString();
+	const hours = ((d.getHours() + 24) % 12 || 12);
+	const currentHour = hours < 10 ? `0${hours}` : hours;
+	const currentMinutes = d.getMinutes() < 10 ? `0${d.getMinutes()}` : d.getMinutes();
+	const ampm = d.getHours() >= 12 ? 'PM' : 'AM';
+
+	return `${currentDate} - ${currentHour}:${currentMinutes} ${ampm}`;
+}
+
+// Make removeComment available globally
+window.removeComment = removeComment;
 
 let API_KEY =
 	"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";
@@ -32,7 +169,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	let messages = [
 		{
 			role: "system",
-			content: `You are a helpful assistant helping in a task its description is '${task.description}'.`,
+			content: `You are a helpful assistant helping in a task its description is '${currentTask.description}'.`,
 		},
 		{
 			role: "assistant",
@@ -137,130 +274,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 		});
 });
 
-function calculateNumberOfDaysFrom(dueDate) {
-	return (dueDate - new Date().getTime()) / (24 * 60 * 60 * 1000);
-}
-let currentDate = new Date().toDateString();
-let currentHour =
-	((new Date().getHours() + 24) % 12 || 12) < 10
-		? `0${(new Date().getHours() + 24) % 12 || 1}`
-		: (new Date().getHours() + 24) % 12 || 12;
-let currentMinutes =
-	new Date().getMinutes() < 10
-		? `0${new Date().getMinutes()}`
-		: new Date().getMinutes();
-function formatDate(date) {
-	console.log(date);
-	let currentDate = new Date(date).toDateString();
-	let currentHour =
-		((new Date().getHours() + 24) % 12 || 12) < 10
-			? `0${(new Date().getHours() + 24) % 12 || 1}`
-			: (new Date().getHours() + 24) % 12 || 12;
-	let currentMinutes =
-		new Date().getMinutes() < 10
-			? `0${new Date().getMinutes()}`
-			: new Date().getMinutes();
-
-	return `${currentDate} - ${currentHour}:${currentMinutes} ${
-		new Date().getHours() >= 12 ? "PM" : "AM"
-	}`;
-}
-
-window.removeComment = (commentID) => {
-	let tsks = JSON.parse(localStorage.getItem("Tasks"));
-	tsks.forEach((tsk) => {
-		if (tsk.task_id === task.task_id) {
-			console.log(tsk.comments);
-			tsk.comments = tsk.comments.filter(
-				(comment) => comment.comment_id !== commentID
-			);
-		}
-	});
-	localStorage.setItem("Tasks", JSON.stringify(tsks));
-};
-
-function fetchData() {
-	document.querySelector(".taskCreateDate").innerHTML = formatDate(
-		task.created_at
-	);
-	document.querySelector(".taskUpdateDate").innerHTML = formatDate(
-		task.updated_at
-	);
-	document.querySelector(".taskTitle h1").innerHTML = task.task_title;
-	document.querySelector(".taskStartDate").innerHTML = formatDate(
-		task.start_date
-	);
-	document.querySelector(".taskDueDate").innerHTML = formatDate(
-		task.due_date
-	);
-	document.querySelector(".taskStatus").innerHTML = task.status;
-	document.querySelector(".taskPriority").innerHTML = task.priority;
-	document.querySelector(".content").children[0].innerHTML =
-		task.task_description;
-
-	let commentsList = task.comments;
-	console.log(commentsList);
-	for (let j = 0; j < commentsList.length; j++) {
-		document.querySelector(".comments-list").insertAdjacentHTML(
-			"beforeend",
-			`<li id="${commentsList[j].comment_id}">
-          <div class="comment-header">
-            <span class="comment-author">${commentsList[j].user_name}: </span>
-            <span class="comment-text">${commentsList[j].comment}</span>
-          </div>
-          ${
-				currentUser.username === commentsList[j].user_name
-					? `<button onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();removeComment(${commentsList[j].comment_id});" class="remove-comment">Remove Comment</button>`
-					: ""
-			}
-      </li>
-      <pre class="comment-date">${commentsList[j].created_at}</pre>`
-		);
-	}
-}
-
-window.addEventListener("load", fetchData);
-document
-	.querySelector(".submit-comment-btn")
-	.addEventListener("click", function () {
-		let commentText = document.querySelector(".comment-textarea").value;
-		if (commentText !== "") {
-			let commentID = new Date().getTime();
-			document.querySelector(".comments-list").insertAdjacentHTML(
-				"beforeend",
-				`<li id="${commentID}">
-					<div class="comment-header">
-						<span class="comment-author">${currentUser.username}: </span>
-						<span class="comment-text">${commentText}</span>
-					</div>
-					<button onclick="this.parentElement.nextElementSibling.remove();this.parentElement.remove();removeComment(${commentID});" class="remove-comment">Remove Comment</button>
-				</li>
-				<pre class="comment-date">${currentDate} - ${currentHour}:${currentMinutes} ${
-					new Date().getHours() >= 12 ? "PM" : "AM"
-				}</pre>`
-			);
-			let tsks = JSON.parse(localStorage.getItem("Tasks"));
-			tsks.forEach((tsk) => {
-				if (tsk.task_id === task.task_id) {
-					tsk.comments.push({
-						comment_id: commentID,
-						user_name: `user-${commentID % 100}`,
-						comment: commentText,
-						created_at: `${currentDate} - ${currentHour}:${currentMinutes} ${
-							new Date().getHours() >= 12 ? "PM" : "AM"
-						}`,
-					});
-				}
-			});
-			localStorage.setItem("Tasks", JSON.stringify(tsks));
-			commentText = "";
-		}
-	});
-
 let taskDate = document.querySelector(".taskDueDate");
 let taskStatus = document.querySelector(".taskStatus");
 let taskPriority = document.querySelector(".taskPriority");
-let date = new Date(task.due_date).getTime();
+let date = new Date(currentTask.due_date).getTime();
 
 if (calculateNumberOfDaysFrom(date) < 7) {
 	taskDate.setAttribute("style", "color: green;");
@@ -272,31 +289,108 @@ if (calculateNumberOfDaysFrom(date) < 2) {
 	taskDate.setAttribute("style", "color: red;");
 }
 
-if (task.priority === "High") {
+if (currentTask.priority === "High") {
 	taskPriority.setAttribute("style", "color: red; font-weight: bold;");
 }
-if (task.priority === "Medium") {
+if (currentTask.priority === "Medium") {
 	taskPriority.setAttribute("style", "color: orange; font-weight: bold;");
 }
-if (task.priority === "Low") {
+if (currentTask.priority === "Low") {
 	taskPriority.setAttribute("style", "color: green; font-weight: bold;");
 }
 
-if (task.status === "In Progress") {
+if (currentTask.status === "In Progress") {
 	taskStatus.setAttribute("style", "color: orange;");
 }
-if (task.status === "Completed") {
+if (currentTask.status === "Completed") {
 	taskStatus.setAttribute("style", "color: green; font-weight: bold;");
 }
 
-document.querySelector(".complete-btn").addEventListener("click", () => {
-	taskStatus.innerHTML = "Completed";
-	taskStatus.setAttribute("style", "color: green; font-weight: bold;");
-	let tsks = JSON.parse(localStorage.getItem("Tasks"));
-	tsks.forEach((tsk) => {
-		if (tsk.task_id === task.task_id) {
-			tsk.status = "Completed";
+function initializeTaskStatus() {
+	const completeBtn = document.querySelector(".complete-btn");
+	if (completeBtn) {
+		completeBtn.addEventListener("click", async () => {
+			try {
+				showMessage('Updating task status...', 'info');
+				
+				// Use dedicated status update endpoint
+				await ApiService.updateTaskStatus(currentTask.task_id, "completed");
+				
+				// Refresh task data
+				await loadTaskData();
+				
+				showMessage('Task marked as completed', 'success');
+			} catch (error) {
+				console.error('Error updating task status:', error);
+				showMessage('Failed to update task status', 'error');
+			}
+		});
+	}
+}
+
+function initializeComments() {
+	displayComments();
+	setupCommentSubmission();
+}
+
+function displayComments() {
+	const commentsList = document.querySelector(".comments-list");
+	commentsList.innerHTML = ''; // Clear existing comments
+
+	if (!currentTask.comments || currentTask.comments.length === 0) {
+		commentsList.innerHTML = '<p>No comments yet</p>';
+		return;
+	}
+
+	currentTask.comments.forEach(comment => {
+		const removeButton = currentUser.username === comment.user_name 
+			? `<button onclick="removeComment('${comment.comment_id}')" class="remove-comment">Remove Comment</button>`
+			: '';
+
+		commentsList.insertAdjacentHTML(
+			"beforeend",
+			`<li id="${comment.comment_id}">
+				<div class="comment-header">
+					<span class="comment-author">${comment.user_name}: </span>
+					<span class="comment-text">${comment.comment}</span>
+				</div>
+				${removeButton}
+			</li>
+			<pre class="comment-date">${formatDate(comment.created_at)}</pre>`
+		);
+	});
+}
+
+async function setupCommentSubmission() {
+	const submitBtn = document.querySelector(".submit-comment-btn");
+	const textarea = document.querySelector(".comment-textarea");
+
+	submitBtn.addEventListener("click", async () => {
+		const commentText = textarea.value.trim();
+		if (!commentText) return;
+
+		try {
+			showMessage('Adding comment...', 'info');
+
+			const commentData = {
+				user_name: currentUser.username,
+				comment: commentText,
+				created_at: new Date().toISOString()
+			};
+
+			// Use dedicated comment addition endpoint
+			await ApiService.addComment(currentTask.task_id, commentData);
+			
+			// Refresh task data
+			await loadTaskData();
+			
+			// Clear textarea
+			textarea.value = '';
+			
+			showMessage('Comment added successfully', 'success');
+		} catch (error) {
+			console.error('Error adding comment:', error);
+			showMessage('Failed to add comment', 'error');
 		}
 	});
-	localStorage.setItem("Tasks", JSON.stringify(tsks));
-});
+}

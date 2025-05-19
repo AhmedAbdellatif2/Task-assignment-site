@@ -1,215 +1,240 @@
-import { tasks, users } from "./tasks_data.js";
+import apiService from './ApiService.js';
 
-if (localStorage.getItem("Tasks") === null) {
-  localStorage.setItem("Tasks", JSON.stringify(tasks));
+class SignupManager {
+    constructor() {
+        this.form = document.getElementById('signup-form');
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        this.form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await this.handleSignup(e);
+        });
+
+        // Add input validation listeners
+        const inputs = this.form.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('blur', () => this.validateField(input));
+        });
+    }
+
+    async handleSignup(event) {
+        const formData = new FormData(event.target);
+        
+        const userData = {
+            username: formData.get('username'),
+            password: formData.get('password'),
+            confirmPassword: formData.get('confirm_password'),
+            email: formData.get('email'),
+            name: formData.get('name'),
+            role: formData.get('role')
+        };
+
+        try {
+            await this.validateSignupData(userData);
+            
+            // Remove confirm password before sending to API
+            delete userData.confirmPassword;
+            
+            await apiService.request('/auth/signup', {
+                method: 'POST',
+                body: JSON.stringify(userData),
+                skipAuth: true
+            });
+
+            this.showSuccess('Account created successfully! Redirecting to login...');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        } catch (error) {
+            console.error('Signup error:', error);
+            this.showError(error.message || 'Failed to create account');
+        }
+    }
+
+    validateField(input) {
+        const value = input.value.trim();
+        const fieldName = input.name;
+
+        switch (fieldName) {
+            case 'username':
+                if (!value) {
+                    this.showFieldError(input, 'Username is required');
+                } else if (value.length < 3) {
+                    this.showFieldError(input, 'Username must be at least 3 characters');
+                } else {
+                    this.clearFieldError(input);
+                }
+                break;
+
+            case 'password':
+                if (!value) {
+                    this.showFieldError(input, 'Password is required');
+                } else if (value.length < 6) {
+                    this.showFieldError(input, 'Password must be at least 6 characters');
+                } else {
+                    this.clearFieldError(input);
+                }
+                break;
+
+            case 'confirm_password':
+                const password = this.form.querySelector('input[name="password"]').value;
+                if (!value) {
+                    this.showFieldError(input, 'Please confirm your password');
+                } else if (value !== password) {
+                    this.showFieldError(input, 'Passwords do not match');
+                } else {
+                    this.clearFieldError(input);
+                }
+                break;
+
+            case 'email':
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!value) {
+                    this.showFieldError(input, 'Email is required');
+                } else if (!emailRegex.test(value)) {
+                    this.showFieldError(input, 'Please enter a valid email');
+                } else {
+                    this.clearFieldError(input);
+                }
+                break;
+
+            case 'name':
+                if (!value) {
+                    this.showFieldError(input, 'Name is required');
+                } else {
+                    this.clearFieldError(input);
+                }
+                break;
+        }
+    }
+
+    async validateSignupData(data) {
+        const errors = [];
+
+        if (!data.username?.trim()) {
+            errors.push('Username is required');
+        } else if (data.username.length < 3) {
+            errors.push('Username must be at least 3 characters');
+        }
+
+        if (!data.password?.trim()) {
+            errors.push('Password is required');
+        } else if (data.password.length < 6) {
+            errors.push('Password must be at least 6 characters');
+        }
+
+        if (data.password !== data.confirmPassword) {
+            errors.push('Passwords do not match');
+        }
+
+        if (!data.email?.trim()) {
+            errors.push('Email is required');
+        } else {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(data.email)) {
+                errors.push('Please enter a valid email');
+            }
+        }
+
+        if (!data.name?.trim()) {
+            errors.push('Name is required');
+        }
+
+        if (!data.role) {
+            errors.push('Role is required');
+        }
+
+        if (errors.length > 0) {
+            throw new Error(errors.join('\n'));
+        }
+
+        // Check if username already exists
+        try {
+            const response = await apiService.request(`/auth/check-username?username=${data.username}`, {
+                method: 'GET',
+                skipAuth: true
+            });
+            if (response.exists) {
+                throw new Error('Username already exists');
+            }
+        } catch (error) {
+            if (error.message !== 'Username already exists') {
+                console.error('Error checking username:', error);
+            }
+            throw error;
+        }
+    }
+
+    showFieldError(field, message) {
+        this.clearFieldError(field);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error';
+        errorDiv.textContent = message;
+        errorDiv.style.color = '#f44336';
+        errorDiv.style.fontSize = '0.8rem';
+        errorDiv.style.marginTop = '4px';
+        field.parentNode.appendChild(errorDiv);
+        field.style.borderColor = '#f44336';
+    }
+
+    clearFieldError(field) {
+        const existingError = field.parentNode.querySelector('.field-error');
+        if (existingError) {
+            existingError.remove();
+            field.style.borderColor = '';
+        }
+    }
+
+    showError(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = message;
+        errorDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        `;
+        document.body.appendChild(errorDiv);
+        setTimeout(() => {
+            errorDiv.style.opacity = '0';
+            errorDiv.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => errorDiv.remove(), 300);
+        }, 3000);
+    }
+
+    showSuccess(message) {
+        const successDiv = document.createElement('div');
+        successDiv.className = 'success-message';
+        successDiv.textContent = message;
+        successDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        `;
+        document.body.appendChild(successDiv);
+        setTimeout(() => {
+            successDiv.style.opacity = '0';
+            successDiv.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => successDiv.remove(), 300);
+        }, 2000);
+    }
 }
-if (localStorage.getItem("users") === null) {
-  localStorage.setItem("users", JSON.stringify(users));
-}
 
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector("form");
-  const inputs = form.querySelectorAll("input, select");
-
-  const PASSWORD_REGEX =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{}|\\:;"'<>,.?/~`-])[A-Za-z\d!@#$%^&*()_+[\]{}|\\:;"'<>,.?/~`-]{8,}$/;
-
-  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!localStorage.getItem("users")) {
-    localStorage.setItem("users", JSON.stringify([]));
-  }
-
-  inputs.forEach((input) => {
-    input.addEventListener("blur", () => {
-      validateField(input);
-    });
-  });
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    clearAllErrors();
-
-    const formData = {
-      name: getValue("name"),
-      username: getValue("username"),
-      email: getValue("email"),
-      password: getValue("password"),
-      confirmPassword: getValue("confirm-password"),
-      role: getValue("role"),
-    };
-
-    const validationResults = validateForm(formData);
-
-    if (validationResults.isValid) {
-      saveUser({
-        name: formData.name,
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
-      });
-      alert("Signup successful!");
-      window.location.href = "login.html";
-    } else {
-      validationResults.errors.forEach(({ field, message }) => {
-        showError(field, message);
-      });
-    }
-  });
-
-  function getValue(id) {
-    return document.getElementById(id).value.trim();
-  }
-
-  function validateField(input) {
-    const fieldId = input.id;
-    const value = input.value.trim();
-    clearError(fieldId);
-
-    const formData = {
-      name: getValue("name"),
-      username: getValue("username"),
-      email: getValue("email"),
-      password: getValue("password"),
-      confirmPassword: getValue("confirm-password"),
-      role: getValue("role"),
-    };
-
-    let error = null;
-
-    if (fieldId === "name" && !value) {
-      error = { field: "name", message: "Full name is required" };
-    } else if (fieldId === "username") {
-      if (!value) {
-        error = { field: "username", message: "Username is required" };
-      } else if (usernameExists(value)) {
-        error = { field: "username", message: "Username already taken" };
-      }
-    } else if (fieldId === "email") {
-      if (!value) {
-        error = { field: "email", message: "Email is required" };
-      } else if (!EMAIL_REGEX.test(value)) {
-        error = { field: "email", message: "Invalid email format" };
-      }
-    } else if (fieldId === "password") {
-      if (!value) {
-        error = { field: "password", message: "Password is required" };
-      } else if (!PASSWORD_REGEX.test(value)) {
-        error = {
-          field: "password",
-          message:
-            "Password must be 8+ chars with uppercase, lowercase, number & special char",
-        };
-      }
-    } else if (fieldId === "confirm-password") {
-      if (!value) {
-        error = {
-          field: "confirm-password",
-          message: "Please confirm your password",
-        };
-      } else if (value !== formData.password) {
-        error = {
-          field: "confirm-password",
-          message: "Passwords do not match",
-        };
-      }
-    } else if (fieldId === "role" && !value) {
-      error = { field: "role", message: "Please select a role" };
-    }
-
-    if (error) {
-      console.log("Error for field:", fieldId, "Message:", error.message);
-      showError(error.field, error.message);
-    } else {
-      console.log("No error for field:", fieldId);
-      clearError(fieldId);
-    }
-  }
-
-  function validateForm(data) {
-    const errors = [];
-
-    if (!data.name) {
-      errors.push({ field: "name", message: "Full name is required" });
-    }
-
-    if (!data.username) {
-      errors.push({ field: "username", message: "Username is required" });
-    } else if (usernameExists(data.username)) {
-      errors.push({ field: "username", message: "Username already taken" });
-    }
-
-    if (!data.email) {
-      errors.push({ field: "email", message: "Email is required" });
-    } else if (!EMAIL_REGEX.test(data.email)) {
-      errors.push({ field: "email", message: "Invalid email format" });
-    }
-
-    if (!data.password) {
-      errors.push({ field: "password", message: "Password is required" });
-    } else if (!PASSWORD_REGEX.test(data.password)) {
-      errors.push({
-        field: "password",
-        message:
-          "Password must be 8+ chars with uppercase, lowercase, number & special char",
-      });
-    }
-
-    if (!data.confirmPassword) {
-      errors.push({
-        field: "confirm-password",
-        message: "Please confirm your password",
-      });
-    } else if (data.password !== data.confirmPassword) {
-      errors.push({
-        field: "confirm-password",
-        message: "Passwords do not match",
-      });
-    }
-
-    if (!data.role) {
-      errors.push({ field: "role", message: "Please select a role" });
-    }
-
-    return {
-      isValid: errors.length === 0,
-      errors,
-    };
-  }
-
-  function usernameExists(username) {
-    const users = JSON.parse(localStorage.getItem("users"));
-    return users.some(
-      (user) => user.username.toLowerCase() === username.toLowerCase()
-    );
-  }
-
-  function saveUser(user) {
-    const users = JSON.parse(localStorage.getItem("users"));
-    users.push(user);
-    localStorage.setItem("users", JSON.stringify(users));
-  }
-
-  function showError(fieldId, message) {
-    const inputGroup = document.getElementById(fieldId).parentElement;
-    const errorElement = document.createElement("small");
-    errorElement.className = "error-message";
-    errorElement.textContent = message;
-    errorElement.style.color = "#ff4444";
-    errorElement.style.marginTop = "8px";
-    inputGroup.appendChild(errorElement);
-  }
-
-  function clearError(fieldId) {
-    const inputGroup = document.getElementById(fieldId).parentElement;
-    const errorElement = inputGroup.querySelector(".error-message");
-    if (errorElement) {
-      errorElement.remove();
-    }
-  }
-
-  function clearAllErrors() {
-    document.querySelectorAll(".error-message").forEach((el) => el.remove());
-  }
+// Initialize when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new SignupManager();
 });

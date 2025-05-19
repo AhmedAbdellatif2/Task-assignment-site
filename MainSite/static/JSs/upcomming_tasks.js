@@ -1,64 +1,55 @@
-import { tasks, users } from "./tasks_data.js";
+import apiService from './ApiService.js';
 
-if (localStorage.getItem("Tasks") === null) {
-  localStorage.setItem("Tasks", JSON.stringify(tasks));
-}
-if (localStorage.getItem("users") === null) {
-  localStorage.setItem("users", JSON.stringify(users));
-}
+class UpcomingTasksManager {
+    constructor() {
+        this.tasksList = document.getElementById('upcoming-tasks-list');
+        this.loadUpcomingTasks();
+    }
 
-function parseDateStrings(task) {
-  task.start_date = new Date(task.start_date);
-  task.due_date = new Date(task.due_date);
-  task.created_at = new Date(task.created_at);
-  task.updated_at = new Date(task.updated_at);
+    async loadUpcomingTasks() {
+        try {
+            const tasks = await apiService.getUpcomingTasks();
+            this.displayTasks(tasks);
+        } catch (error) {
+            console.error('Error loading upcoming tasks:', error);
+            this.showError('Failed to load upcoming tasks');
+        }
+    }
 
-  task.comments.forEach((comment) => {
-    comment.created_at = new Date(comment.created_at);
-  });
+    displayTasks(tasks) {
+        this.tasksList.innerHTML = '';
 
-  return task;
-}
+        if (tasks.length === 0) {
+            this.tasksList.innerHTML = '<p class="no-tasks">No upcoming tasks</p>';
+            return;
+        }
 
-function loadTasks() {
-  const tasks = localStorage.getItem("Tasks");
-  return tasks ? JSON.parse(tasks).map(parseDateStrings) : [];
-}
+        tasks.forEach(task => {
+            const taskElement = document.createElement('div');
+            taskElement.className = 'task-item';
+            
+            const dueDate = new Date(task.dueDate);
+            const daysUntilDue = Math.ceil((dueDate - new Date()) / (1000 * 60 * 60 * 24));
+            
+            taskElement.innerHTML = `
+                <h3><a href="./teacher_task.html?task_id=${task.id}">${task.title}</a></h3>
+                <p>${task.description}</p>
+                <div class="task-meta">
+                    <span class="status ${task.status}">${task.status}</span>
+                    <span class="due-date">Due in ${daysUntilDue} days</span>
+                </div>
+            `;
+            this.tasksList.appendChild(taskElement);
+        });
+    }
 
-function displayUpcomingTasks() {
-  const tasks = loadTasks();
-  const taskList = document.getElementById("task-list");
-  taskList.innerHTML = "";
-
-  const today = new Date();
-
-  const upcoming = tasks
-    .filter((task) => {
-      const dueDate = new Date(task.due_date);
-      return (
-        (task.status === "pending" || task.status === "in_progress") &&
-        dueDate >= today
-      );
-    })
-    .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
-
-  upcoming.forEach((task) => {
-    const li = document.createElement("li");
-    li.classList.add("task-item");
-    li.innerHTML = `
-    <a href="./teacher_task.html?task_id=${task.task_id}" class="task-link">
-      <strong>${task.task_title}</strong> - Due: ${new Date(
-      task.due_date
-    ).toLocaleDateString()}
-      <br> Priority: ${task.priority} 
-      <br> Assigned to: ${task.assigned_to}
-      <br> Status: ${task.status}
-    </a>
-    `;
-    taskList.appendChild(li);
-  });
+    showError(message) {
+        // Implement error notification
+        alert(message);
+    }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  displayUpcomingTasks();
+// Initialize when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new UpcomingTasksManager();
 });

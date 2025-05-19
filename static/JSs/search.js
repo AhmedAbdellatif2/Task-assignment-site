@@ -1,4 +1,6 @@
-window.addEventListener("DOMContentLoaded", () => {
+import ApiService from "./ApiService.js";
+
+window.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(window.location.search);
   const query = params.get("query")?.toLowerCase() || "";
   const resultsContainer = document.querySelector(".search-results");
@@ -9,35 +11,49 @@ window.addEventListener("DOMContentLoaded", () => {
 
   input.value = query;
 
-  let currentUser = null;
   try {
-    const userStr = sessionStorage.getItem("currentUser");
-    currentUser = userStr ? JSON.parse(userStr) : null;
-  } catch (e) {
-    console.error("Failed to parse currentUser from sessionStorage:", e);
-  }
+    const currentUser = await ApiService.getCurrentUser();
+    if (!currentUser) {
+      window.location.href = "login.html";
+      return;
+    }
 
-  if (!currentUser) {
-    resultsContainer.innerHTML = "<p>Error: No current user found.</p>";
-    return;
-  }
+    const tasks = await ApiService.searchTasks({ query });
+    const userTasks = currentUser.role === "admin" 
+      ? tasks 
+      : tasks.filter(task => task.assigned_to === currentUser.username);
 
-  let tasks = [];
-  try {
-    const stored = localStorage.getItem("Tasks");
-    tasks = stored ? JSON.parse(stored) : [];
-  } catch (e) {
-    console.error("Failed to parse tasks from localStorage:", e);
-  }
+    if (userTasks.length === 0) {
+      resultsContainer.innerHTML = "<p>No results found</p>";
+      return;
+    }
 
-  // Filter tasks assigned to current user or for admin
-  const userTasks = tasks.filter(
-    (task) =>
-      (task.assigned_to === currentUser.username &&
-        (task.task_title.toLowerCase().includes(query) ||
-          task.task_description.toLowerCase().includes(query))) ||
-      currentUser.role === "admin"
-  );
+    const ul = document.createElement("ul");
+    ul.classList.add("task-list");
+
+    userTasks.forEach((task) => {
+      const li = document.createElement("li");
+      li.className = `task-item ${task.status === "completed" ? "completed" : ""}`;
+      li.innerHTML = `
+        <div class="task-content">
+          <a href="./teacher_task.html?task_id=${task.task_id}" class="task-link">
+            <span class="task-text">${task.task_title}</span>
+          </a>
+          ${task.status !== "completed" ? 
+            `<button onclick="markAsComplete('${task.task_id}')" class="complete-btn">✓</button>` 
+            : ''
+          }
+        </div>
+      `;
+      ul.appendChild(li);
+    });
+
+    resultsContainer.innerHTML = '';
+    resultsContainer.appendChild(ul);
+  } catch (error) {
+    console.error('Error:', error);
+    resultsContainer.innerHTML = "<p>Error loading search results</p>";
+  }
 
   // Filter state
   let currentStatus = "all";
@@ -119,3 +135,12 @@ window.addEventListener("DOMContentLoaded", () => {
     renderTasks();
   });
 });
+
+window.markAsComplete = async function(taskId) {
+  try {
+    await ApiService.updateTaskStatus(taskId, "completed");
+    location.reload();
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}

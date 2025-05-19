@@ -1,121 +1,75 @@
-window.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search);
-  const query = params.get("query")?.toLowerCase() || "";
-  const resultsContainer = document.querySelector(".search-results");
-  const form = document.querySelector(".search-form");
-  const input = form.querySelector('input[name="query"]');
-  const filterButtons = document.querySelectorAll(".filter-btn");
-  const priorityDropdown = document.getElementById("priority-filter");
+import apiService from './ApiService.js';
 
-  input.value = query;
-
-  let currentUser = null;
-  try {
-    const userStr = sessionStorage.getItem("currentUser");
-    currentUser = userStr ? JSON.parse(userStr) : null;
-  } catch (e) {
-    console.error("Failed to parse currentUser from sessionStorage:", e);
-  }
-
-  if (!currentUser) {
-    resultsContainer.innerHTML = "<p>Error: No current user found.</p>";
-    return;
-  }
-
-  let tasks = [];
-  try {
-    const stored = localStorage.getItem("Tasks");
-    tasks = stored ? JSON.parse(stored) : [];
-  } catch (e) {
-    console.error("Failed to parse tasks from localStorage:", e);
-  }
-
-  // Filter tasks assigned to current user or for admin
-  const userTasks = tasks.filter(
-    (task) =>
-      (task.assigned_to === currentUser.username &&
-        (task.task_title.toLowerCase().includes(query) ||
-          task.task_description.toLowerCase().includes(query))) ||
-      currentUser.role === "admin"
-  );
-
-  // Filter state
-  let currentStatus = "all";
-  let currentPriority = "all";
-
-  function renderTasks() {
-    resultsContainer.innerHTML = "";
-
-    let filteredTasks = userTasks;
-
-    // Filter by status
-    if (currentStatus !== "all") {
-      if (currentStatus === "active") {
-        filteredTasks = filteredTasks.filter(
-          (task) => task.status === "in_progress" || task.status === "pending"
-        );
-      } else {
-        filteredTasks = filteredTasks.filter(
-          (task) => task.status === currentStatus
-        );
-      }
+class TaskSearchManager {
+    constructor() {
+        this.searchInput = document.getElementById('search-input');
+        this.searchResults = document.getElementById('search-results');
+        this.setupEventListeners();
     }
 
-    // Filter by priority
-    if (currentPriority !== "all") {
-      filteredTasks = filteredTasks.filter(
-        (task) => task.priority === currentPriority
-      );
+    setupEventListeners() {
+        this.searchInput.addEventListener('input', this.debounce(() => {
+            this.performSearch(this.searchInput.value);
+        }, 300));
     }
 
-    if (filteredTasks.length === 0) {
-      resultsContainer.innerHTML = `<p>No results found. Try a different filter or search term.</p>`;
-      return;
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
     }
 
-    const ul = document.createElement("ul");
-    ul.classList.add("task-list");
+    async performSearch(query) {
+        if (!query.trim()) {
+            this.searchResults.innerHTML = '';
+            return;
+        }
 
-    filteredTasks.forEach((task) => {
-      const li = document.createElement("li");
-      li.className = `task-item ${
-        task.status === "completed" ? "completed" : ""
-      }`;
+        try {
+            const tasks = await apiService.searchTasks(query);
+            this.displaySearchResults(tasks);
+        } catch (error) {
+            console.error('Error searching tasks:', error);
+            this.showError('Failed to search tasks');
+        }
+    }
 
-      li.innerHTML = `
-        <div class="task-content">
-          <a href="./teacher_task.html?task_id=${task.task_id}" class="task-link">
-            <span class="task-text">${task.task_title}</span>
-          </a>
-          <div class="task-actions">
-            <button class="complete-btn" data-id="${task.task_id}">✓</button>
-            <button class="delete-btn" data-id="${task.task_id}">✕</button>
-          </div>
-        </div>
-      `;
+    displaySearchResults(tasks) {
+        this.searchResults.innerHTML = '';
 
-      ul.appendChild(li);
-    });
+        if (tasks.length === 0) {
+            this.searchResults.innerHTML = '<p class="no-results">No tasks found</p>';
+            return;
+        }
 
-    resultsContainer.appendChild(ul);
-  }
+        tasks.forEach(task => {
+            const taskElement = document.createElement('div');
+            taskElement.className = 'task-result';
+            taskElement.innerHTML = `
+                <h3><a href="./teacher_task.html?task_id=${task.id}">${task.title}</a></h3>
+                <p>${task.description}</p>
+                <div class="task-meta">
+                    <span class="status ${task.status}">${task.status}</span>
+                    <span class="due-date">Due: ${task.dueDate}</span>
+                </div>
+            `;
+            this.searchResults.appendChild(taskElement);
+        });
+    }
 
-  // Initial render
-  renderTasks();
+    showError(message) {
+        // Implement error notification
+        alert(message);
+    }
+}
 
-  // Handle status filter button clicks
-  filterButtons.forEach((btn) =>
-    btn.addEventListener("click", () => {
-      document.querySelector(".filter-btn.active")?.classList.remove("active");
-      btn.classList.add("active");
-      currentStatus = btn.dataset.filter;
-      renderTasks();
-    })
-  );
-
-  // Handle priority dropdown change
-  priorityDropdown.addEventListener("change", () => {
-    currentPriority = priorityDropdown.value;
-    renderTasks();
-  });
+// Initialize when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new TaskSearchManager();
 });
