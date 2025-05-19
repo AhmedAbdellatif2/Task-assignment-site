@@ -3,6 +3,7 @@ import apiService from "./ApiService.js";
 class SignupManager {
   constructor() {
     this.form = document.getElementById("signup-form");
+    console.log("hello from signup.js");
     this.setupEventListeners();
   }
 
@@ -29,7 +30,6 @@ class SignupManager {
       email: formData.get("email"),
       name: formData.get("name"),
       role: formData.get("role"),
-      
     };
 
     try {
@@ -38,7 +38,7 @@ class SignupManager {
       // Remove confirm password before sending to API
       delete userData.confirmPassword;
 
-      await apiService.request("/auth/signup", {
+      await apiService.request("/auth/signup/", {
         method: "POST",
         content_type: "application/json",
         body: JSON.stringify(userData),
@@ -157,7 +157,7 @@ class SignupManager {
     // Check if username already exists
     try {
       const response = await apiService.request(
-        `/auth/check-username?username=${data.username}`,
+        `/auth/check-username/?username=${data.username}`,
         {
           method: "GET",
           skipAuth: true,

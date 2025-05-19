@@ -5,6 +5,7 @@ from django.contrib import messages
 from .models import Teacher, Admin
 from django.contrib.auth.hashers import make_password,check_password
 from django.http import JsonResponse, HttpResponseBadRequest
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 import json
@@ -33,9 +34,12 @@ def teacher_task(request):
 
 def teachers_task_list(request):
     return render(request, '_admin/teachers_task_list.html')
+
+@csrf_exempt
 def SignUp(request):
     if request.method == 'POST':
         if request.content_type != 'application/json':
+            print(request.content_type)
             return JsonResponse({"success": False, "error": "Content-Type must be application/json"}, status=400)
         try:
             data = json.loads(request.body)
@@ -80,7 +84,7 @@ def SignUp(request):
         else:
             return JsonResponse({"success": False, "error": "Invalid user type"}, status=400)
 
-    return  render(request, '_admin/signup.html')
+    return render(request, '_admin/signup.html')
 
 def Login(request):
     if request.method == 'POST':
@@ -141,3 +145,13 @@ def is_strong_password(password):
         return False
 
     return True
+
+@csrf_exempt
+def check_username(request):
+    if request.method == 'GET':
+        username = request.GET.get('username')
+        if not username:
+            return JsonResponse({'exists': False, 'error': 'No username provided'}, status=400)
+        exists = Teacher.objects.filter(username=username).exists() or Admin.objects.filter(username=username).exists()
+        return JsonResponse({'exists': exists})
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
