@@ -29,6 +29,7 @@ class SignupManager {
       email: formData.get("email"),
       name: formData.get("name"),
       role: formData.get("role"),
+      
     };
 
     try {

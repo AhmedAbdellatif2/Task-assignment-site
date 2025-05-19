@@ -80,7 +80,7 @@ def SignUp(request):
         else:
             return JsonResponse({"success": False, "error": "Invalid user type"}, status=400)
 
-    return JsonResponse({"success": False, "error": "Only POST method allowed"}, status=405)
+    return  render(request, '_admin/signup.html')
 
 def Login(request):
     if request.method == 'POST':

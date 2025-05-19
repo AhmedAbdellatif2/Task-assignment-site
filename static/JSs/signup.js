@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
             password: getValue("password"),
             confirmPassword: getValue("confirm-password"),
             role: getValue("role"),
+            
         };
 
         const validationResults = validateForm(formData);
