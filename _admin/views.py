@@ -3,7 +3,7 @@ from .models import Teacher, Admin, Task, Comment
 from django.contrib.auth import logout
 from django.contrib.auth.hashers import make_password,check_password
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_http_methods
 from django.http import JsonResponse
 import json
 
@@ -205,7 +205,7 @@ def tasks(request):
     filters = dict(request.GET.items()) if request.method == 'GET' else {}
     queryset = None
     if request.session.get("teacher_id"):
-        filters["assighned_to"] = request.session["teacher_id"]
+        filters["assigned_to"] = request.session["teacher_id"]
         queryset = Task.objects.filter(**filters)
     elif request.session.get("admin_id"):
         queryset = Task.objects.filter(**filters)
@@ -253,3 +253,90 @@ def get_task(request, task_id):
         "updated_at": task.updated_at,
     }
     return JsonResponse(task_data)
+
+@csrf_exempt
+@require_http_methods(["PUT"])
+def update_task(request, task_id):
+    teacher_id = request.session.get("teacher_id")
+    admin_id = request.session.get("admin_id")
+    try:
+        if teacher_id:
+            task = Task.objects.get(task_id=task_id, assigned_to=teacher_id)
+        elif admin_id:
+            task = Task.objects.get(task_id=task_id)
+        else:
+            return JsonResponse({"error": "Not authenticated"}, status=401)
+    except Task.DoesNotExist:
+        return JsonResponse({"error": "Task not found"}, status=404)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    for field in ["task_title", "task_description", "due_date", "start_date", "status", "perioty", "assigned_to"]:
+        if field in data:
+            setattr(task, field, data[field])
+    task.save()
+
+    return JsonResponse({"success": True, "message": "Task updated successfully"})
+
+@require_GET
+def get_task_comments(request, task_id):
+    teacher_id = request.session.get("teacher_id")
+    admin_id = request.session.get("admin_id")
+    try:
+        if teacher_id:
+            task = Task.objects.get(task_id=task_id, assigned_to=teacher_id)
+        elif admin_id:
+            task = Task.objects.get(task_id=task_id)
+        else:
+            return JsonResponse({"error": "Not authenticated"}, status=401)
+    except Task.DoesNotExist:
+        return JsonResponse({"error": "Task not found"}, status=404)
+
+    comments = Comment.objects.filter(task=task).order_by('created_at')
+    comments_data = [
+        {
+            "comment_id": c.comment_id,
+            "author": c.teacher.username if c.teacher else (c.admin.username if c.admin else "Unknown"),
+            "comment": c.comment,
+            "date": c.created_at,
+        }
+        for c in comments
+    ]
+    return JsonResponse(comments_data, safe=False)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def add_task_comment(request, task_id):
+    teacher_id = request.session.get("teacher_id")
+    admin_id = request.session.get("admin_id")
+    try:
+        if teacher_id:
+            task = Task.objects.get(task_id=task_id, assigned_to_id=teacher_id)
+        elif admin_id:
+            task = Task.objects.get(task_id=task_id)
+        else:
+            return JsonResponse({"error": "Not authenticated"}, status=401)
+    except Task.DoesNotExist:
+        return JsonResponse({"error": "Task not found"}, status=404)
+
+    try:
+        data = json.loads(request.body)
+        text = data.get("text", "").strip()
+        if not text:
+            return JsonResponse({"error": "Comment text required"}, status=400)
+    except Exception:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    teacher = None
+    admin = None
+    if teacher_id:
+        teacher = Teacher.objects.get(id=teacher_id)
+    elif admin_id:
+        admin = Admin.objects.get(id=admin_id)
+
+    comment = Comment(task=task, teacher=teacher, admin=admin, comment=text)
+    comment.save()
+    return JsonResponse({"success": True, "message": "Comment added successfully"})

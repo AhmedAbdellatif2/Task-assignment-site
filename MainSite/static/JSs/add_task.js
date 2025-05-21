@@ -237,14 +237,23 @@ class AddTaskManager {
     const successDiv = document.createElement("div");
     successDiv.className = "success-message";
     successDiv.textContent = message;
-    successDiv.style.color = "#4caf50";
-    successDiv.style.padding = "10px";
-    successDiv.style.marginTop = "10px";
-    successDiv.style.backgroundColor = "#e8f5e9";
-    successDiv.style.borderRadius = "4px";
-
-    this.form.insertBefore(successDiv, this.form.firstChild);
-    setTimeout(() => successDiv.remove(), 3000);
+    successDiv.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4caf50;
+      color: white;
+      padding: 15px;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      z-index: 1000;
+    `;
+    document.body.appendChild(successDiv);
+    setTimeout(() => {
+      successDiv.style.opacity = "0";
+      successDiv.style.transition = "opacity 0.3s ease";
+      setTimeout(() => successDiv.remove(), 300);
+    }, 1200);
   }
 }
 

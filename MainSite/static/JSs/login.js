@@ -60,7 +60,7 @@ class LoginManager {
 
       setTimeout(() => {
         if (user.role === "admin") {
-          window.location.href = "/AdminDashboard";
+          window.location.href = "/Admindashboard";
         } else {
           window.location.href = "/teachers_task_list";
         }

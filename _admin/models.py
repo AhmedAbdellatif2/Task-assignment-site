@@ -45,12 +45,18 @@ class Task(models.Model):
     def __str__(self):
         return self.task_title
 class Comment(models.Model):
-    comment_id = models.CharField(max_length=100, unique=True)
+    comment_id = models.AutoField(primary_key=True)
     task = models.ForeignKey(Task, related_name='comments', on_delete=models.CASCADE)
-    #user = models.ForeignKey(user, on_delete=models.SET_NULL, null=True, blank=True)
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True, blank=True)
+    admin = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True, blank=True)
     comment = models.TextField()
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        # Access username from the linked user
-        return f"Comment by {self.user.username} on {self.created_at}"        
+        if self.teacher:
+            author = self.teacher.username
+        elif self.admin:
+            author = self.admin.username
+        else:
+            author = "Unknown"
+        return f"Comment by {author} on {self.created_at}"

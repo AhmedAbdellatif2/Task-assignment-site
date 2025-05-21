@@ -157,14 +157,14 @@ class ApiService {
   }
 
   async createTask(taskData) {
-    return this.request("/tasks", {
+    return this.request("/tasks/", {
       method: "POST",
       body: JSON.stringify(taskData),
     });
   }
 
   async updateTask(taskId, taskData) {
-    return this.request(`/tasks/${taskId}`, {
+    return this.request(`/tasks/${taskId}/update/`, {
       method: "PUT",
       body: JSON.stringify(taskData),
     });
@@ -203,14 +203,14 @@ class ApiService {
   }
 
   async addTaskComment(taskId, commentData) {
-    return this.request(`/tasks/${taskId}/comments`, {
+    return this.request(`/tasks/${taskId}/comments/add/`, {
       method: "POST",
       body: JSON.stringify(commentData),
     });
   }
 
   async updateTaskComment(taskId, commentId, commentData) {
-    return this.request(`/tasks/${taskId}/comments/${commentId}`, {
+    return this.request(`/tasks/${taskId}/comments/${commentId}/`, {
       method: "PUT",
       body: JSON.stringify(commentData),
     });
@@ -258,7 +258,7 @@ class ApiService {
   }
 
   async changePassword(passwordData) {
-    return this.request("/users/me/password", {
+    return this.request("/users/me/password/", {
       method: "PUT",
       body: JSON.stringify(passwordData),
     });
@@ -279,14 +279,14 @@ class ApiService {
   }
 
   async updateUserPreferences(preferences) {
-    return await this.request("/user/preferences", {
+    return await this.request("/user/preferences/", {
       method: "PUT",
       body: JSON.stringify(preferences),
     });
   }
 
   async updateUsername(username) {
-    return await this.request("/user/username", {
+    return await this.request("/user/username/", {
       method: "PUT",
       body: JSON.stringify({ username }),
     });
