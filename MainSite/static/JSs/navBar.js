@@ -92,9 +92,9 @@ fetch("navbar.html")
       if (home_img_) {
         home_img_.onclick = function () {
           if (user.role === "admin") {
-            window.location.href = "AdminDashboard.html";
+            window.location.href = "/AdminDashboard";
           } else {
-            window.location.href = "teachers_task_list.html";
+            window.location.href = "/teachers_task_list";
           }
         };
       }

@@ -38,7 +38,7 @@ class Task(models.Model):
     start_date = models.DateTimeField()
     status = models.CharField(max_length=20, choices=[('pending', 'Pending'), ('completed', 'Completed')])
     perioty = models.CharField(max_length=20, choices=[('high', 'High'), ('medium', 'Medium'), ('low', 'Low')])
-    assighned_to = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='tasks')
+    assigned_to = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='tasks')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

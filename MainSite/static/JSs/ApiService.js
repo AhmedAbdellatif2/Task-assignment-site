@@ -10,7 +10,6 @@ class ApiError extends Error {
 class ApiService {
   constructor() {
     this.baseUrl = "http://127.0.0.1:8000";
-    this.token = localStorage.getItem("authToken");
     this.maxRetries = 3;
     this.retryDelay = 1000;
     this.requestQueue = [];
@@ -26,62 +25,6 @@ class ApiService {
     });
   }
 
-  setToken(token) {
-    this.token = token;
-    if (token) {
-      localStorage.setItem("authToken", token);
-      // Update token expiry
-      const tokenData = this.parseJwt(token);
-      if (tokenData.exp) {
-        this.setupTokenRefresh(tokenData.exp);
-      }
-    } else {
-      localStorage.removeItem("authToken");
-    }
-  }
-
-  parseJwt(token) {
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      return JSON.parse(window.atob(base64));
-    } catch (error) {
-      console.error("Error parsing JWT:", error);
-      return {};
-    }
-  }
-
-  setupTokenRefresh(expiryTimestamp) {
-    const refreshBuffer = 5 * 60 * 1000;
-    const timeUntilRefresh =
-      expiryTimestamp * 1000 - Date.now() - refreshBuffer;
-
-    if (timeUntilRefresh > 0) {
-      setTimeout(() => this.refreshToken(), timeUntilRefresh);
-    } else {
-      this.refreshToken();
-    }
-  }
-
-  async refreshToken() {
-    try {
-      const response = await this.request("/auth/refresh", {
-        method: "POST",
-        skipAuth: true,
-        headers: {
-          "Refresh-Token": localStorage.getItem("refreshToken"),
-        },
-      });
-      this.setToken(response.token);
-      if (response.refreshToken) {
-        localStorage.setItem("refreshToken", response.refreshToken);
-      }
-    } catch (error) {
-      console.error("Token refresh failed:", error);
-      this.handleAuthError();
-    }
-  }
-
   async handleResponse(response) {
     const contentType = response.headers.get("content-type");
     const isJson = contentType && contentType.includes("application/json");
@@ -95,7 +38,7 @@ class ApiService {
 
     if (!response.ok) {
       const error = new ApiError(
-        data.message || "API request failed",
+        data.message || data.error || "API request failed",
         response.status,
         data
       );
@@ -181,8 +124,6 @@ class ApiService {
 
     const headers = {
       "Content-Type": "application/json",
-      ...(this.token &&
-        !options.skipAuth && { Authorization: `Bearer ${this.token}` }),
       ...options.headers,
     };
 
@@ -194,21 +135,13 @@ class ApiService {
     try {
       return await this.retryRequest(endpoint, config);
     } catch (error) {
-      if (error.status === 401 && !options.skipAuth) {
-        await this.handleAuthError();
-      }
       throw error;
     }
   }
 
   async handleAuthError() {
-    try {
-      await this.refreshToken();
-    } catch (error) {
-      this.setToken(null);
-      localStorage.removeItem("refreshToken");
-      window.location.href = "/login";
-    }
+    // No-op: no token refresh, just reload to login
+    window.location.href = "/login";
   }
 
   // Task-related methods
@@ -294,21 +227,15 @@ class ApiService {
     const response = await this.request("/auth/login/", {
       method: "POST",
       body: JSON.stringify(credentials),
-      skipAuth: true,
     });
-    this.setToken(response.token);
-    if (response.refreshToken) {
-      localStorage.setItem("refreshToken", response.refreshToken);
-    }
     return response;
   }
 
   async logout() {
     try {
-      await this.request("/auth/logout", { method: "POST" });
+      await this.request("/auth/logout/", { method: "POST" });
     } finally {
-      this.setToken(null);
-      localStorage.removeItem("refreshToken");
+      window.location.href = "/login";
     }
   }
 

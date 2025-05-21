@@ -1,5 +1,5 @@
 import { applyTheme, initializeTheme } from "./theme.js";
-import apiService from './ApiService.js';
+import apiService from "./ApiService.js";
 
 const darkThemeBtn = document.getElementById("dark-theme");
 const lightThemeBtn = document.getElementById("light-theme");
@@ -84,7 +84,7 @@ async function updateImages() {
       }
     });
   } catch (error) {
-    console.error('Failed to update theme images:', error);
+    console.error("Failed to update theme images:", error);
   }
 }
 
@@ -114,7 +114,7 @@ async function loadUsername() {
       newUsernameInput.value = username;
       usernameDisplay.textContent = username;
     } catch (error) {
-      console.error('Failed to load username:', error);
+      console.error("Failed to load username:", error);
     }
   }
 }
@@ -129,7 +129,7 @@ async function loadNotificationPrefs() {
       scheduledTasksCheckbox.checked = preferences.scheduledTasks;
     }
   } catch (error) {
-    console.error('Failed to load notification preferences:', error);
+    console.error("Failed to load notification preferences:", error);
   }
 }
 
@@ -137,12 +137,12 @@ async function saveNotificationPrefs() {
   try {
     const preferences = {
       upcomingTasks: upcomingTasksCheckbox?.checked || false,
-      scheduledTasks: scheduledTasksCheckbox?.checked || false
+      scheduledTasks: scheduledTasksCheckbox?.checked || false,
     };
     await apiService.updateUserPreferences(preferences);
   } catch (error) {
-    console.error('Failed to save notification preferences:', error);
-    alert('Failed to save preferences. Please try again.');
+    console.error("Failed to save notification preferences:", error);
+    alert("Failed to save preferences. Please try again.");
   }
 }
 
@@ -167,7 +167,7 @@ async function initializePage() {
     await loadUsername();
     await loadNotificationPrefs();
   } catch (error) {
-    console.error('Failed to initialize page:', error);
+    console.error("Failed to initialize page:", error);
   }
 }
 
@@ -179,8 +179,8 @@ if (darkThemeBtn) {
       await applyTheme("dark");
       await updateThemeButtons("dark");
     } catch (error) {
-      console.error('Failed to update theme:', error);
-      alert('Failed to update theme. Please try again.');
+      console.error("Failed to update theme:", error);
+      alert("Failed to update theme. Please try again.");
     }
   });
 }
@@ -192,8 +192,8 @@ if (lightThemeBtn) {
       await applyTheme("light");
       await updateThemeButtons("light");
     } catch (error) {
-      console.error('Failed to update theme:', error);
-      alert('Failed to update theme. Please try again.');
+      console.error("Failed to update theme:", error);
+      alert("Failed to update theme. Please try again.");
     }
   });
 }
@@ -207,8 +207,8 @@ if (saveUsernameBtn) {
         usernameDisplay.textContent = newUsername;
         newUsernameInput.value = "";
       } catch (error) {
-        console.error('Failed to update username:', error);
-        alert('Failed to update username. Please try again.');
+        console.error("Failed to update username:", error);
+        alert("Failed to update username. Please try again.");
       }
     }
   });
@@ -226,27 +226,31 @@ if (logoutBtn) {
   logoutBtn.addEventListener("click", async () => {
     try {
       await apiService.logout();
-      window.location.href = "login.html";
+      window.location.href = "login";
     } catch (error) {
-      console.error('Failed to logout:', error);
-      alert('Failed to logout. Please try again.');
+      console.error("Failed to logout:", error);
+      alert("Failed to logout. Please try again.");
     }
   });
 }
 
 if (deleteAccountBtn) {
   deleteAccountBtn.addEventListener("click", async () => {
-    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+    if (
+      confirm(
+        "Are you sure you want to delete your account? This action cannot be undone."
+      )
+    ) {
       try {
         await apiService.deleteAccount();
-        window.location.href = "login.html";
+        window.location.href = "login";
       } catch (error) {
-        console.error('Failed to delete account:', error);
-        alert('Failed to delete account. Please try again.');
+        console.error("Failed to delete account:", error);
+        alert("Failed to delete account. Please try again.");
       }
     }
   });
 }
 
 // Initialize the page
-document.addEventListener('DOMContentLoaded', initializePage);
+document.addEventListener("DOMContentLoaded", initializePage);

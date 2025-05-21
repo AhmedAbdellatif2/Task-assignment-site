@@ -1,20 +1,18 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
-from .models import Teacher, Admin
+from .models import Teacher, Admin, Task, Comment
+from django.contrib.auth import logout
 from django.contrib.auth.hashers import make_password,check_password
-from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
+from django.http import JsonResponse
+import json
 
-# Create your views here.
-import json
-import json
+# Routs logic
 
 def Dashboard(request):
     return render(request, '_admin/AdminDashboard.html')
 
-def Tasks(request):
+def addtask(request):
     return render(request, '_admin/AdminTask.html')
 
 def EditPage(request):
@@ -29,11 +27,11 @@ def Settings(request):
 def Search(request):
     return render(request, '_admin/SearchPage.html')
 
-def teacher_task(request):
-    return render(request, '_admin/teacher_task.html')
-
 def teachers_task_list(request):
     return render(request, '_admin/teachers_task_list.html')
+
+
+# Authentication logic
 
 @csrf_exempt
 def SignUp(request):
@@ -85,49 +83,100 @@ def SignUp(request):
             return JsonResponse({"success": False, "error": "Invalid user type"}, status=400)
 
     return render(request, '_admin/signup.html')
-
 @csrf_exempt
 def Login(request):
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            print(data)
-        except (json.JSONDecodeError, UnicodeDecodeError):
-            return JsonResponse({"success": False, "error": "Invalid JSON"}, status=400)
-
+        data = json.loads(request.body)
+        role = data.get('role')
         username = data.get('username')
         password = data.get('password')
-        
 
-        if not username or not password:
-            return JsonResponse({"success": False, "error": "Username and password are required"}, status=400)
+        if not role:
+            teacher_exists = Teacher.objects.filter(username=username).exists()
+            admin_exists = Admin.objects.filter(username=username).exists()
+            if teacher_exists and not admin_exists:
+                role = 'teacher'
+            elif admin_exists and not teacher_exists:
+                role = 'admin'
+            elif teacher_exists and admin_exists:
+                return JsonResponse({"success": False, "error": "Username exists as both teacher and admin. Please specify role."}, status=400)
+            else:
+                return JsonResponse({"success": False, "error": "Invalid username"}, status=400)
 
-        # Try teacher first
-        teacher = Teacher.objects.filter(username=username).first()
-        if teacher and check_password(password, teacher.password):
-            request.session['teacher_id'] = teacher.id
-            request.session['username'] = teacher.username
-            return JsonResponse({"success": True, "role": "teacher"})
+        if role == 'teacher':
+            try:
+                teacher = Teacher.objects.get(username=username)
+                if check_password(password, teacher.password):
+                    request.session['teacher_id'] = teacher.id
+                    request.session['username'] = teacher.username
+                    return JsonResponse({"success": True, "role": "teacher"}, status=200)
+                else:
+                    return JsonResponse({"success": False, "error": "Invalid password for teacher"}, status=400)
+            except Teacher.DoesNotExist:
+                return JsonResponse({"success": False, "error": "Invalid username for teacher"}, status=400)
 
-        # Try admin
-        admin = Admin.objects.filter(username=username).first()
-        if admin and check_password(password, admin.password):
-            request.session['admin_id'] = admin.id
-            request.session['username'] = admin.username
-            return JsonResponse({"success": True, "role": "admin"})
+        elif role == 'admin':
+            try:
+                admin = Admin.objects.get(username=username)
+                if check_password(password, admin.password):
+                    request.session['admin_id'] = admin.id
+                    request.session['username'] = admin.username
+                    return JsonResponse({"success": True, "role": "admin"}, status=200)
+                else:
+                    return JsonResponse({"success": False, "error": "Invalid password for admin"}, status=400)
+            except Admin.DoesNotExist:
+                return JsonResponse({"success": False, "error": "Invalid username for admin"}, status=400)
 
-        # If neither found or password incorrect
-        return JsonResponse({"success": False, "error": "Invalid username or password"}, status=401)
+        else:
+            return JsonResponse({"success": False, "error": "Invalid role"}, status=400)
 
     return render(request, '_admin/login.html')
 
+@csrf_exempt
+def user_logout(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "not a post method"})
+    logout(request)
+    return JsonResponse({"success": True, "message": "Logged out successfully"})
+
+@require_GET
+def current_user(request):
+    user_info = None
+    if request.session.get('admin_id'):
+        try:
+            admin = Admin.objects.get(id=request.session['admin_id'])
+            user_info = {
+                "role": "admin",
+                "id": admin.id,
+                "name": admin.name,
+                "username": admin.username,
+                "email": admin.email,
+                "avatar_url": admin.avatar_url,
+            }
+        except Admin.DoesNotExist:
+            pass
+    elif request.session.get('teacher_id'):
+        try:
+            teacher = Teacher.objects.get(id=request.session['teacher_id'])
+            user_info = {
+                "role": "teacher",
+                "id": teacher.id,
+                "name": teacher.name,
+                "username": teacher.username,
+                "email": teacher.email,
+                "avatar_url": teacher.avatar_url,
+            }
+        except Teacher.DoesNotExist:
+            pass
+
+    if user_info:
+        return JsonResponse(user_info)
+    else:
+        return JsonResponse({"error": "Not authenticated"}, status=401)
+    
 def is_strong_password(password):
     # Check if password length is at least 8 characters
     if len(password) < 8:
-        return False
-
-    # Check if first character is capitalized
-    if not password[0].isupper():
         return False
 
     # Check if password contains at least one digit
@@ -149,3 +198,58 @@ def check_username(request):
         exists = Teacher.objects.filter(username=username).exists() or Admin.objects.filter(username=username).exists()
         return JsonResponse({'exists': exists})
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+# Tasks Logic
+
+def tasks(request):
+    filters = dict(request.GET.items()) if request.method == 'GET' else {}
+    queryset = None
+    if request.session.get("teacher_id"):
+        filters["assighned_to"] = request.session["teacher_id"]
+        queryset = Task.objects.filter(**filters)
+    elif request.session.get("admin_id"):
+        queryset = Task.objects.filter(**filters)
+    else:
+        return JsonResponse({"error": "Not authenticated"}, status=401)
+    print(queryset)
+    tasks_list = list(queryset.values())
+    return JsonResponse(tasks_list, safe=False)
+
+def teacher_task(request):
+    task_id = request.GET.get("task_id")
+    teacher_id = request.session.get("teacher_id")
+    if not task_id or not teacher_id:
+        return redirect("/teachers_task_list")
+    try:
+        task = Task.objects.get(task_id=task_id, assigned_to=teacher_id)
+    except Task.DoesNotExist:
+        return redirect("/teachers_task_list")
+    return render(request, '_admin/teacher_task.html', {"task": task})
+
+def get_task(request, task_id):
+    # Only allow access if user is authenticated
+    teacher_id = request.session.get("teacher_id")
+    admin_id = request.session.get("admin_id")
+    try:
+        if teacher_id:
+            task = Task.objects.get(task_id=task_id, assigned_to_id=teacher_id)
+        elif admin_id:
+            task = Task.objects.get(task_id=task_id)
+        else:
+            return JsonResponse({"error": "Not authenticated"}, status=401)
+    except Task.DoesNotExist:
+        return JsonResponse({"error": "Task not found"}, status=404)
+
+    task_data = {
+        "task_id": task.task_id,
+        "task_title": task.task_title,
+        "task_description": task.task_description,
+        "due_date": task.due_date,
+        "start_date": task.start_date,
+        "status": task.status,
+        "priority": task.perioty,
+        "assigned_to": task.assigned_to_id,
+        "created_at": task.created_at,
+        "updated_at": task.updated_at,
+    }
+    return JsonResponse(task_data)

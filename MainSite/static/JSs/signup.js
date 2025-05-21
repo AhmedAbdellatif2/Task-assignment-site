@@ -2,11 +2,24 @@ import apiService from "./ApiService.js";
 
 class SignupManager {
   constructor() {
-    this.form = document.getElementById("signup-form");
-    console.log("hello from signup.js");
-    this.setupEventListeners();
+    this.init();
   }
-
+  async init() {
+    this.form = document.getElementById("signup-form");
+    try {
+      const currentUser = await apiService.getCurrentUser();
+      if (currentUser?.role === "admin") {
+        window.location.href = "/AdminDashboard";
+        return;
+      } else if (currentUser?.role === "teacher") {
+        window.location.href = "/teachers_task_list";
+        return;
+      }
+      this.setupEventListeners();
+    } catch (error) {
+      this.setupEventListeners();
+    }
+  }
   setupEventListeners() {
     this.form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -47,7 +60,7 @@ class SignupManager {
 
       this.showSuccess("Account created successfully! Redirecting to login...");
       setTimeout(() => {
-        window.location.href = "login.html";
+        window.location.href = "login";
       }, 2000);
     } catch (error) {
       console.error("Signup error:", error);
