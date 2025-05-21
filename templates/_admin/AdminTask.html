@@ -1,0 +1,89 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>Admin Task Management</title>
+		<link
+			rel="stylesheet"
+			href="{% static 'CSSs/AdminTask.css' %}"
+		/>
+	</head>
+	<body>
+		<div id="navbar-container"></div>
+		<div class="background"></div>
+		<div class="container">
+			<h2>Admin Task Management</h2>
+			<form
+				action="#"
+				method="post"
+			>
+				<label for="task-id">Task ID</label>
+				<input
+					type="text"
+					id="task-id"
+					name="task-id"
+					placeholder="Enter task ID"
+					required
+				/>
+
+				<label for="task-title">Task Title</label>
+				<input
+					type="text"
+					id="task-title"
+					name="task-title"
+					placeholder="Enter task title"
+					required
+				/>
+
+				<label for="teacher-name">Teacher Name</label>
+				<input
+					type="text"
+					id="teacher-name"
+					name="teacher-name"
+					placeholder="Enter teacher name"
+					required
+				/>
+
+				<label for="priority">Priority</label>
+				<select
+					id="priority"
+					name="priority"
+				>
+					<option value="low">Low</option>
+					<option value="medium">Medium</option>
+					<option value="high">High</option>
+				</select>
+
+				<label for="description">Description</label>
+				<textarea
+					id="description"
+					name="description"
+					placeholder="Enter task description"
+					required
+				></textarea>
+
+				<button type="submit">Add Task</button>
+			</form>
+			<p class="login-link">
+				Already have tasks?
+				<a href="{% url 'dashboard' %}">View them here</a>
+			</p>
+		</div>
+
+		<script
+			src="{% static 'JSs/navBar.js' %}"
+			type="module"
+		></script>
+		<script
+			src="{% static 'JSs/add_task.js' %}"
+			type="module"
+		></script>
+	</body>
+</html>
+
+{% endblock content %}

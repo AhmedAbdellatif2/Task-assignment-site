@@ -1,0 +1,10 @@
+{% load static %}
+<link
+	rel="stylesheet"
+	href="{% static 'CSSs/navStyle.css' %}"
+/>
+<link
+	rel="stylesheet"
+	href="{% static 'CSSs/footer.css' %}"
+/>
+{% include 'navbar.html' %} {% block content %} {% endblock content %} {% include 'footer.html' %}

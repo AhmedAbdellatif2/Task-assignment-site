@@ -1,0 +1,73 @@
+{% extends "base.html" %} {% load static %} {%block content %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>Task Tracker</title>
+		<link
+			rel="stylesheet"
+			href="{% static 'CSSs/styles.css' %}"
+		/>
+	</head>
+	<body>
+		<div id="navbar-container"></div>
+
+		<main class="container">
+			<h1 class="title">Tasks List</h1>
+			<h3
+				id="tasks-percent"
+				class="tasks-percent"
+			></h3>
+			<div class="progress-bar-container">
+				<div
+					class="progress-bar"
+					id="progress-bar"
+				></div>
+			</div>
+
+			<div class="task-filters">
+				<button
+					class="filter-btn active"
+					data-filter="all"
+				>
+					All
+				</button>
+				<button
+					class="filter-btn"
+					data-filter="active"
+				>
+					Active
+				</button>
+				<button
+					class="filter-btn"
+					data-filter="completed"
+				>
+					Completed
+				</button>
+			</div>
+
+			<ul
+				class="task-list"
+				id="task-list"
+			></ul>
+		</main>
+
+		<footer>
+			<p>TaskTracker &copy; 2025</p>
+		</footer>
+
+		<script
+			src="{% static 'JSs/task_list.js' %}"
+			type="module"
+		></script>
+		<script
+			src="{% static 'JSs/navBar.js' %}"
+			type="module"
+		></script>
+	</body>
+</html>
+{%endblock content %}
