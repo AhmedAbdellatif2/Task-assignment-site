@@ -68,15 +68,14 @@ export function applyTheme(theme) {
     Object.keys(themeElements).forEach((key) => {
       const element = themeElements[key];
       const imagePath = themeImages[key];
-      console.log(key, element);
       if (element && imagePath) {
-        const newSrc = imagePath[isDark ? 1 : 0];
-        if (element.src !== newSrc) {
+        let newSrc = imagePath[isDark ? 1 : 0];
+        // Compare only the filename part to avoid issues with absolute/relative URLs
+        const currentSrc = element.src.split("/").slice(-2).join("/");
+        const newSrcFile = newSrc.split("/").slice(-2).join("/");
+        if (!currentSrc.endsWith(newSrcFile)) {
           element.src = newSrc;
-          console.log(`Updated ${key} image to: ${newSrc}`);
         }
-      } else {
-        console.warn(`Missing element or image path for: ${key}`);
       }
     });
   }
@@ -87,7 +86,9 @@ export function applyTheme(theme) {
   // Update body class
   if (theme === "light") {
     body.classList.add("light-theme");
+    body.classList.remove("dark-theme");
   } else {
+    body.classList.add("dark-theme");
     body.classList.remove("light-theme");
   }
 

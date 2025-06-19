@@ -133,7 +133,13 @@ class TeacherTaskManager {
   }
   async loadTask() {
     try {
-      const task = await apiService.getTaskById(this.taskId);
+      // Use the new data endpoint for teacher task
+      const url = `/teacher_task/data/?task_id=${encodeURIComponent(
+        this.taskId
+      )}`;
+      const response = await fetch(url, { credentials: "include" });
+      if (!response.ok) throw new Error("Failed to fetch task data");
+      const task = await response.json();
       this.task = task;
       this.displayTask(task);
       await this.loadComments();

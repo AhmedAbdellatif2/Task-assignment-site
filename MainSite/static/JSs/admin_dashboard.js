@@ -48,7 +48,8 @@ class AdminDashboard {
 
   async loadTeachers() {
     try {
-      const teachers = await apiService.getUsers({ role: "teacher" });
+      const users = await apiService.getUsers();
+      const teachers = users.teachers || [];
       this.updateTeacherStats(teachers);
     } catch (error) {
       console.error("Error loading teachers:", error);
@@ -66,46 +67,92 @@ class AdminDashboard {
     }
 
     tasks.forEach((task) => {
-      const taskElement = this.createTaskElement(task);
+      // Map backend fields to frontend fields
+      const mappedTask = {
+        id: task.id || task.task_id,
+        title: task.title || task.task_title,
+        description: task.description || task.task_description,
+        dueDate: task.dueDate || task.due_date,
+        startDate: task.startDate || task.start_date,
+        status: task.status,
+        priority: task.priority,
+        assignedTo: task.assignedTo || task.assigned_to,
+        createdAt: task.createdAt || task.created_at,
+        updatedAt: task.updatedAt || task.updated_at,
+      };
+      const taskElement = this.createTaskElement(mappedTask);
       this.taskList.appendChild(taskElement);
     });
   }
 
   createTaskElement(task) {
     const div = document.createElement("div");
-    div.className = "task-item";
+    div.className = "task-item card shadow";
 
     const dueDate = new Date(task.dueDate);
     const isOverdue = dueDate < new Date() && task.status !== "completed";
 
+    // Emoji for status
+    let statusIcon = "";
+    if (task.status === "completed") statusIcon = "✅";
+    else if (task.status === "pending") statusIcon = "⏳";
+    else statusIcon = "🔄";
+
+    // Emoji for priority
+    let priorityIcon = "";
+    if (task.priority === "high") priorityIcon = "🔴";
+    else if (task.priority === "medium") priorityIcon = "🟡";
+    else priorityIcon = "🟢";
+
     div.innerHTML = `
-            <div class="task-header">
-                <h3>${task.title}</h3>
-                <span class="task-status ${task.status}">${task.status}</span>
-            </div>
-            <p class="task-description">${task.description}</p>
-            <div class="task-meta">
-                <span class="due-date ${isOverdue ? "overdue" : ""}">
-                    Due: ${dueDate.toLocaleDateString()}
-                </span>
-                <span class="priority ${task.priority}">${task.priority}</span>
-            </div>
-            <div class="task-actions">
-                <button onclick="editTask('${
-                  task.id
-                }')" class="edit-btn">Edit</button>
-                <button onclick="deleteTask('${
-                  task.id
-                }')" class="delete-btn">Delete</button>
-            </div>
-        `;
+      <div class="task-header flex-between">
+        <div class="task-title-group">
+          <h3 class="task-title">${task.title}</h3>
+          <span class="badge status-badge status-${task.status}">
+            ${statusIcon}
+            ${task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+          </span>
+        </div>
+        <div class="task-actions">
+          <button onclick="editTask('${
+            task.id
+          }')" class="edit-btn btn btn-outline-primary" title="Edit Task">
+            ✏️ Edit
+          </button>
+          <button onclick="deleteTask('${
+            task.id
+          }')" class="delete-btn btn btn-outline-danger" title="Delete Task">
+            🗑️ Delete
+          </button>
+        </div>
+      </div>
+      <p class="task-description">${task.description}</p>
+      <div class="task-meta flex-between">
+        <span class="due-date ${isOverdue ? "overdue" : ""}">
+          📅 Due: <b>${dueDate.toLocaleDateString()}</b>
+        </span>
+        <span class="badge priority-badge priority-${task.priority}">
+          ${priorityIcon} ${
+      task.priority.charAt(0).toUpperCase() + task.priority.slice(1)
+    }
+        </span>
+      </div>
+    `;
+    // Add click handler to the card (ignore clicks on edit/delete buttons)
+    div.addEventListener("click", (e) => {
+      if (e.target.closest(".edit-btn") || e.target.closest(".delete-btn"))
+        return;
+      // Go to the edit page for this task (admin workflow)
+      window.location.href = `/editpage/?task_id=${task.id}`;
+    });
     return div;
   }
 
   async updateStatistics() {
     try {
       const tasks = await apiService.getAllTasks();
-      const teachers = await apiService.getUsers({ role: "teacher" });
+      const users = await apiService.getUsers();
+      const teachers = users.teachers || [];
 
       const stats = this.calculateTaskStats(tasks);
       this.displayTaskStats(stats);
@@ -123,7 +170,7 @@ class AdminDashboard {
       inProgress: tasks.filter((t) => t.status === "in_progress").length,
       pending: tasks.filter((t) => t.status === "pending").length,
       overdue: tasks.filter((t) => {
-        const dueDate = new Date(t.dueDate);
+        const dueDate = new Date(t.due_date);
         return dueDate < new Date() && t.status !== "completed";
       }).length,
     };
@@ -176,7 +223,8 @@ class AdminDashboard {
     const addTaskBtn = document.getElementById("add-task-btn");
     if (addTaskBtn) {
       addTaskBtn.addEventListener("click", () => {
-        window.location.href = "add_task.html";
+        // Use Django route, not static HTML
+        window.location.href = "/addtask/";
       });
     }
 

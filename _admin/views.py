@@ -6,6 +6,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_http_methods
 from django.http import JsonResponse
 import json
+from django.views.decorators.http import require_POST
+from django.template.loader import render_to_string
+from django.http import HttpResponse
 
 # Routs logic
 
@@ -212,19 +215,49 @@ def tasks(request):
     else:
         return JsonResponse({"error": "Not authenticated"}, status=401)
     print(queryset)
-    tasks_list = list(queryset.values())
+    tasks_list = [
+        {
+            "id": t.task_id,
+            "title": t.task_title,
+            "description": t.task_description,
+            "dueDate": t.due_date,
+            "startDate": t.start_date,
+            "status": t.status,
+            "priority": t.priority,
+            "assignedTo": t.assigned_to_id,
+            "createdAt": t.created_at,
+            "updatedAt": t.updated_at,
+        }
+        for t in queryset
+    ]
     return JsonResponse(tasks_list, safe=False)
 
-def teacher_task(request):
+def teacher_task_data(request):
     task_id = request.GET.get("task_id")
     teacher_id = request.session.get("teacher_id")
     if not task_id or not teacher_id:
-        return redirect("/teachers_task_list")
+        return JsonResponse({"error": "Missing task_id or not authenticated"}, status=400)
     try:
         task = Task.objects.get(task_id=task_id, assigned_to=teacher_id)
     except Task.DoesNotExist:
-        return redirect("/teachers_task_list")
-    return render(request, '_admin/teacher_task.html', {"task": task})
+        return JsonResponse({"error": "Task not found"}, status=404)
+    task_data = {
+        "id": task.task_id,
+        "title": task.task_title,
+        "description": task.task_description,
+        "dueDate": task.due_date,
+        "startDate": task.start_date,
+        "status": task.status,
+        "priority": task.priority,
+        "assignedTo": task.assigned_to_id,
+        "createdAt": task.created_at,
+        "updatedAt": task.updated_at,
+    }
+    return JsonResponse(task_data)
+
+def teacher_task(request):
+    # Only render the page, data is fetched via AJAX
+    return render(request, '_admin/teacher_task.html')
 
 def get_task(request, task_id):
     # Only allow access if user is authenticated
@@ -241,16 +274,16 @@ def get_task(request, task_id):
         return JsonResponse({"error": "Task not found"}, status=404)
 
     task_data = {
-        "task_id": task.task_id,
-        "task_title": task.task_title,
-        "task_description": task.task_description,
-        "due_date": task.due_date,
-        "start_date": task.start_date,
+        "id": task.task_id,
+        "title": task.task_title,
+        "description": task.task_description,
+        "dueDate": task.due_date,
+        "startDate": task.start_date,
         "status": task.status,
-        "priority": task.perioty,
-        "assigned_to": task.assigned_to_id,
-        "created_at": task.created_at,
-        "updated_at": task.updated_at,
+        "priority": task.priority,
+        "assignedTo": task.assigned_to_id,
+        "createdAt": task.created_at,
+        "updatedAt": task.updated_at,
     }
     return JsonResponse(task_data)
 
@@ -274,7 +307,7 @@ def update_task(request, task_id):
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON"}, status=400)
 
-    for field in ["task_title", "task_description", "due_date", "start_date", "status", "perioty", "assigned_to"]:
+    for field in ["task_title", "task_description", "due_date", "start_date", "status", "priority", "assigned_to"]:
         if field in data:
             setattr(task, field, data[field])
     task.save()
@@ -340,3 +373,110 @@ def add_task_comment(request, task_id):
     comment = Comment(task=task, teacher=teacher, admin=admin, comment=text)
     comment.save()
     return JsonResponse({"success": True, "message": "Comment added successfully"})
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def users(request):
+    # Only admin can list users
+    if not request.session.get('admin_id'):
+        return JsonResponse({"error": "Not authorized"}, status=403)
+    teachers = list(Teacher.objects.values('id', 'name', 'username', 'email', 'avatar_url'))
+    admins = list(Admin.objects.values('id', 'name', 'username', 'email', 'avatar_url'))
+    return JsonResponse({"teachers": teachers, "admins": admins})
+
+@csrf_exempt
+@require_http_methods(["PUT"])
+def update_user_profile(request):
+    user_id = request.session.get('admin_id') or request.session.get('teacher_id')
+    if not user_id:
+        return JsonResponse({"error": "Not authenticated"}, status=401)
+    try:
+        data = json.loads(request.body)
+    except Exception:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    if request.session.get('admin_id'):
+        user = Admin.objects.get(id=user_id)
+    else:
+        user = Teacher.objects.get(id=user_id)
+    for field in ['name', 'email', 'avatar_url']:
+        if field in data:
+            setattr(user, field, data[field])
+    user.save()
+    return JsonResponse({"success": True, "message": "Profile updated"})
+
+@csrf_exempt
+@require_http_methods(["PUT"])
+def change_password(request):
+    user_id = request.session.get('admin_id') or request.session.get('teacher_id')
+    if not user_id:
+        return JsonResponse({"error": "Not authenticated"}, status=401)
+    try:
+        data = json.loads(request.body)
+        new_password = data.get('new_password')
+        if not new_password:
+            return JsonResponse({"error": "New password required"}, status=400)
+    except Exception:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    if request.session.get('admin_id'):
+        user = Admin.objects.get(id=user_id)
+    else:
+        user = Teacher.objects.get(id=user_id)
+    user.password = make_password(new_password)
+    user.save()
+    return JsonResponse({"success": True, "message": "Password changed"})
+
+@csrf_exempt
+@require_http_methods(["GET", "PUT"])
+def user_preferences(request):
+    # For demo, just return or update a static dict in session
+    if not request.session.get('admin_id') and not request.session.get('teacher_id'):
+        return JsonResponse({"error": "Not authenticated"}, status=401)
+    if request.method == "GET":
+        prefs = request.session.get('user_preferences', {"theme": "dark", "upcomingTasks": True, "scheduledTasks": True})
+        return JsonResponse(prefs)
+    else:
+        try:
+            data = json.loads(request.body)
+            request.session['user_preferences'] = data
+            return JsonResponse({"success": True, "message": "Preferences updated"})
+        except Exception:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+@csrf_exempt
+@require_http_methods(["PUT"])
+def update_username(request):
+    user_id = request.session.get('admin_id') or request.session.get('teacher_id')
+    if not user_id:
+        return JsonResponse({"error": "Not authenticated"}, status=401)
+    try:
+        data = json.loads(request.body)
+        new_username = data.get('username')
+        if not new_username:
+            return JsonResponse({"error": "Username required"}, status=400)
+    except Exception:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    if request.session.get('admin_id'):
+        user = Admin.objects.get(id=user_id)
+    else:
+        user = Teacher.objects.get(id=user_id)
+    user.username = new_username
+    user.save()
+    return JsonResponse({"success": True, "message": "Username updated"})
+
+@csrf_exempt
+@require_http_methods(["DELETE"])
+def delete_account(request):
+    user_id = request.session.get('admin_id') or request.session.get('teacher_id')
+    if not user_id:
+        return JsonResponse({"error": "Not authenticated"}, status=401)
+    if request.session.get('admin_id'):
+        Admin.objects.filter(id=user_id).delete()
+        request.session.flush()
+    else:
+        Teacher.objects.filter(id=user_id).delete()
+        request.session.flush()
+    return JsonResponse({"success": True, "message": "Account deleted"})
+
+def navbar_partial(request):
+    html = render_to_string('_admin/navbar.html', request=request)
+    return HttpResponse(html)

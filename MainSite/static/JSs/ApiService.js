@@ -147,13 +147,13 @@ class ApiService {
   // Task-related methods
   async getAllTasks(filters = {}) {
     const queryParams = new URLSearchParams(filters).toString();
-    return this.request(`/tasks${queryParams ? "?" + queryParams : ""}`, {
+    return this.request(`/tasks/${queryParams ? "?" + queryParams : ""}`, {
       method: "GET",
     });
   }
 
   async getTaskById(taskId) {
-    return this.request(`/tasks/${taskId}`, { method: "GET" });
+    return this.request(`/tasks/${taskId}/`, { method: "GET" });
   }
 
   async createTask(taskData) {
@@ -171,35 +171,26 @@ class ApiService {
   }
 
   async deleteTask(taskId) {
-    return this.request(`/tasks/${taskId}`, { method: "DELETE" });
+    // Not implemented in backend, so this should be removed or handled accordingly
+    // return this.request(`/tasks/${taskId}`, { method: "DELETE" });
+    throw new Error("Delete task endpoint not implemented in backend");
   }
 
   async getTasksByTeacher(teacherId, filters = {}) {
     const queryParams = new URLSearchParams({
-      teacherId,
+      assigned_to: teacherId,
       ...filters,
     }).toString();
-    return this.request(`/tasks?${queryParams}`, { method: "GET" });
+    return this.request(`/tasks/${queryParams ? "?" + queryParams : ""}`, {
+      method: "GET",
+    });
   }
 
-  async getUpcomingTasks(days = 7) {
-    return this.request(`/tasks/upcoming?days=${days}`, { method: "GET" });
-  }
-
-  async searchTasks(query, filters = {}) {
-    const queryParams = new URLSearchParams({
-      q: query,
-      ...filters,
-    }).toString();
-    return this.request(`/tasks/search?${queryParams}`, { method: "GET" });
-  }
+  // No /tasks/upcoming or /tasks/search endpoints in backend, so remove these
 
   // Comment-related methods
-  async getTaskComments(taskId, page = 1, limit = 10) {
-    return this.request(
-      `/tasks/${taskId}/comments?page=${page}&limit=${limit}`,
-      { method: "GET" }
-    );
+  async getTaskComments(taskId) {
+    return this.request(`/tasks/${taskId}/comments/`, { method: "GET" });
   }
 
   async addTaskComment(taskId, commentData) {
@@ -209,26 +200,14 @@ class ApiService {
     });
   }
 
-  async updateTaskComment(taskId, commentId, commentData) {
-    return this.request(`/tasks/${taskId}/comments/${commentId}/`, {
-      method: "PUT",
-      body: JSON.stringify(commentData),
-    });
-  }
-
-  async deleteTaskComment(taskId, commentId) {
-    return this.request(`/tasks/${taskId}/comments/${commentId}`, {
-      method: "DELETE",
-    });
-  }
+  // No update/delete comment endpoints in backend, so remove these
 
   // User-related methods
   async login(credentials) {
-    const response = await this.request("/auth/login/", {
+    return this.request("/auth/login/", {
       method: "POST",
       body: JSON.stringify(credentials),
     });
-    return response;
   }
 
   async logout() {
@@ -239,22 +218,34 @@ class ApiService {
     }
   }
 
+  async signup(userData) {
+    return this.request("/auth/signup/", {
+      method: "POST",
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async checkUsername(username) {
+    return this.request(
+      `/auth/check-username/?username=${encodeURIComponent(username)}`,
+      { method: "GET" }
+    );
+  }
+
   async getCurrentUser() {
     return this.request("/users/me", { method: "GET" });
   }
 
   async updateUserProfile(userData) {
-    return this.request("/users/me", {
+    return this.request("/users/me/", {
       method: "PUT",
       body: JSON.stringify(userData),
     });
   }
 
   async getUsers(filters = {}) {
-    const queryParams = new URLSearchParams(filters).toString();
-    return this.request(`/users${queryParams ? "?" + queryParams : ""}`, {
-      method: "GET",
-    });
+    // Only admin can list users; filters are not used in backend
+    return this.request("/users/", { method: "GET" });
   }
 
   async changePassword(passwordData) {
@@ -265,37 +256,41 @@ class ApiService {
   }
 
   async getUserPreferences() {
-    try {
-      const response = await this.request("/user/preferences");
-      return response;
-    } catch (error) {
-      console.error("Failed to get user preferences:", error);
-      return {
-        theme: "dark",
-        upcomingTasks: true,
-        scheduledTasks: true,
-      };
-    }
+    return this.request("/user/preferences", { method: "GET" });
   }
 
   async updateUserPreferences(preferences) {
-    return await this.request("/user/preferences/", {
+    return this.request("/user/preferences/", {
       method: "PUT",
       body: JSON.stringify(preferences),
     });
   }
 
   async updateUsername(username) {
-    return await this.request("/user/username/", {
+    return this.request("/user/username/", {
       method: "PUT",
       body: JSON.stringify({ username }),
     });
   }
 
   async deleteAccount() {
-    return await this.request("/user/account", {
+    return this.request("/user/account", {
       method: "DELETE",
     });
+  }
+
+  // Add a searchTasks method to ApiService
+  async searchTasks(query) {
+    // If your backend supports a search endpoint, use it. Otherwise, filter client-side.
+    // Here, we use getAllTasks and filter client-side as a fallback.
+    const allTasks = await this.getAllTasks();
+    const lowerQuery = query.toLowerCase();
+    return allTasks.filter(
+      (task) =>
+        (task.title && task.title.toLowerCase().includes(lowerQuery)) ||
+        (task.description &&
+          task.description.toLowerCase().includes(lowerQuery))
+    );
   }
 }
 

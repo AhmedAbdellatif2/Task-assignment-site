@@ -9,10 +9,10 @@ class SignupManager {
     try {
       const currentUser = await apiService.getCurrentUser();
       if (currentUser?.role === "admin") {
-        window.location.href = "/AdminDashboard";
+        window.location.href = "/Admindashboard/";
         return;
       } else if (currentUser?.role === "teacher") {
-        window.location.href = "/teachers_task_list";
+        window.location.href = "/teachers_task_list/";
         return;
       }
       this.setupEventListeners();
@@ -60,7 +60,7 @@ class SignupManager {
 
       this.showSuccess("Account created successfully! Redirecting to login...");
       setTimeout(() => {
-        window.location.href = "login";
+        window.location.href = "/login/";
       }, 2000);
     } catch (error) {
       console.error("Signup error:", error);

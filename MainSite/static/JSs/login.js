@@ -9,7 +9,7 @@ class LoginManager {
     try {
       const currentUser = await apiService.getCurrentUser();
       if (currentUser?.role === "admin") {
-        window.location.href = "/AdminDashboard";
+        window.location.href = "/Admindashboard";
         return;
       } else if (currentUser?.role === "teacher") {
         window.location.href = "/teachers_task_list";

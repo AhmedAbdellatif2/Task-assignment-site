@@ -73,4 +73,129 @@ body {
   margin-top: 1rem;
   color: var(--accent-blue);
   font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.modern-card {
+  background: var(--dark-gray);
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 16px 0 rgba(48, 118, 227, 0.08),
+    0 1.5px 6px 0 rgba(0, 0, 0, 0.1);
+  padding: 1.5rem 1.7rem 1.2rem 1.7rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  border: 1.5px solid var(--accent-blue);
+  position: relative;
+  overflow: hidden;
+}
+
+.modern-card:hover {
+  box-shadow: 0 4px 32px 0 rgba(48, 118, 227, 0.18),
+    0 3px 12px 0 rgba(0, 0, 0, 0.18);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--white-text);
+  font-weight: 600;
+}
+
+.card-header a {
+  color: var(--accent-blue);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.card-header a:hover {
+  color: var(--accent-green);
+}
+
+.status-pill {
+  padding: 0.3em 1em;
+  border-radius: 2em;
+  font-size: 0.95em;
+  font-weight: 500;
+  background: var(--accent-blue);
+  color: var(--white-text);
+  text-transform: capitalize;
+  margin-left: 0.5em;
+}
+
+.status-pill.completed {
+  background: var(--accent-green);
+}
+
+.status-pill.pending {
+  background: #e3a130;
+}
+
+.status-pill.inprogress,
+.status-pill[title*="progress"] {
+  background: #3076e3;
+}
+
+.task-desc {
+  color: var(--gray-texts);
+  margin: 0.5rem 0 1rem 0;
+  font-size: 1.05rem;
+  text-align: left;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.98rem;
+}
+
+.priority-pill {
+  padding: 0.2em 0.9em;
+  border-radius: 2em;
+  font-size: 0.93em;
+  font-weight: 500;
+  background: #222b3a;
+  color: var(--accent-blue);
+  text-transform: capitalize;
+  margin-right: 0.7em;
+  border: 1px solid var(--accent-blue);
+}
+
+.priority-pill.high {
+  background: #e33030;
+  color: #fff;
+  border: none;
+}
+
+.priority-pill.medium {
+  background: #e3a130;
+  color: #fff;
+  border: none;
+}
+
+.priority-pill.low {
+  background: var(--accent-green);
+  color: #fff;
+  border: none;
+}
+
+.due-date {
+  color: var(--gray-texts);
+  font-size: 0.97em;
+}
+
+.no-results {
+  color: #e33030;
+  font-weight: 500;
+  font-size: 1.1rem;
+  margin: 1.5rem 0;
 }

@@ -11,7 +11,7 @@ class TaskListManager {
         .getCurrentUser()
         .then((currentUser) => {
           if (currentUser.role === "admin") {
-            window.location.href = "/AdminDashboard";
+            window.location.href = "/Admindashboard";
             return;
           }
           return currentUser;

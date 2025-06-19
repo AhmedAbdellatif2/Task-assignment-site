@@ -14,10 +14,11 @@
       <h2>Admin Dashboard</h2>
       <p class="subtext">Manage all tasks efficiently.</p>
 
-      <div class="task-list" id="taskList"></div>
+      <div class="task-list" id="task-list"></div>
 
       <button
         class="add-task-btn"
+        id="add-task-btn"
         onclick="window.location.href='{% url 'addtask' %}'"
       >
         ➕ Add New Task
