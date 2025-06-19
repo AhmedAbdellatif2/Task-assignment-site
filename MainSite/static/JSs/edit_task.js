@@ -2,37 +2,30 @@ import apiService from "./ApiService.js";
 
 class EditTaskManager {
   constructor() {
-    this.taskId = new URLSearchParams(window.location.search).get("id");
+    // Get the task_id from the URL query parameter 'task_id' (not 'id')
+    const params = new URLSearchParams(window.location.search);
+    this.taskId = params.get("task_id");
     this.form = document.querySelector("form");
     this.init();
   }
 
   async init() {
-    apiService
-      .getCurrentUser()
-      .then(async (currentUser) => {
-        if (currentUser.role !== "admin") {
-          await apiService.logout();
-          window.location.href = "/login";
-          return;
-        }
-        try {
-          await this.setupForm();
-          this.setupEventListeners();
-          if (this.taskId) {
-            await this.loadTask();
-          }
-        } catch (error) {
-          console.error("Error initializing edit task:", error);
-          this.showError("Failed to initialize. Please try again later.");
-        }
-        return currentUser;
-      })
-      .catch((error) => {
-        console.error("Error fetching current user:", error);
-        alert("Unauthorized access. Redirecting to login...");
+    try {
+      const currentUser = await apiService.getCurrentUser();
+      if (!currentUser || currentUser.role !== "admin") {
+        await apiService.logout();
         window.location.href = "/login";
-      });
+        return;
+      }
+      await this.setupForm();
+      this.setupEventListeners();
+      if (this.taskId) {
+        await this.loadTask();
+      }
+    } catch (error) {
+      console.error("Error initializing edit task:", error);
+      this.showError("Failed to initialize. Please try again later.");
+    }
   }
 
   async setupForm() {
@@ -42,14 +35,24 @@ class EditTaskManager {
 
   async loadUsers() {
     try {
-      const users = await apiService.getAllUsers();
+      // Use getUsers and extract teachers/admins
+      const users = await apiService.getUsers();
+      const teachers = users.teachers || [];
+      const admins = users.admins || [];
       const assignedSelect = document.getElementById("assigned-to");
-      users.forEach((user) => {
+      teachers.forEach((user) => {
         const option = document.createElement("option");
         option.value = user.id;
-        option.textContent = `${user.name} (${user.role})`;
+        option.textContent = `${user.name} (Teacher)`;
         assignedSelect.appendChild(option);
       });
+      admins.forEach((user) => {
+        const option = document.createElement("option");
+        option.value = user.id;
+        option.textContent = `${user.name} (Admin)`;
+        assignedSelect.appendChild(option);
+      });
+      assignedSelect.multiple = false; // Ensure single select
     } catch (error) {
       console.error("Error loading users:", error);
       this.showError("Failed to load users list");
@@ -57,6 +60,9 @@ class EditTaskManager {
   }
 
   addFormFields() {
+    // Remove any default action attribute from the form to prevent native POST
+    this.form.removeAttribute("action");
+
     const formGroups = document.querySelectorAll(".form-group");
     const lastFormGroup = formGroups[formGroups.length - 1];
 
@@ -106,7 +112,7 @@ class EditTaskManager {
       "assigned-to"
     );
     const assignedSelect = assignedToGroup.querySelector("select");
-    assignedSelect.multiple = true;
+    assignedSelect.multiple = false; // Single select only
     this.form.insertBefore(assignedToGroup, lastFormGroup);
   }
 
@@ -144,27 +150,30 @@ class EditTaskManager {
   }
 
   populateForm(task) {
+    // Format date fields as yyyy-MM-dd for input[type=date]
+    function formatDate(dateValue) {
+      if (!dateValue) return "";
+      const date = new Date(dateValue);
+      if (isNaN(date.getTime())) return "";
+      // Pad month and day
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
     const fields = {
-      "task-title": task.title,
-      "task-desc": task.description,
-      "start-date": task.startDate,
-      "due-date": task.dueDate,
+      "task-title": task.title || task.task_title,
+      "task-desc": task.description || task.task_description,
+      "start-date": formatDate(task.startDate || task.start_date),
+      "due-date": formatDate(task.dueDate || task.due_date),
       "task-priority": task.priority,
       "task-status": task.status,
-      "assigned-to": task.assignedTo,
+      "assigned-to": task.assignedTo || task.assigned_to, // Should be a single value
     };
-
     Object.entries(fields).forEach(([id, value]) => {
       const element = document.getElementById(id);
       if (element) {
-        if (element.multiple && Array.isArray(value)) {
-          // Handle multiple select
-          Array.from(element.options).forEach((option) => {
-            option.selected = value.includes(option.value);
-          });
-        } else {
-          element.value = value;
-        }
+        element.value = value;
       }
     });
   }
@@ -176,7 +185,6 @@ class EditTaskManager {
         await this.handleSubmit(e);
       }
     });
-
     // Add input validation listeners
     const inputs = this.form.querySelectorAll("input, select");
     inputs.forEach((input) => {
@@ -188,28 +196,33 @@ class EditTaskManager {
     try {
       const formData = new FormData(event.target);
       const taskData = {
-        title: formData.get("task-title"),
-        description: formData.get("task-desc"),
-        startDate: formData.get("start-date"),
-        dueDate: formData.get("due-date"),
+        task_title: formData.get("task-title"),
+        task_description: formData.get("task-desc"),
+        start_date: formData.get("start-date"),
+        due_date: formData.get("due-date"),
         priority: formData.get("task-priority"),
         status: formData.get("task-status"),
-        assignedTo: Array.from(event.target["assigned-to"].selectedOptions).map(
-          (opt) => opt.value
-        ),
+        assigned_to: formData.get("assigned-to"), // Single value
       };
-
       if (this.taskId) {
-        await apiService.updateTask(this.taskId, taskData);
-        this.showSuccess("Task updated successfully");
+        const response = await apiService.updateTask(this.taskId, taskData);
+        if (!response.success) {
+          throw new Error(response.error || "Task update failed");
+        }
+        this.showSuccess("Task updated successfully!");
+        setTimeout(() => {
+          window.location.href = "/Admindashboard/";
+        }, 1500);
       } else {
-        await apiService.createTask(taskData);
-        this.showSuccess("Task created successfully");
+        const response = await apiService.createTask(taskData);
+        if (!response.success) {
+          throw new Error(response.error || "Task creation failed");
+        }
+        this.showSuccess("Task created successfully!");
+        setTimeout(() => {
+          window.location.href = "/Admindashboard/";
+        }, 1500);
       }
-
-      setTimeout(() => {
-        window.location.href = "task_list.html";
-      }, 1500);
     } catch (error) {
       console.error("Error saving task:", error);
       this.showError(error.message || "Failed to save task");
@@ -219,22 +232,18 @@ class EditTaskManager {
   async validateForm() {
     const inputs = this.form.querySelectorAll("input, select");
     let isValid = true;
-
     for (const input of inputs) {
       if (!(await this.validateField(input))) {
         isValid = false;
       }
     }
-
     return isValid;
   }
 
   async validateField(input) {
     const value = input.value.trim();
     const id = input.id;
-
     this.removeError(input);
-
     if (!value && input.required) {
       this.showFieldError(
         input,
@@ -242,28 +251,23 @@ class EditTaskManager {
       );
       return false;
     }
-
     if (id === "due-date" && value) {
       const dueDate = new Date(value);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
       if (dueDate < today) {
         this.showFieldError(input, "Due date cannot be in the past");
         return false;
       }
     }
-
     if (id === "start-date" && value) {
       const startDate = new Date(value);
       const dueDate = new Date(document.getElementById("due-date").value);
-
       if (startDate > dueDate) {
         this.showFieldError(input, "Start date cannot be after due date");
         return false;
       }
     }
-
     return true;
   }
 
@@ -288,19 +292,45 @@ class EditTaskManager {
   }
 
   showError(message) {
-    const notification = document.createElement("div");
-    notification.className = "notification error";
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "error-message";
+    errorDiv.textContent = message;
+    errorDiv.style.color = "#f44336";
+    errorDiv.style.padding = "10px";
+    errorDiv.style.marginTop = "10px";
+    errorDiv.style.backgroundColor = "#ffebee";
+    errorDiv.style.borderRadius = "4px";
+
+    const existingError = this.form.querySelector(".error-message");
+    if (existingError) {
+      existingError.remove();
+    }
+
+    this.form.insertBefore(errorDiv, this.form.firstChild);
+    setTimeout(() => errorDiv.remove(), 5000);
   }
 
   showSuccess(message) {
-    const notification = document.createElement("div");
-    notification.className = "notification success";
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
+    const successDiv = document.createElement("div");
+    successDiv.className = "success-message";
+    successDiv.textContent = message;
+    successDiv.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4caf50;
+      color: white;
+      padding: 15px;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      z-index: 1000;
+    `;
+    document.body.appendChild(successDiv);
+    setTimeout(() => {
+      successDiv.style.opacity = "0";
+      successDiv.style.transition = "opacity 0.3s ease";
+      setTimeout(() => successDiv.remove(), 300);
+    }, 1200);
   }
 }
 

@@ -6,6 +6,7 @@ urlpatterns = [
     path('login/', views.Login, name='login'),
     path('Admindashboard/', views.Dashboard, name='dashboard'),
     path('addtask/', views.addtask, name='addtask'),
+    path('addtask/api/', views.addtask_api, name='addtask_api'),
     path('editpage/', views.EditPage, name='editpage'),
     path('profile/', views.Profile, name='profile'),
     path('settings/', views.Settings, name='settings'),

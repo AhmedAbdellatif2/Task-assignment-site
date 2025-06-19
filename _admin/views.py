@@ -207,14 +207,16 @@ def check_username(request):
 def tasks(request):
     filters = dict(request.GET.items()) if request.method == 'GET' else {}
     queryset = None
-    if request.session.get("teacher_id"):
-        filters["assigned_to"] = request.session["teacher_id"]
+    teacher_id = request.session.get("teacher_id")
+    admin_id = request.session.get("admin_id")
+    if teacher_id:
+        filters["assigned_to"] = teacher_id
         queryset = Task.objects.filter(**filters)
-    elif request.session.get("admin_id"):
+    elif admin_id:
+        # Admin can see all tasks, but allow filtering by assigned_to if provided
         queryset = Task.objects.filter(**filters)
     else:
         return JsonResponse({"error": "Not authenticated"}, status=401)
-    print(queryset)
     tasks_list = [
         {
             "id": t.task_id,
@@ -235,10 +237,16 @@ def tasks(request):
 def teacher_task_data(request):
     task_id = request.GET.get("task_id")
     teacher_id = request.session.get("teacher_id")
-    if not task_id or not teacher_id:
-        return JsonResponse({"error": "Missing task_id or not authenticated"}, status=400)
+    admin_id = request.session.get("admin_id")
+    if not task_id:
+        return JsonResponse({"error": "Missing task_id"}, status=400)
+    if not teacher_id and not admin_id:
+        return JsonResponse({"error": "Not authenticated"}, status=401)
     try:
-        task = Task.objects.get(task_id=task_id, assigned_to=teacher_id)
+        if teacher_id:
+            task = Task.objects.get(task_id=task_id, assigned_to=teacher_id)
+        elif admin_id:
+            task = Task.objects.get(task_id=task_id)
     except Task.DoesNotExist:
         return JsonResponse({"error": "Task not found"}, status=404)
     task_data = {
@@ -309,7 +317,15 @@ def update_task(request, task_id):
 
     for field in ["task_title", "task_description", "due_date", "start_date", "status", "priority", "assigned_to"]:
         if field in data:
-            setattr(task, field, data[field])
+            if field == "assigned_to":
+                # ForeignKey expects an object, not just the id
+                try:
+                    teacher = Teacher.objects.get(id=data[field])
+                    task.assigned_to = teacher
+                except Teacher.DoesNotExist:
+                    return JsonResponse({"error": "Assigned teacher not found"}, status=400)
+            else:
+                setattr(task, field, data[field])
     task.save()
 
     return JsonResponse({"success": True, "message": "Task updated successfully"})
@@ -480,3 +496,37 @@ def delete_account(request):
 def navbar_partial(request):
     html = render_to_string('_admin/navbar.html', request=request)
     return HttpResponse(html)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def addtask_api(request):
+    if not request.session.get("admin_id"):
+        return JsonResponse({"error": "Not authenticated"}, status=401)
+    try:
+        data = json.loads(request.body)
+        task = Task(
+            task_title=data.get("task_title"),
+            task_description=data.get("task_description"),
+            due_date=data.get("due_date"),
+            start_date=data.get("start_date"),
+            status=data.get("status"),
+            priority=data.get("priority"),
+            assigned_to_id=data.get("assigned_to"),
+        )
+        task.save()
+        return JsonResponse({"success": True, "message": "Task added successfully", "task_id": task.task_id})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+@csrf_exempt
+@require_http_methods(["DELETE"])
+def delete_task(request, task_id):
+    # Only admin can delete tasks
+    if not request.session.get("admin_id"):
+        return JsonResponse({"error": "Not authorized"}, status=403)
+    try:
+        task = Task.objects.get(task_id=task_id)
+    except Task.DoesNotExist:
+        return JsonResponse({"error": "Task not found"}, status=404)
+    task.delete()
+    return JsonResponse({"success": True, "message": "Task deleted successfully"})

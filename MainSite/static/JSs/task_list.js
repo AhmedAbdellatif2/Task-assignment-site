@@ -38,12 +38,17 @@ class TaskListManager {
       let filteredTasks = tasks;
       if (filter === "active") {
         filteredTasks = tasks.filter(
-          (task) => task.status !== "completed" && task.status !== "Completed"
+          (task) =>
+            task.status !== "completed" &&
+            task.status !== "Completed" &&
+            !this.isUpcomingTask(task)
         );
       } else if (filter === "completed") {
         filteredTasks = tasks.filter(
           (task) => task.status === "completed" || task.status === "Completed"
         );
+      } else if (filter === "upcoming") {
+        filteredTasks = tasks.filter((task) => this.isUpcomingTask(task));
       }
 
       filteredTasks.forEach((task) => {
@@ -56,20 +61,33 @@ class TaskListManager {
     }
   }
 
+  isUpcomingTask(task) {
+    // Consider a task upcoming if its start date is in the future
+    const start = new Date(task.startDate || task.start_date);
+    return start.getTime() > Date.now();
+  }
+
   createTaskElement(task) {
     const div = document.createElement("div");
-    div.className = "task";
+    // Use 'task-item' for styling, and add 'upcoming-task' if needed
+    div.className =
+      "task-item" + (this.isUpcomingTask(task) ? " upcoming-task" : "");
     div.innerHTML = `
-            <div class="task-content">
-                <a href="/teacher_task?task_id=${task.task_id}" class="task-link">
-                <span class="task-text">${task.task_title}</span>
-                </a>
-                <div class="task-actions">
-                <button class="complete-btn" data-id="${task.task_id}">✓</button>
-                <button class="delete-btn" data-id="${task.task_id}">✕</button>
-                </div>
-            </div>
-        `;
+      <div class="task-content">
+        <a href="/teacher_task?task_id=${task.id}" class="task-link">
+          <span class="task-text">${task.title}</span>
+          ${
+            this.isUpcomingTask(task)
+              ? '<span class="upcoming-label" style="color:#2196f3;font-weight:bold;"> (Upcoming)</span>'
+              : ""
+          }
+        </a>
+        <div class="task-actions">
+          <button class="complete-btn" data-id="${task.id}">✓</button>
+          <button class="delete-btn" data-id="${task.id}">✕</button>
+        </div>
+      </div>
+    `;
     return div;
   }
 

@@ -226,7 +226,7 @@ if (logoutBtn) {
   logoutBtn.addEventListener("click", async () => {
     try {
       await apiService.logout();
-      window.location.href = "login";
+      window.location.href = "/login";
     } catch (error) {
       console.error("Failed to logout:", error);
       alert("Failed to logout. Please try again.");
@@ -243,7 +243,7 @@ if (deleteAccountBtn) {
     ) {
       try {
         await apiService.deleteAccount();
-        window.location.href = "login";
+        window.location.href = "/login";
       } catch (error) {
         console.error("Failed to delete account:", error);
         alert("Failed to delete account. Please try again.");

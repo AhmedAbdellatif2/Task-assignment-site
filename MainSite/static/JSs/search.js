@@ -136,9 +136,7 @@ class TaskSearchManager {
       }
       taskElement.innerHTML = `
         <div class="card-header">
-          <h3><a href="./teacher_task.html?task_id=${task.id}">${
-        task.title
-      }</a></h3>
+          <h3><a href="/teacher_task/?task_id=${task.id}">${task.title}</a></h3>
           <span class="status-pill ${task.status?.toLowerCase() || ""}">${
         task.status || ""
       }</span>

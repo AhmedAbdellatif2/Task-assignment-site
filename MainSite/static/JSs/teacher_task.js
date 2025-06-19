@@ -24,10 +24,11 @@ class TeacherTaskManager {
     this.taskId = new URLSearchParams(window.location.search).get("task_id");
     this.setupEventListeners();
     await this.loadTask();
+    // Fix: Use the correct structure for task title/description in chatbot prompt
     let messages = [
       {
         role: "system",
-        content: `You are a helpful assistant helping in a task its title is ${this.task.task_title} and description is '${this.task.task_description}'. Remeber this very well`,
+        content: `You are a helpful assistant helping in a task. Its title is '${this.task.title}' and description is '${this.task.description}'. Remember this very well.`,
       },
       {
         role: "assistant",
@@ -152,29 +153,28 @@ class TeacherTaskManager {
   displayTask(task) {
     // Update task fields using class selectors
     const titleElem = document.querySelector(".taskTitle h1");
-    if (titleElem) titleElem.textContent = task.task_title || "";
+    if (titleElem) titleElem.textContent = task.title || "";
     const statusElem = document.querySelector(".taskStatus");
     if (statusElem) statusElem.textContent = task.status || "";
     const dueDateElem = document.querySelector(".taskDueDate");
     if (dueDateElem)
-      dueDateElem.textContent = this.formatDate(task.due_date) || "";
+      dueDateElem.textContent = this.formatDate(task.dueDate) || "";
     const descElem = document.querySelector(".content p");
-    if (descElem) descElem.textContent = task.task_description || "";
+    if (descElem) descElem.textContent = task.description || "";
     const startDateElem = document.querySelector(".taskStartDate");
     if (startDateElem)
-      startDateElem.textContent = this.formatDate(task.start_date) || "";
+      startDateElem.textContent = this.formatDate(task.startDate) || "";
     const createDateElem = document.querySelector(".taskCreateDate");
     if (createDateElem)
-      createDateElem.textContent = this.formatDate(task.created_at) || "";
+      createDateElem.textContent = this.formatDate(task.createdAt) || "";
     const updateDateElem = document.querySelector(".taskUpdateDate");
     if (updateDateElem)
-      updateDateElem.textContent = this.formatDate(task.updated_at) || "";
+      updateDateElem.textContent = this.formatDate(task.updatedAt) || "";
     const priorityElem = document.querySelector(".taskPriority");
-    if (priorityElem)
-      priorityElem.textContent = task.priority || task.perioty || "";
+    if (priorityElem) priorityElem.textContent = task.priority || "";
 
     // Color logic for due date
-    let date = new Date(task.due_date).getTime();
+    let date = new Date(task.dueDate).getTime();
     if (dueDateElem) {
       if (this.calculateNumberOfDaysFrom(date) < 2) {
         dueDateElem.style.color = "red";
@@ -188,13 +188,13 @@ class TeacherTaskManager {
     }
     // Color logic for priority
     if (priorityElem) {
-      if ((task.priority || task.perioty) === "High") {
+      if (task.priority === "High") {
         priorityElem.style.color = "red";
         priorityElem.style.fontWeight = "bold";
-      } else if ((task.priority || task.perioty) === "Medium") {
+      } else if (task.priority === "Medium") {
         priorityElem.style.color = "orange";
         priorityElem.style.fontWeight = "bold";
-      } else if ((task.priority || task.perioty) === "Low") {
+      } else if (task.priority === "Low") {
         priorityElem.style.color = "green";
         priorityElem.style.fontWeight = "bold";
       } else {
@@ -207,7 +207,11 @@ class TeacherTaskManager {
       if (task.status === "In Progress") {
         statusElem.style.color = "orange";
         statusElem.style.fontWeight = "";
-      } else if (task.status === "Completed" || task.status === "Complete") {
+      } else if (
+        task.status === "Completed" ||
+        task.status === "Complete" ||
+        task.status === "completed"
+      ) {
         statusElem.style.color = "green";
         statusElem.style.fontWeight = "bold";
       } else {

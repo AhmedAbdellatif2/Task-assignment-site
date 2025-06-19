@@ -157,7 +157,9 @@ class ApiService {
   }
 
   async createTask(taskData) {
-    return this.request("/tasks/", {
+    console.log("Creating task with data:", taskData);
+    // Use the correct backend endpoint for adding a task
+    return this.request("/addtask/api/", {
       method: "POST",
       body: JSON.stringify(taskData),
     });
@@ -171,9 +173,8 @@ class ApiService {
   }
 
   async deleteTask(taskId) {
-    // Not implemented in backend, so this should be removed or handled accordingly
-    // return this.request(`/tasks/${taskId}`, { method: "DELETE" });
-    throw new Error("Delete task endpoint not implemented in backend");
+    // Use the correct backend endpoint for deleting a task
+    return this.request(`/tasks/${taskId}/delete/`, { method: "DELETE" });
   }
 
   async getTasksByTeacher(teacherId, filters = {}) {

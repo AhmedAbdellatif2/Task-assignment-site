@@ -25,9 +25,9 @@ class AddTaskManager {
     try {
       const teacherSelect = document.getElementById("assigned_to");
       if (!teacherSelect) return;
-      const teachers = await apiService.request("/users?role=teacher", {
-        method: "GET",
-      });
+      // Use the correct API to get teachers (from /users/ endpoint)
+      const users = await apiService.getUsers();
+      const teachers = users.teachers || [];
       teacherSelect.innerHTML = '<option value="">Select a teacher</option>';
       teachers.forEach((teacher) => {
         const option = document.createElement("option");
@@ -42,6 +42,14 @@ class AddTaskManager {
   }
 
   setupFormFields() {
+    // Remove any default action attribute from the form to prevent native POST
+    this.form.removeAttribute("action");
+    // Ensure the form is empty before appending
+    this.form.innerHTML = "";
+
+    const container = document.createElement("div");
+    container.className = "form-container";
+
     const formGroups = [
       { label: "Title", type: "text", id: "title", required: true },
       {
@@ -74,16 +82,17 @@ class AddTaskManager {
       },
     ];
 
-    // Ensure the form is empty before appending
-    this.form.innerHTML = "";
-
-    const container = document.createElement("div");
-    container.className = "form-container";
-
     formGroups.forEach((field) => {
       const group = this.createFormGroup(field);
       container.appendChild(group);
     });
+
+    // Add the submit button at the end
+    const submitBtn = document.createElement("button");
+    submitBtn.type = "submit";
+    submitBtn.textContent = "Add Task";
+    submitBtn.className = "save-btn";
+    container.appendChild(submitBtn);
 
     this.form.appendChild(container);
   }
@@ -157,20 +166,25 @@ class AddTaskManager {
     const formData = new FormData(event.target);
 
     const taskData = {
-      title: formData.get("title"),
-      description: formData.get("description"),
+      task_title: formData.get("title"),
+      task_description: formData.get("description"),
       status: formData.get("status"),
       priority: formData.get("priority"),
-      startDate: formData.get("start_date"),
-      dueDate: formData.get("due_date"),
-      assignedTo: formData.get("assigned_to"),
+      start_date: formData.get("start_date"),
+      due_date: formData.get("due_date"),
+      assigned_to: formData.get("assigned_to"),
     };
 
     try {
       await this.validateTaskData(taskData);
-      await apiService.createTask(taskData);
+      const response = await apiService.createTask(taskData);
+      if (!response.success) {
+        throw new Error(response.error || "Task creation failed");
+      }
       this.showSuccess("Task created successfully");
-      window.location.href = "./task_list.html";
+      setTimeout(() => {
+        window.location.href = "/Admindashboard/";
+      }, 1000);
     } catch (error) {
       console.error("Error creating task:", error);
       this.showError(error.message || "Failed to create task");
@@ -180,19 +194,19 @@ class AddTaskManager {
   async validateTaskData(taskData) {
     const errors = [];
 
-    if (!taskData.title?.trim()) {
+    if (!taskData.task_title?.trim()) {
       errors.push("Title is required");
     }
 
-    if (!taskData.description?.trim()) {
+    if (!taskData.task_description?.trim()) {
       errors.push("Description is required");
     }
 
-    if (!taskData.startDate) {
+    if (!taskData.start_date) {
       errors.push("Start date is required");
     }
 
-    if (!taskData.dueDate) {
+    if (!taskData.due_date) {
       errors.push("Due date is required");
     }
 
@@ -200,7 +214,7 @@ class AddTaskManager {
       errors.push("Priority is required");
     }
 
-    if (!taskData.assignedTo) {
+    if (!taskData.assigned_to) {
       errors.push("Assigned to is required");
     }
 

@@ -114,14 +114,10 @@ class AdminDashboard {
           </span>
         </div>
         <div class="task-actions">
-          <button onclick="editTask('${
-            task.id
-          }')" class="edit-btn btn btn-outline-primary" title="Edit Task">
+          <button class="edit-btn btn btn-outline-primary" title="Edit Task">
             ✏️ Edit
           </button>
-          <button onclick="deleteTask('${
-            task.id
-          }')" class="delete-btn btn btn-outline-danger" title="Delete Task">
+          <button class="delete-btn btn btn-outline-danger" title="Delete Task">
             🗑️ Delete
           </button>
         </div>
@@ -138,11 +134,27 @@ class AdminDashboard {
         </span>
       </div>
     `;
-    // Add click handler to the card (ignore clicks on edit/delete buttons)
+    // Add click handlers for edit and delete buttons
+    div.querySelector(".edit-btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      window.location.href = `/editpage/?task_id=${task.id}`;
+    });
+    div.querySelector(".delete-btn").addEventListener("click", async (e) => {
+      e.stopPropagation();
+      if (!confirm("Are you sure you want to delete this task?")) return;
+      try {
+        await apiService.deleteTask(task.id);
+        this.loadTasks();
+        this.updateStatistics();
+      } catch (error) {
+        console.error("Error deleting task:", error);
+        this.showError("Failed to delete task");
+      }
+    });
+    // Card click navigates to edit page (if not clicking a button)
     div.addEventListener("click", (e) => {
       if (e.target.closest(".edit-btn") || e.target.closest(".delete-btn"))
         return;
-      // Go to the edit page for this task (admin workflow)
       window.location.href = `/editpage/?task_id=${task.id}`;
     });
     return div;
@@ -311,22 +323,3 @@ class AdminDashboard {
 document.addEventListener("DOMContentLoaded", () => {
   new AdminDashboard();
 });
-
-// Global functions for task actions
-window.editTask = async (taskId) => {
-  window.location.href = `edit_task.html?id=${taskId}`;
-};
-
-window.deleteTask = async (taskId) => {
-  if (!confirm("Are you sure you want to delete this task?")) return;
-
-  try {
-    await apiService.deleteTask(taskId);
-    // Refresh the dashboard
-    window.adminDashboard.loadTasks();
-    window.adminDashboard.updateStatistics();
-  } catch (error) {
-    console.error("Error deleting task:", error);
-    window.adminDashboard.showError("Failed to delete task");
-  }
-};
