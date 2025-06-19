@@ -4,28 +4,38 @@ class ProfileManager {
   constructor() {
     this.init();
   }
-
   async init() {
     try {
-      apiService
-        .getCurrentUser()
-        .then((currentUser) => {
-          if (currentUser.role === "admin") {
-            return;
-          }
-          return currentUser;
-        })
-        .catch((error) => {
-          console.error("Error fetching current user:", error);
-          window.location.href = "/login";
-        });
-
-      this.updateUI(user);
+      const currentUser = await apiService.getCurrentUser();
+      if (currentUser.role !== "admin") {
+        this.updateUI(currentUser);
+      }
     } catch (error) {
       console.error("Failed to load profile:", error);
-      window.location.href = "login";
+      window.location.href = "/login";
     }
   }
+  // async init() {
+  //   try {
+  //     apiService
+  //       .getCurrentUser()
+  //       .then((currentUser) => {
+  //         if (currentUser.role === "admin") {
+  //           return;
+  //         }
+  //         return currentUser;
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error fetching current user:", error);
+  //         window.location.href = "/login";
+  //       });
+
+  //     this.updateUI(user);
+  //   } catch (error) {
+  //     console.error("Failed to load profile:", error);
+  //     window.location.href = "login";
+  //   }
+  // }
 
   updateUI(user) {
     document.getElementById("username").textContent = user.username;
