@@ -293,6 +293,12 @@ class ApiService {
           task.description.toLowerCase().includes(lowerQuery))
     );
   }
+  // for upcoming
+  async getUpcomingTasks() {
+  return this.request("/tasks/upcoming/", {
+    method: "GET",
+  });
+}
 }
 
 // Create a singleton instance

@@ -9,6 +9,11 @@ import json
 from django.views.decorators.http import require_POST
 from django.template.loader import render_to_string
 from django.http import HttpResponse
+from django.http import JsonResponse
+from datetime import datetime, timedelta
+from django.http import JsonResponse
+from django.utils import timezone
+from .models import Task
 
 # Routs logic
 
@@ -35,6 +40,44 @@ def teachers_task_list(request):
 
 
 # Authentication logic
+# test views for upcoming tasks
+def upcoming_tasks(request):
+    now = timezone.now()
+    tasks = Task.objects.filter(due_date__gte=now).order_by('due_date')
+
+    data = [
+        {
+            "id": task.task_id,
+            "title": task.task_title,
+            "description": task.task_description,
+            "dueDate": task.due_date.isoformat(),
+            "status": task.status,
+        }
+        for task in tasks
+    ]
+
+    return JsonResponse(data, safe=False)
+
+
+# def upcoming_tasks(request):
+#     tasks = [
+#         {
+#             "id": 1,
+#             "title": "Submit report",
+#             "description": "End of term report due.",
+#             "dueDate": (datetime.now() + timedelta(days=3)).isoformat(),
+#             "status": "pending",
+#         },
+#         {
+#             "id": 2,
+#             "title": "Grade assignments",
+#             "description": "Math class grading due.",
+#             "dueDate": (datetime.now() + timedelta(days=5)).isoformat(),
+#             "status": "in-progress",
+#         },
+#     ]
+#     return JsonResponse(tasks, safe=False)
+
 
 @csrf_exempt
 def SignUp(request):

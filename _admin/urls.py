@@ -4,6 +4,8 @@ from . import views
 urlpatterns = [
     path('', views.SignUp, name='signup'),
     path('login/', views.Login, name='login'),
+    # upcomingtasks
+    path('tasks/upcoming/', views.upcoming_tasks, name='upcoming_tasks'),
     path('Admindashboard/', views.Dashboard, name='dashboard'),
     path('addtask/', views.addtask, name='addtask'),
     path('addtask/api/', views.addtask_api, name='addtask_api'),
