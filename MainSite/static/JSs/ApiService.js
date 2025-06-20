@@ -130,6 +130,7 @@ class ApiService {
     const config = {
       ...options,
       headers,
+      credentials: "include", // Ensure cookies (sessionid) are sent with every request
     };
 
     try {
@@ -295,10 +296,10 @@ class ApiService {
   }
   // for upcoming
   async getUpcomingTasks() {
-  return this.request("/tasks/upcoming/", {
-    method: "GET",
-  });
-}
+    return this.request("/tasks/upcoming/", {
+      method: "GET",
+    });
+  }
 }
 
 // Create a singleton instance

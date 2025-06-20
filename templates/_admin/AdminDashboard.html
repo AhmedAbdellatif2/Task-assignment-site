@@ -1,33 +1,20 @@
-{% extends 'base.html' %} {% load static %}{% block content %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="{% static 'CSSs/AdminDashboard.css' %}" />
-  </head>
-
-  <body>
-    <div id="navbar-container"></div>
-    <main class="admin-dashboard">
-      <h2>Admin Dashboard</h2>
-      <p class="subtext">Manage all tasks efficiently.</p>
-
-      <div class="task-list" id="task-list"></div>
-
-      <button
-        class="add-task-btn"
-        id="add-task-btn"
-        onclick="window.location.href='{% url 'addtask' %}'"
-      >
-        ➕ Add New Task
-      </button>
-    </main>
-
-    <script src="{% static 'JSs/navBar.js' %}" type="module"></script>
-    <script src="{% static 'JSs/admin_dashboard.js' %}" type="module"></script>
-  </body>
-</html>
-
-{% endblock content %}
+{% extends 'base.html' %} {% load static %} {% block title %}Admin Dashboard
+<!--  -->
+{% endblock title %} {% block extra_head %}
+<link rel="stylesheet" href="{% static 'CSSs/AdminDashboard.css' %}" />
+{% endblock extra_head %} {% block content %}
+<main class="admin-dashboard">
+  <h2>Admin Dashboard</h2>
+  <p class="subtext">Manage all tasks efficiently.</p>
+  <div class="task-list" id="task-list"></div>
+  <button
+    class="add-task-btn"
+    id="add-task-btn"
+    onclick="window.location.href='{% url 'addtask' %}'"
+  >
+    ➕ Add New Task
+  </button>
+</main>
+{% endblock content %} {% block extra_scripts %}
+<script src="{% static 'JSs/admin_dashboard.js' %}" type="module"></script>
+{% endblock extra_scripts %}

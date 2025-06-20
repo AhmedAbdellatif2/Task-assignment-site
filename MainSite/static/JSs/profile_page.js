@@ -7,37 +7,21 @@ class ProfileManager {
   async init() {
     try {
       const currentUser = await apiService.getCurrentUser();
-      if (currentUser.role !== "admin") {
+      if (currentUser && currentUser.role !== "admin") {
         this.updateUI(currentUser);
+      } else if (!currentUser) {
+        throw new Error("No user data returned");
       }
     } catch (error) {
       console.error("Failed to load profile:", error);
       window.location.href = "/login";
     }
   }
-  // async init() {
-  //   try {
-  //     apiService
-  //       .getCurrentUser()
-  //       .then((currentUser) => {
-  //         if (currentUser.role === "admin") {
-  //           return;
-  //         }
-  //         return currentUser;
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error fetching current user:", error);
-  //         window.location.href = "/login";
-  //       });
-
-  //     this.updateUI(user);
-  //   } catch (error) {
-  //     console.error("Failed to load profile:", error);
-  //     window.location.href = "login";
-  //   }
-  // }
-
   updateUI(user) {
+    if (!user) {
+      console.error("No user provided to updateUI");
+      return;
+    }
     document.getElementById("username").textContent = user.username;
     document.getElementById("user-role").textContent = `Role: ${user.role}`;
     document.getElementById("user-email").textContent = `Email: ${user.email}`;

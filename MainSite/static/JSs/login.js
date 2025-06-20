@@ -52,8 +52,13 @@ class LoginManager {
       loginButton.innerHTML =
         '<div class="button-spinner"></div> Authenticating';
 
+      // Log before login
+      console.log("Attempting login for:", username);
       await apiService.login({ username, password });
+      // Log after login
+      console.log("Login successful, fetching user info...");
       const user = await apiService.getCurrentUser();
+      console.log("User after login:", user);
 
       // Show success message before redirecting
       this.showSuccess("Login successful! Redirecting...");

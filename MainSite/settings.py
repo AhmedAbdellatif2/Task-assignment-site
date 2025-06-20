@@ -54,7 +54,14 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS settings for secure cookie/session sharing
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
 
 ROOT_URLCONF = 'MainSite.urls'
 
