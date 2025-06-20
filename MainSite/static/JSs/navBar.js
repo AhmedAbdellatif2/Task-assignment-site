@@ -105,3 +105,48 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize theme (after navbar is loaded)
   initializeTheme();
 });
+
+// Listen for theme changes and update icons accordingly
+function updateNavbarIconsForTheme() {
+  const isDark = document.body.classList.contains("dark-theme");
+  // Map icon ids to their light/dark srcs
+  const iconMap = {
+    home: ["/media/logos/light/homepage.png", "/media/logos/dark/homepage.png"],
+    notification: [
+      "/media/logos/light/notification-panel.png",
+      "/media/logos/dark/notification-panel.png",
+    ],
+    Profile: [
+      "/media/logos/light/profile.png",
+      "/media/logos/dark/profile.png",
+    ],
+    ser: ["/media/logos/light/search.png", "/media/logos/dark/search.png"],
+    settings: [
+      "/media/logos/light/settings.png",
+      "/media/logos/dark/settings.png",
+    ],
+    dropdown_profile: [
+      "/media/logos/light/profile.png",
+      "/media/logos/dark/profile.png",
+    ],
+  };
+  Object.entries(iconMap).forEach(([id, [lightSrc, darkSrc]]) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.src = isDark ? darkSrc : lightSrc;
+    }
+  });
+}
+
+// Observe theme changes
+const observer = new MutationObserver(() => {
+  updateNavbarIconsForTheme();
+});
+observer.observe(document.body, {
+  attributes: true,
+  attributeFilter: ["class"],
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateNavbarIconsForTheme(); // Initial set
+});

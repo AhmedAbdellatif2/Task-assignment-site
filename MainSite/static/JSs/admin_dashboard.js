@@ -134,14 +134,16 @@ class AdminDashboard {
         </span>
       </div>
     `;
-    // Add click handlers for edit and delete buttons
     div.querySelector(".edit-btn").addEventListener("click", (e) => {
       e.stopPropagation();
       window.location.href = `/editpage/?task_id=${task.id}`;
     });
     div.querySelector(".delete-btn").addEventListener("click", async (e) => {
       e.stopPropagation();
-      if (!confirm("Are you sure you want to delete this task?")) return;
+      const confirmed = await this.showConfirmDialog(
+        "Are you sure you want to delete this task? This action cannot be undone."
+      );
+      if (!confirmed) return;
       try {
         await apiService.deleteTask(task.id);
         this.loadTasks();
@@ -151,13 +153,69 @@ class AdminDashboard {
         this.showError("Failed to delete task");
       }
     });
-    // Card click navigates to edit page (if not clicking a button)
     div.addEventListener("click", (e) => {
       if (e.target.closest(".edit-btn") || e.target.closest(".delete-btn"))
         return;
       window.location.href = `/editpage/?task_id=${task.id}`;
     });
     return div;
+  }
+
+  async showConfirmDialog(message) {
+    return new Promise((resolve) => {
+      // Detect theme
+      const isDark = document.body.classList.contains("dark-theme");
+      // Colors for theme
+      const bg = isDark ? "#181e29" : "#fff";
+      const text = isDark ? "#fff" : "#222";
+      const border = isDark ? "#3076e3" : "#3076e3";
+      const btnDelete = isDark ? "#f44336" : "#f44336";
+      const btnCancel = isDark ? "#3076e3" : "#3076e3";
+      // Create overlay
+      const overlay = document.createElement("div");
+      overlay.style.position = "fixed";
+      overlay.style.top = 0;
+      overlay.style.left = 0;
+      overlay.style.width = "100vw";
+      overlay.style.height = "100vh";
+      overlay.style.background = "rgba(0,0,0,0.35)";
+      overlay.style.zIndex = 3000;
+      overlay.style.display = "flex";
+      overlay.style.justifyContent = "center";
+      overlay.style.alignItems = "center";
+      // Create dialog
+      const dialog = document.createElement("div");
+      dialog.style.background = bg;
+      dialog.style.color = text;
+      dialog.style.border = `2.5px solid ${border}`;
+      dialog.style.borderRadius = "14px";
+      dialog.style.boxShadow = "0 8px 32px rgba(48,118,227,0.18)";
+      dialog.style.padding = "2.2rem 2.5rem 1.5rem 2.5rem";
+      dialog.style.display = "flex";
+      dialog.style.flexDirection = "column";
+      dialog.style.alignItems = "center";
+      dialog.style.maxWidth = "90vw";
+      dialog.style.minWidth = "320px";
+      dialog.style.gap = "1.2rem";
+      dialog.innerHTML = `
+        <div style="font-size:2.2rem;">⚠️</div>
+        <div style="font-size:1.1rem;text-align:center;">${message}</div>
+        <div style="display:flex;gap:1.2rem;margin-top:0.5rem;">
+          <button id="confirm-yes" style="background:${btnDelete};color:#fff;padding:0.7rem 1.5rem;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(244,67,54,0.08);">Delete</button>
+          <button id="confirm-no" style="background:${btnCancel};color:#fff;padding:0.7rem 1.5rem;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(48,118,227,0.08);">Cancel</button>
+        </div>
+      `;
+      overlay.appendChild(dialog);
+      document.body.appendChild(overlay);
+      dialog.querySelector("#confirm-yes").onclick = () => {
+        overlay.remove();
+        resolve(true);
+      };
+      dialog.querySelector("#confirm-no").onclick = () => {
+        overlay.remove();
+        resolve(false);
+      };
+    });
   }
 
   async updateStatistics() {

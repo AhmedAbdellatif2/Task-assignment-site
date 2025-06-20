@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% load static %} {% block title %}Profile Page
-<!--  -->
-{% endblock title %} {% block extra_head %}
+-----{% endblock title %} {% block extra_head %}
+<link rel="stylesheet" href="{% static 'CSSs/styles.css' %}" />
 <style>
   #settings:hover {
     background-color: goldenrod;
@@ -44,6 +44,5 @@
   </section>
 </main>
 {% endblock content %} {% block extra_scripts %}
-<script src="{% static 'JSs/profile_page.js' %}" type="module"></script>
 <script src="{% static 'JSs/upcomming_tasks.js' %}" type="module"></script>
 {% endblock extra_scripts %}

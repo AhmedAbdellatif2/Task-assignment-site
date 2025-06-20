@@ -55,10 +55,25 @@ class TaskListManager {
         const taskElement = this.createTaskElement(task);
         taskList.appendChild(taskElement);
       });
+
+      this.updateProgressBar(tasks);
     } catch (error) {
       console.error("Error fetching tasks:", error);
       this.showError("Failed to load tasks. Please try again later.");
     }
+  }
+
+  updateProgressBar(tasks) {
+    const progressBar = document.getElementById("progress-bar");
+    const percentText = document.getElementById("tasks-percent");
+    if (!progressBar || !percentText) return;
+    const total = tasks.length;
+    const completed = tasks.filter(
+      (task) => task.status === "completed" || task.status === "Completed"
+    ).length;
+    const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+    progressBar.style.width = percent + "%";
+    percentText.textContent = `${percent}% tasks completed (${completed}/${total})`;
   }
 
   isUpcomingTask(task) {

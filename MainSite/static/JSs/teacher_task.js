@@ -293,7 +293,7 @@ class TeacherTaskManager {
     const completeBtn = document.querySelector(".complete-btn");
     if (completeBtn) {
       completeBtn.addEventListener("click", () => {
-        this.updateTaskStatus("Complete");
+        this.updateTaskStatus("Completed");
       });
     }
 

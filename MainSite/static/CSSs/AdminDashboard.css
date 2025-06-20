@@ -1,29 +1,39 @@
 :root {
+  --primary-black: #f7faff;
+  --dark-gray: #f0f4fa;
+  --accent-blue: #3076e3;
+  --accent-green: #00b222;
+  --white-text: #222;
+  --gray-texts: #444;
+  --danger-red: #f44336;
+}
+body.dark-theme {
   --primary-black: #010409;
   --dark-gray: #151b23;
   --accent-blue: #3076e3;
   --accent-green: #00b222;
-
   --white-text: white;
   --gray-texts: #cfcfcf;
+  --danger-red: #f44336;
 }
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+body.light-theme {
+  --primary-black: #f7faff;
+  --dark-gray: #f0f4fa;
+  --accent-blue: #3076e3;
+  --accent-green: #00b222;
+  --white-text: #222;
+  --gray-texts: #444;
+  --danger-red: #f44336;
 }
-
 body {
   font-family: "Poppins", sans-serif;
-  background: var(--dark-gray); /* Updated background color */
-  color: var(--gray-texts); /* Retain softer white for text */
+  background: var(--dark-gray);
+  color: var(--gray-texts);
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
 }
-
 
 .admin-dashboard {
   display: flex;
@@ -61,41 +71,50 @@ body {
   transition: all 0.3s ease;
 }
 
-button {
-  width: 100%;
-  padding: 0.9rem;
-  background-color: var(--accent-green); /* Updated button color */
-  color: white;
-  padding: 0.5rem 1rem;
-  text-decoration: none;
-  border-radius: 4px;
-  display: inline-block;
-  text-align: center;
-  cursor: pointer;
-}
+button,
+.add-task-btn,
+.edit-btn,
 .delete-btn {
-  background-color: #f44336;
-  color: white;
-  padding: 0.5rem 1rem;
-  text-decoration: none;
-  border-radius: 4px;
   display: inline-block;
-  text-align: center;
-}
-
-.add-task-btn {
-  width: 100%;
-  padding: 0.9rem;
-  background-color: var(--accent-green);
-  color: white;
+  padding: 0.9rem 1.5rem;
   border: none;
-  border-radius: 10px;
-  font-size: 0.95rem;
+  border-radius: 8px;
+  font-size: 1rem;
   font-weight: 600;
+  color: var(--white-text);
+  background: var(--accent-blue);
+  box-shadow: 0 2px 8px rgba(48, 118, 227, 0.08);
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
   margin-top: 0.75rem;
   letter-spacing: 0.5px;
+}
+button:hover,
+.add-task-btn:hover,
+.edit-btn:hover {
+  background: var(--accent-green);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 16px rgba(0, 178, 34, 0.15);
+}
+.delete-btn {
+  background: var(--danger-red);
+  color: var(--white-text);
+}
+.delete-btn:hover {
+  background: var(--accent-blue);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 16px rgba(244, 67, 54, 0.15);
+}
+.edit-btn {
+  background: var(--accent-green);
+  color: var(--white-text);
+}
+.edit-btn:hover {
+  background: var(--accent-blue);
+}
+.add-task-btn {
+  width: 100%;
+  margin-top: 1.5rem;
 }
 
 h2 {
