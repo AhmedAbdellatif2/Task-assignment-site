@@ -1,75 +1,82 @@
-# School Task Assignment Website
+# 📚 School Task Assignment Website
 
-## Overview
-
-This repository contains the implementation of **Project 3: School Task Assignment Website** for the IS231 – Web Technology course at Cairo University, Faculty of Computers and Artificial Intelligence (2024/2025).  
-**Supervisor:** Dr. Laila Abdelrahman
-
-The website streamlines the assignment and management of school tasks, providing an intuitive platform for students and teachers to interact, assign, submit, and review assignments efficiently.
+A simple and user-friendly school task assignment web application where **Admins** can assign and manage tasks for **Teachers**, and **Teachers** can view, complete, and interact with assigned tasks.
 
 ---
 
-## Features
+### 🔐 User Management
+- Sign up as an **Admin** or a **Teacher**
+- Login system with role-based redirection
+- Authentication securely in **Login** and **Registeration** for users (teachers and admins)
+- Dynamic navigation bar based on user role and login status
 
-- **User Authentication:** Secure login and registration for students and teachers.
-- **Task Assignment:** Teachers can create and assign tasks to students or groups.
-- **Submission Portal:** Students can submit their assignments online.
-- **Personal Dashboards:** Track assignments and deadlines.
-- **Notifications:** Automated alerts for new assignments and deadlines.
+### 🛠️ Admin Capabilities
+- Create, edit, and delete tasks
+- Assign tasks to teachers with priority (Low / Medium / High)
+- View all tasks created by the currently logged-in admin
+
+### 📘 Teacher Capabilities
+- View only tasks assigned to the logged-in teacher
+- Search tasks by **priority**
+- View task details
+- Mark tasks as **completed**
+- View completed tasks
+
+### 🌐 Additional Features
+- **Settings page** with support for **Light/Dark Mode**
+- **Notifications** Automated alerts for new assignments and deadlines
+- Integration with an **AI Chatbot** via API
+- Responsive and accessible UI
 
 ---
 
-## Technologies Used
+## 🛠️ Built With
 
 - **Frontend:** HTML, CSS, JavaScript
-- **Backend:** *Django*
-- **Database:** *SQLite*
-- **Authentication:** *Will be informed*
+- **Backend:** Django (Python)
+- **Database:** SQLite
+- **API Integration:** Chatbot (via REST APIs)
 
 ---
 
-## Installation
+## 🚀 Getting Started
 
-1. **Clone the repository:**
-    ```
-    git clone "https://github.com/AhmedAbdellatif2/Task-assignment-site.git"
-    cd Task-assignment-site
-    ```
+### 1. Clone the repository
 
-3. **Apply migrations (if applicable):**
-    ```
-    python manage.py makemigrations
-    python manage.py migrate
-    ```
+```bash
+git clone "https://github.com/AhmedAbdellatif2/Task-assignment-site.git"
+cd Task-assignment-site
+```
 
-4. **Run the development server:**
-    ```
-    python manage.py runserver
-    ```
+### 2. Create and Activate virtual environment
+```bash
+python -m venv env
+source env\Scripts\activate
+```
 
-5. **Access the website:**
 
-    Open your web browser and go to: http://127.0.0.1:8000
+### 3. Run Database Migrations
+ ```bash
+ python manage.py makemigrations
+ python manage.py migrate
+ ```
 
----
+### 4. Run the development server
+```bash
+python manage.py runserver
+```
 
-## Usage
-
-- **Teachers:** Register/login, create assignments, review and grade submissions.
-- **Students:** Register/login, view and submit assignments, receive feedback.
-
----
-
-## License
-
-This project is for academic use as part of IS231 – Web Technology at Cairo University.
+then open **http://127.0.0.1:8000** in your browser
 
 ---
 
-## Acknowledgements
+## 📬 Contact
+- Marwan Hussein: [LinkedIn](http://www.linkedin.com/in/marawan-hussein-568373314)
+- Adel Hefney: [LinkedIn]()
+- Ahmed Abdellatef: [LinkedIn](https://www.linkedin.com/in/ahmed-abdellatif-521b1b27b/)
+- Mahmoud AbdelAziz: [LinkedIn]()
+- Youssef Fahmy: [LinkedIn]()
+- Youssef Edris: [LinkedIn](http://www.linkedin.com/in/yousif-edris)
 
-- Cairo University, Faculty of Computers and Artificial Intelligence
-- IS231 – Web Technology course team
-
----
-
+## 📜 License
+This project is licensed under the MIT License.
