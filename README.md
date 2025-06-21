@@ -50,8 +50,9 @@ cd Task-assignment-site
 
 ### 2. Create and Activate virtual environment
 ```bash
-python -m venv env
-source env\Scripts\activate
+pip install virtualenv
+virtualenv env
+env\Scripts\activate
 ```
 ### 3. Download django
 ```bash
