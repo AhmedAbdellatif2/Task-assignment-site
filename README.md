@@ -53,15 +53,19 @@ cd Task-assignment-site
 python -m venv env
 source env\Scripts\activate
 ```
+### 3. Download django
+```bash
+pip install django
+pip freeze > requirements.txt
+```
 
-
-### 3. Run Database Migrations
+### 4. Run Database Migrations
  ```bash
  python manage.py makemigrations
  python manage.py migrate
  ```
 
-### 4. Run the development server
+### 5. Run the development server
 ```bash
 python manage.py runserver
 ```
