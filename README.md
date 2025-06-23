@@ -110,11 +110,11 @@ then open **http://127.0.0.1:8000** in your browser
 ---
 
 ## 📬 Contact
+- Adel Hefney: [LinkedIn](https://www.linkedin.com/in/adel-hefny-75b6601bb)
 - Marwan Hussein: [LinkedIn](http://www.linkedin.com/in/marawan-hussein-568373314)
-- Adel Hefney: [LinkedIn]()
 - Ahmed Abdellatef: [LinkedIn](https://www.linkedin.com/in/ahmed-abdellatif-521b1b27b/)
-- Mahmoud AbdelAziz: [LinkedIn]()
-- Youssef Fahmy: [LinkedIn]()
+- Mahmoud AbdelAziz: [LinkedIn](https://www.linkedin.com/in/mahmoud-abdelaziz-240012347?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
+- Youssef Fahmy: [LinkedIn](http://linkedin.com/in/youssefhassanfahmy2004/)
 - Youssef Edris: [LinkedIn](http://www.linkedin.com/in/yousif-edris)
 
 ## 📜 License
