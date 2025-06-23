@@ -39,6 +39,45 @@ A simple and user-friendly school task assignment web application where **Admins
 
 ---
 
+## Images For Our Pages:-
+1) ![Sign up page]
+   (Images/1. sign up.png)
+   to create an account for a new user
+   
+2) ![Login page]
+   (Images/1. login.png)
+   to login with existing page
+   
+3) ![Admin Dashboard page]
+   (Images/2. admin dashboard.png)
+   to view all tasks the admins added in the site (for admins only)
+   
+4) ![Admin task management page]
+   (Images/2. admin task management.png)
+   to add a task (for only admins)
+   
+5) ![Edit task page]
+   (Images/2. edit task.png)
+    to edit existing task properties (for only admins)
+
+6) ![Search page](Images/3. search.png)
+    ![filtering results]((Images/3. search2.png)
+    to search for sometask and filter it according to status or priority
+    
+7) ![Settings page]((Images/4. settings.png)
+    here you can:-
+      view your name
+      change your name
+      select your preferred theme (Dark / Light)
+      select notifications preferences
+      danger Area (Logout / Delete account)
+    
+8) ![Tasks List page](Images/5. tasks list darkMode.jpg)
+    ![in light theme](Images/5. tasks list lightMode.jpg)
+    to view tasks you're required to do (for users only)
+
+---
+
 ## 🚀 Getting Started
 
 ### 1. Clone the repository
