@@ -40,37 +40,36 @@ A simple and user-friendly school task assignment web application where **Admins
 ---
 
 ## Images For Our Pages:-
-1) Sign up page: to create an account for a new user
+<br><br>**1) Sign up Page: to create an account for a new user**
    ![Sign up page](Images/1.%20sign%20up.png)
 
-<br>2) Login Page: to login with an existing account
+<br><br>**2) Login Page: to login with an existing account**
    ![Login page](Images/1.%20login.png)
 
-3) Admin Dashboard Page: to view all tasks added by the admin (admin only)
+<br><br>**3) Admin Dashboard Page: to view all tasks added by the admin (admin only)**
    ![Admin Dashboard page](Images/2.%20admin%20dashboard.png)
 
-4) Admin Task Management Page: to add a task (admin only)
+<br><br>**4) Admin Task Management Page: to add a task (admin only)**
    ![Admin task management page](Images/2.%20admin%20task%20management.png)
 
-5) Edit Task Page: to edit existing task properties (admin only)
+<br><br>**5) Edit Task Page: to edit existing task properties (admin only)**
    ![Edit task page](Images/2.%20edit%20task.png)
 
-6) Search Page: to search for tasks and filter by status or priority
-![Search page](Images/3.%20search.png)  
-![Filtering results](Images/3.%20search2.png)
+<br><br>**6) Search Page: to search for tasks and filter by status or priority**
+   ![Search page](Images/3.%20search.png)
+   ![Filtering results](Images/3.%20search2.png)
 
-7) Settings Page:
+<br><br>**7) Settings Page:
     here you can:  
        - View and change your name  
-       - Select theme (Dark / Light)  
+       - Select theme (Dark / Light)
        - Manage notifications  
-       - Logout or delete account
+       - Logout or delete account**
     ![Settings page](Images/4.%20settings.png)
 
-8) Tasks List Page: to view tasks assigned to the teacher
+<br><br>**8) Tasks List Page: to view tasks assigned to the teacher**
    ![Tasks list in Dark Mode](Images/5.%20tasks%20list%20darkMode.jpg)  
 ![Tasks list in Light Mode](Images/5.%20tasks%20list%20lightMode.jpg)
-
 
 ---
 
