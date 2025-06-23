@@ -40,27 +40,36 @@ A simple and user-friendly school task assignment web application where **Admins
 ---
 
 ## Images For Our Pages:-
-1) ![Sign up page](Images/1.%20sign%20up.png) — to create an account for a new user
+1) Sign up page: to create an account for a new user
+   ![Sign up page](Images/1.%20sign%20up.png)
 
-2) ![Login page](Images/1.%20login.png) — to login with an existing account
+2) Login Page: to login with an existing account
+   ![Login page](Images/1.%20login.png)
 
-3) ![Admin Dashboard page](Images/2.%20admin%20dashboard.png) — to view all tasks added by the admin (admin only)
+3) Admin Dashboard Page: to view all tasks added by the admin (admin only)
+   ![Admin Dashboard page](Images/2.%20admin%20dashboard.png)
 
-4) ![Admin task management page](Images/2.%20admin%20task%20management.png) — to add a task (admin only)
+4) Admin Task Management Page: to add a task (admin only)
+   ![Admin task management page](Images/2.%20admin%20task%20management.png)
 
-5) ![Edit task page](Images/2.%20edit%20task.png) — to edit existing task properties (admin only)
+5) Edit Task Page: to edit existing task properties (admin only)
+   ![Edit task page](Images/2.%20edit%20task.png)
 
-6) ![Search page](Images/3.%20search.png)  
-![Filtering results](Images/3.%20search2.png) — to search for tasks and filter by status or priority
+6) Search Page: to search for tasks and filter by status or priority
+![Search page](Images/3.%20search.png)  
+![Filtering results](Images/3.%20search2.png)
 
-7) ![Settings page](Images/4.%20settings.png) — here you can:  
-- View and change your name  
-- Select theme (Dark / Light)  
-- Manage notifications  
-- Logout or delete account
+7) Settings Page:
+    here you can:  
+       - View and change your name  
+       - Select theme (Dark / Light)  
+       - Manage notifications  
+       - Logout or delete account
+    ![Settings page](Images/4.%20settings.png)
 
-8) ![Tasks list in Dark Mode](Images/5.%20tasks%20list%20darkMode.jpg)  
-![Tasks list in Light Mode](Images/5.%20tasks%20list%20lightMode.jpg) — to view tasks assigned to the teacher
+8) Tasks List Page: to view tasks assigned to the teacher
+   ![Tasks list in Dark Mode](Images/5.%20tasks%20list%20darkMode.jpg)  
+![Tasks list in Light Mode](Images/5.%20tasks%20list%20lightMode.jpg)
 
 
 ---
