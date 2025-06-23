@@ -41,9 +41,9 @@ A simple and user-friendly school task assignment web application where **Admins
 
 ## Images For Our Pages:-
 1) Sign up page: to create an account for a new user
-   ![Sign up page](Images/1.%20sign%20up.png)<br>
+   ![Sign up page](Images/1.%20sign%20up.png)
 
-2) Login Page: to login with an existing account
+<br>2) Login Page: to login with an existing account
    ![Login page](Images/1.%20login.png)
 
 3) Admin Dashboard Page: to view all tasks added by the admin (admin only)
