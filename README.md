@@ -40,41 +40,28 @@ A simple and user-friendly school task assignment web application where **Admins
 ---
 
 ## Images For Our Pages:-
-1) ![Sign up page]
-   (Images/1. sign up.png)
-   to create an account for a new user
-   
-2) ![Login page]
-   (Images/1. login.png)
-   to login with existing page
-   
-3) ![Admin Dashboard page]
-   (Images/2. admin dashboard.png)
-   to view all tasks the admins added in the site (for admins only)
-   
-4) ![Admin task management page]
-   (Images/2. admin task management.png)
-   to add a task (for only admins)
-   
-5) ![Edit task page]
-   (Images/2. edit task.png)
-    to edit existing task properties (for only admins)
+1) ![Sign up page](Images/1.%20sign%20up.png) — to create an account for a new user
 
-6) ![Search page](Images/3. search.png)
-    ![filtering results]((Images/3. search2.png)
-    to search for sometask and filter it according to status or priority
-    
-7) ![Settings page]((Images/4. settings.png)
-    here you can:-
-      view your name
-      change your name
-      select your preferred theme (Dark / Light)
-      select notifications preferences
-      danger Area (Logout / Delete account)
-    
-8) ![Tasks List page](Images/5. tasks list darkMode.jpg)
-    ![in light theme](Images/5. tasks list lightMode.jpg)
-    to view tasks you're required to do (for users only)
+2) ![Login page](Images/1.%20login.png) — to login with an existing account
+
+3) ![Admin Dashboard page](Images/2.%20admin%20dashboard.png) — to view all tasks added by the admin (admin only)
+
+4) ![Admin task management page](Images/2.%20admin%20task%20management.png) — to add a task (admin only)
+
+5) ![Edit task page](Images/2.%20edit%20task.png) — to edit existing task properties (admin only)
+
+6) ![Search page](Images/3.%20search.png)  
+![Filtering results](Images/3.%20search2.png) — to search for tasks and filter by status or priority
+
+7) ![Settings page](Images/4.%20settings.png) — here you can:  
+- View and change your name  
+- Select theme (Dark / Light)  
+- Manage notifications  
+- Logout or delete account
+
+8) ![Tasks list in Dark Mode](Images/5.%20tasks%20list%20darkMode.jpg)  
+![Tasks list in Light Mode](Images/5.%20tasks%20list%20lightMode.jpg) — to view tasks assigned to the teacher
+
 
 ---
 
